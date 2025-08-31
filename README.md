@@ -1,6 +1,6 @@
-# VSCode Fuzzy Search Telescope Extension
+# VSCode Regex Search Telescope Extension
 
-A fast and intuitive fuzzy search extension for Visual Studio Code, inspired by vim telescope. Provides powerful text search capabilities with a clean split-pane interface.
+A fast and intuitive regex search extension for Visual Studio Code, inspired by vim telescope. Provides powerful text search capabilities with a clean split-pane interface.
 
 ## Features
 
@@ -8,14 +8,14 @@ A fast and intuitive fuzzy search extension for Visual Studio Code, inspired by 
 - **Current File Search** (`Ctrl+Shift+F` / `Cmd+Shift+F`): Search within the active file
 - **Workspace Search** (`Ctrl+Shift+P` / `Cmd+Shift+P`): Search across all files in the workspace
 
-### ⚡ Advanced Fuzzy Matching
+### ⚡ Advanced Regex Matching
 - Smart word boundary prioritization (e.g., "Err" matches "ErrInvalidInput")
 - CamelCase-aware matching for better code navigation
 - Real-time highlighting of matched characters
 - Backtracking algorithm for optimal match scoring
 
 ### 🖥️ Split-Pane Interface
-- **Top pane**: List of matching lines with fuzzy highlighting
+- **Top pane**: List of matching lines with regex highlighting
 - **Bottom pane**: Code context surrounding the selected line
 - Familiar vim telescope-style navigation
 
@@ -30,7 +30,7 @@ A fast and intuitive fuzzy search extension for Visual Studio Code, inspired by 
 1. Download the latest `.vsix` file from releases
 2. Install via command line:
    ```bash
-   code --install-extension fuzzy-search-telescope-0.0.1.vsix
+   code --install-extension regex-search-telescope-0.0.1.vsix
    ```
 3. Or install through VSCode: `Ctrl+Shift+P` → "Extensions: Install from VSIX"
 
@@ -38,7 +38,7 @@ A fast and intuitive fuzzy search extension for Visual Studio Code, inspired by 
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd vscode-fuzzy-search
+   cd vscode-regex-search
    ```
 2. Install dependencies:
    ```bash
@@ -110,9 +110,9 @@ vsce package
 ```
 src/
 ├── extension.ts              # Main extension entry point
-├── fuzzySearchProvider.ts    # Core search orchestration
+├── regexSearchProvider.ts    # Core search orchestration
 ├── ripgrepService.ts         # Ripgrep integration
-├── fuzzyMatcher.ts          # Advanced fuzzy matching algorithm
+├── regexMatcher.ts          # Advanced regex matching algorithm
 └── searchWebviewPanel.ts    # Split-pane webview interface
 ```
 

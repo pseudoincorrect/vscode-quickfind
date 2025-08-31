@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as path from 'path';
 import { RipgrepService } from '../../ripgrepService';
-import { SearchResult } from '../../fuzzySearchProvider';
+import { SearchResult } from '../../searchProvider';
 
 async function runTests() {
     const ripgrepService = new RipgrepService();

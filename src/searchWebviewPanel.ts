@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SearchResult } from './fuzzySearchProvider';
+import { SearchResult } from './searchProvider';
 
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;

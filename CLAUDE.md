@@ -1,8 +1,8 @@
-# VSCode Fuzzy Search Telescope Extension
+# VSCode Regex Search Telescope Extension
 
 ## Requirements
 
-This VSCode plugin provides fuzzy text search functionality similar to vim telescope with the following features:
+This VSCode plugin provides regex text search functionality similar to vim telescope with the following features:
 
 ### Core Features
 1. **Two Search Modes:**
@@ -10,7 +10,7 @@ This VSCode plugin provides fuzzy text search functionality similar to vim teles
    - Search in current folder/workspace
 
 2. **Split-Pane Interface:**
-   - Top half: List of matching lines with fuzzy highlighting
+   - Top half: List of matching lines with regex highlighting
    - Bottom half: Code context surrounding the selected line
    - Similar to vim telescope interface
 
@@ -22,7 +22,7 @@ This VSCode plugin provides fuzzy text search functionality similar to vim teles
 
 4. **Integration:**
    - Uses system `ripgrep` (rg) for fast text searching
-   - Advanced fuzzy matching with word boundary prioritization
+   - Advanced regex matching with word boundary prioritization
    - Real-time filtering as you type
 
 ### Keybindings
@@ -40,7 +40,7 @@ This VSCode plugin provides fuzzy text search functionality similar to vim teles
 2. **Core Functionality**
    - Extension activation and command registration
    - Ripgrep integration for text searching
-   - Advanced fuzzy matching algorithm with backtracking
+   - Advanced regex matching algorithm with backtracking
    - Custom webview for split-pane search interface
    - Search in current file and folder/workspace
    - Navigation logic (ESC/Enter/Arrow keys)
@@ -48,7 +48,7 @@ This VSCode plugin provides fuzzy text search functionality similar to vim teles
 
 3. **User Experience Improvements**
    - Auto-focus on search input when extension opens
-   - Intelligent fuzzy matching that prioritizes:
+   - Intelligent regex matching that prioritizes:
      - Word boundaries (e.g., "Err" in "ErrInvalidInput")
      - Consecutive character matches
      - CamelCase boundaries
@@ -61,7 +61,7 @@ This VSCode plugin provides fuzzy text search functionality similar to vim teles
 ### Development Mode (Recommended for Testing)
 1. Open the extension folder in VSCode:
    ```bash
-   code /home/mclement/git/dataservice_integration_test/vscode-fuzzy-search
+   code /home/mclement/git/dataservice_integration_test/vscode-regex-search
    ```
 2. Press `F5` to launch Extension Development Host
 3. In the new VSCode window, test with `Ctrl+Shift+F` or `Ctrl+Shift+P`
@@ -75,16 +75,16 @@ npm install -g vsce
 vsce package
 
 # Install the .vsix file
-code --install-extension fuzzy-search-telescope-0.0.1.vsix
+code --install-extension regex-search-telescope-0.0.1.vsix
 ```
 
 ## Architecture
 
 ### Core Components
 1. **extension.ts** - Main extension entry point with command registration
-2. **fuzzySearchProvider.ts** - Core search orchestration logic
+2. **regexSearchProvider.ts** - Core search orchestration logic
 3. **ripgrepService.ts** - Integration with system ripgrep for text searching
-4. **fuzzyMatcher.ts** - Advanced fuzzy matching with backtracking algorithm
+4. **regexMatcher.ts** - Advanced regex matching with backtracking algorithm
 5. **searchWebviewPanel.ts** - Custom webview for split-pane search interface
 
 ### System Requirements
@@ -113,7 +113,7 @@ F5 in VSCode to launch Extension Development Host
 
 ## File Structure
 ```
-vscode-fuzzy-search/
+vscode-regex-search/
 ├── package.json              # Extension manifest and dependencies
 ├── tsconfig.json             # TypeScript configuration
 ├── .eslintrc.json           # ESLint configuration
@@ -121,9 +121,9 @@ vscode-fuzzy-search/
 │   └── launch.json          # Debug configuration
 ├── src/
 │   ├── extension.ts         # Main extension entry point
-│   ├── fuzzySearchProvider.ts # Core search orchestration
+│   ├── regexSearchProvider.ts # Core search orchestration
 │   ├── ripgrepService.ts    # Ripgrep integration with context
-│   ├── fuzzyMatcher.ts      # Advanced fuzzy matching algorithm
+│   ├── regexMatcher.ts      # Advanced regex matching algorithm
 │   └── searchWebviewPanel.ts # Custom webview UI with split panes
 ├── out/                     # Compiled JavaScript output
 └── CLAUDE.md               # This documentation
@@ -131,7 +131,7 @@ vscode-fuzzy-search/
 
 ## Technical Implementation
 
-### Fuzzy Matching Algorithm
+### Regex Matching Algorithm
 - **Backtracking search** to find optimal character matches
 - **Word boundary prioritization** - matches at start of words score higher
 - **Consecutive match bonuses** - "err" matches preferred over "e..r..r"

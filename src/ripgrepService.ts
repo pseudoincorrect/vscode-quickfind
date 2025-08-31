@@ -1,6 +1,6 @@
 import * as cp from 'child_process';
 import * as path from 'path';
-import { SearchResult } from './fuzzySearchProvider';
+import { SearchResult } from './searchProvider';
 
 export class RipgrepService {
     private readonly rgPath = '/usr/bin/rg';

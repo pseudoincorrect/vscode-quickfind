@@ -1,5 +1,5 @@
 {
-  "name": "fuzzy-search-telescope",
+  "name": "regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "A telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
   "version": "0.0.1",
@@ -11,29 +11,29 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:fuzzySearch.searchInFile",
-    "onCommand:fuzzySearch.searchInFolder"
+    "onCommand:regexSearch.searchInFile",
+    "onCommand:regexSearch.searchInFolder"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "fuzzySearch.searchInFile",
+        "command": "regexSearch.searchInFile",
         "title": "Regex Search: Search in Current File"
       },
       {
-        "command": "fuzzySearch.searchInFolder",
+        "command": "regexSearch.searchInFolder",
         "title": "Regex Search: Search in Current Folder"
       }
     ],
     "keybindings": [
       {
-        "command": "fuzzySearch.searchInFile",
+        "command": "regexSearch.searchInFile",
         "key": "ctrl+shift+f",
         "mac": "cmd+shift+f"
       },
       {
-        "command": "fuzzySearch.searchInFolder",
+        "command": "regexSearch.searchInFolder",
         "key": "ctrl+shift+p",
         "mac": "cmd+shift+p"
       }
