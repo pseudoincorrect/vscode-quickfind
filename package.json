@@ -1,7 +1,7 @@
 {
   "name": "fuzzy-search-telescope",
-  "displayName": "Fuzzy Search Telescope",
-  "description": "A telescope-like fuzzy search extension for VSCode with split-pane interface (developed with LLM assistance)",
+  "displayName": "Regex Search Telescope",
+  "description": "A telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
   "version": "0.0.1",
   "author": "Maxime Clement",
   "engines": {
@@ -19,11 +19,11 @@
     "commands": [
       {
         "command": "fuzzySearch.searchInFile",
-        "title": "Fuzzy Search: Search in Current File"
+        "title": "Regex Search: Search in Current File"
       },
       {
         "command": "fuzzySearch.searchInFolder",
-        "title": "Fuzzy Search: Search in Current Folder"
+        "title": "Regex Search: Search in Current Folder"
       }
     ],
     "keybindings": [
@@ -45,14 +45,18 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "npm run compile && node ./out/test/suite/searchInFile.test.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.74.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^8.28.0",
+    "mocha": "^11.7.1",
     "typescript": "^4.9.4"
   }
 }

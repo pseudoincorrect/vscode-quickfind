@@ -1,23 +1,22 @@
 import * as vscode from 'vscode';
 import { SearchResult } from './fuzzySearchProvider';
-import { FuzzyMatcher, FuzzyMatch } from './fuzzyMatcher';
 
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
     private disposables: vscode.Disposable[] = [];
-    private filteredResults: FuzzyMatch[] = [];
+    private filteredResults: SearchResult[] = [];
 
     constructor(
         private context: vscode.ExtensionContext,
         private initialResults: SearchResult[],
         private searchType: 'file' | 'folder',
-        private fuzzyMatcher: FuzzyMatcher,
         private onNavigate: (result: SearchResult) => void,
-        private onCancel: () => void
+        private onCancel: () => void,
+        private onSearch: (query: string) => Promise<SearchResult[]>
     ) {
         this.panel = vscode.window.createWebviewPanel(
-            'fuzzySearch',
-            `Fuzzy Search - ${searchType === 'file' ? 'Current File' : 'Current Folder'}`,
+            'regexSearch',
+            `Regex Search - ${searchType === 'file' ? 'Current File' : 'Current Folder'}`,
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
@@ -25,7 +24,7 @@ export class SearchWebviewPanel {
             }
         );
 
-        this.filteredResults = this.fuzzyMatcher.fuzzyFilter(initialResults, '');
+        this.filteredResults = initialResults;
         this.panel.webview.html = this.getWebviewContent();
         this.setupEventHandlers();
         
@@ -67,14 +66,21 @@ export class SearchWebviewPanel {
         );
     }
 
-    private handleSearch(query: string) {
-        this.filteredResults = this.fuzzyMatcher.fuzzyFilter(this.initialResults, query);
-        this.updateResults();
+    private async handleSearch(query: string) {
+        try {
+            const searchResults = await this.onSearch(query);
+            this.filteredResults = searchResults;
+            this.updateResults();
+        } catch (error) {
+            console.error('Search error:', error);
+            this.filteredResults = [];
+            this.updateResults();
+        }
     }
 
     private handleSelect(index: number) {
         if (index >= 0 && index < this.filteredResults.length) {
-            const result = this.filteredResults[index].result;
+            const result = this.filteredResults[index];
             this.onNavigate(result);
         }
     }
@@ -99,33 +105,29 @@ export class SearchWebviewPanel {
     <style>
         body { margin: 0; padding: 0; font-family: var(--vscode-font-family); background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
         .container { display: flex; flex-direction: column; height: 100vh; }
-        .search-box { padding: 10px; border-bottom: 1px solid var(--vscode-panel-border); }
-        .search-input { width: 100%; padding: 8px; border: 1px solid var(--vscode-input-border); background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-size: 14px; }
-        .results-container { flex: 1; display: flex; flex-direction: column; }
-        .results-list { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--vscode-panel-border); }
-        .result-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--vscode-panel-border); }
-        .result-item:hover, .result-item.selected { background: var(--vscode-list-hoverBackground); }
-        .result-file { font-size: 12px; color: var(--vscode-descriptionForeground); margin-bottom: 2px; }
-        .result-text { font-size: 14px; font-family: var(--vscode-editor-font-family); }
-        .highlight { background: var(--vscode-editor-findMatchBackground); color: var(--vscode-editor-findMatchForeground); }
-        .context-panel { flex: 1; padding: 10px; overflow-y: auto; background: var(--vscode-editor-background); }
-        .context-line { font-family: var(--vscode-editor-font-family); font-size: 13px; margin: 2px 0; white-space: pre-wrap; }
+        .context-panel { height: 140px; padding: 6px; overflow: hidden; background: var(--vscode-editor-background); border-bottom: 1px solid var(--vscode-panel-border); }
+        .context-line { font-family: var(--vscode-editor-font-family); font-size: 12px; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .context-match { background: var(--vscode-editor-findMatchBackground); font-weight: bold; }
-        .no-results { padding: 20px; text-align: center; color: var(--vscode-descriptionForeground); }
+        .search-box { padding: 6px; border-bottom: 1px solid var(--vscode-panel-border); }
+        .search-input { width: 100%; padding: 6px; border: 1px solid var(--vscode-input-border); background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-size: 13px; }
+        .results-list { flex: 1; overflow-y: auto; overflow-x: hidden; }
+        .result-item { padding: 4px 8px; cursor: pointer; border-bottom: 1px solid var(--vscode-panel-border); }
+        .result-item:hover, .result-item.selected { background: var(--vscode-list-hoverBackground); }
+        .result-file { font-size: 11px; color: var(--vscode-descriptionForeground); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .result-text { font-size: 13px; font-family: var(--vscode-editor-font-family); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .no-results { padding: 10px; text-align: center; color: var(--vscode-descriptionForeground); }
         .keybinds { position: absolute; bottom: 10px; right: 10px; font-size: 11px; color: var(--vscode-descriptionForeground); }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="context-panel" id="contextPanel">
+            <div class="no-results">Select a result to see context</div>
+        </div>
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="Type to search..." autofocus>
+            <input type="text" class="search-input" placeholder="Type regex to search..." autofocus>
         </div>
-        <div class="results-container">
-            <div class="results-list" id="resultsList"></div>
-            <div class="context-panel" id="contextPanel">
-                <div class="no-results">Select a result to see context</div>
-            </div>
-        </div>
+        <div class="results-list" id="resultsList"></div>
         <div class="keybinds">ESC: Cancel | Enter: Navigate | ↑↓: Navigate</div>
     </div>
 
@@ -133,6 +135,7 @@ export class SearchWebviewPanel {
         const vscode = acquireVsCodeApi();
         let results = [];
         let selectedIndex = 0;
+        let searchTimeout = null;
 
         const searchInput = document.querySelector('.search-input');
         const resultsList = document.getElementById('resultsList');
@@ -143,7 +146,15 @@ export class SearchWebviewPanel {
         updateDisplay();
 
         searchInput.addEventListener('input', (e) => {
-            vscode.postMessage({ command: 'search', query: e.target.value });
+            // Clear existing timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            // Set new timeout for 500ms debounce
+            searchTimeout = setTimeout(() => {
+                vscode.postMessage({ command: 'search', query: e.target.value });
+            }, 500);
         });
 
         searchInput.addEventListener('keydown', (e) => {
@@ -197,15 +208,14 @@ export class SearchWebviewPanel {
                 return;
             }
 
-            resultsList.innerHTML = results.map((match, index) => {
-                const result = match.result;
+            resultsList.innerHTML = results.map((result, index) => {
                 const fileName = result.file.split('/').pop();
                 const relativePath = result.file.replace(/^.*\\//, '');
                 
                 return \`<div class="result-item \${index === selectedIndex ? 'selected' : ''}" 
                             onclick="selectResult(\${index})">
                     <div class="result-file">\${relativePath}:\${result.line}:\${result.column}</div>
-                    <div class="result-text">\${highlightText(result.text, match.matchedIndices)}</div>
+                    <div class="result-text">\${escapeHtml(result.text)}</div>
                 </div>\`;
             }).join('');
         }
@@ -216,17 +226,16 @@ export class SearchWebviewPanel {
                 return;
             }
 
-            const result = results[selectedIndex].result;
+            const result = results[selectedIndex];
             const context = result.context || [];
             const matchLine = result.text;
 
             if (context.length === 0) {
-                contextPanel.innerHTML = \`<div class="context-line context-match">\${matchLine}</div>\`;
+                contextPanel.innerHTML = \`<div class="context-line context-match">\${escapeHtml(matchLine)}</div>\`;
                 return;
             }
 
             let contextHtml = '';
-            const midPoint = Math.floor(context.length / 2);
             
             context.forEach((line, index) => {
                 const isMatch = line.trim() === matchLine.trim();
@@ -252,24 +261,6 @@ export class SearchWebviewPanel {
             }
         }
 
-        function highlightText(text, matchedIndices) {
-            if (!matchedIndices || matchedIndices.length === 0) {
-                return escapeHtml(text);
-            }
-
-            let result = '';
-            let lastIndex = 0;
-
-            matchedIndices.forEach(index => {
-                if (index >= text.length) return;
-                result += escapeHtml(text.substring(lastIndex, index));
-                result += \`<span class="highlight">\${escapeHtml(text[index])}</span>\`;
-                lastIndex = index + 1;
-            });
-
-            result += escapeHtml(text.substring(lastIndex));
-            return result;
-        }
 
         function escapeHtml(text) {
             const div = document.createElement('div');

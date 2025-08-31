@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { RipgrepService } from './ripgrepService';
-import { FuzzyMatcher } from './fuzzyMatcher';
 import { SearchWebviewPanel } from './searchWebviewPanel';
 
 export interface SearchResult {
@@ -12,15 +11,15 @@ export interface SearchResult {
     context: string[];
 }
 
-export class FuzzySearchProvider {
+export class RegexSearchProvider {
     private ripgrepService: RipgrepService;
-    private fuzzyMatcher: FuzzyMatcher;
     private currentWebviewPanel: SearchWebviewPanel | undefined;
     private originalEditor: vscode.TextEditor | undefined;
+    private initialResults: SearchResult[] = [];
+    private currentSearchPath: string | undefined;
 
     constructor(private context: vscode.ExtensionContext) {
         this.ripgrepService = new RipgrepService();
-        this.fuzzyMatcher = new FuzzyMatcher();
     }
 
     async searchInCurrentFile() {
@@ -31,17 +30,10 @@ export class FuzzySearchProvider {
         }
 
         this.originalEditor = editor;
+        this.currentSearchPath = editor.document.fileName;
         
         try {
-            const filePath = editor.document.fileName;
-            const searchResults = await this.ripgrepService.searchInFile(filePath, '.');
-            
-            if (searchResults.length === 0) {
-                vscode.window.showInformationMessage('No text found in current file');
-                return;
-            }
-            
-            this.showSearchWebview(searchResults, 'file');
+            this.showSearchWebview([], 'file');
         } catch (error) {
             vscode.window.showErrorMessage(`Error searching in file: ${error}`);
         }
@@ -55,17 +47,10 @@ export class FuzzySearchProvider {
         }
 
         this.originalEditor = vscode.window.activeTextEditor;
+        this.currentSearchPath = workspaceFolder.uri.fsPath;
         
         try {
-            const folderPath = workspaceFolder.uri.fsPath;
-            const searchResults = await this.ripgrepService.searchInFolder(folderPath, '.');
-            
-            if (searchResults.length === 0) {
-                vscode.window.showInformationMessage('No text found in current folder');
-                return;
-            }
-            
-            this.showSearchWebview(searchResults, 'folder');
+            this.showSearchWebview([], 'folder');
         } catch (error) {
             vscode.window.showErrorMessage(`Error searching in folder: ${error}`);
         }
@@ -80,10 +65,33 @@ export class FuzzySearchProvider {
             this.context,
             results,
             searchType,
-            this.fuzzyMatcher,
             (result: SearchResult) => this.navigateToResult(result),
-            () => this.returnToOriginalEditor()
+            () => this.returnToOriginalEditor(),
+            (query: string) => this.performSearch(query, searchType)
         );
+    }
+
+    private async performSearch(query: string, searchType: 'file' | 'folder'): Promise<SearchResult[]> {
+        if (!query.trim()) {
+            return this.initialResults;
+        }
+
+        try {
+            if (searchType === 'file') {
+                if (!this.currentSearchPath) {
+                    return [];
+                }
+                return await this.ripgrepService.searchWithQuery(this.currentSearchPath, query, true);
+            } else {
+                if (!this.currentSearchPath) {
+                    return [];
+                }
+                return await this.ripgrepService.searchWithQuery(this.currentSearchPath, query, false);
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+            return [];
+        }
     }
 
     private async navigateToResult(result: SearchResult) {
@@ -99,6 +107,9 @@ export class FuzzySearchProvider {
                 this.currentWebviewPanel.dispose();
                 this.currentWebviewPanel = undefined;
             }
+            
+            // Reset the search path
+            this.currentSearchPath = undefined;
         } catch (error) {
             vscode.window.showErrorMessage(`Error navigating to result: ${error}`);
         }
@@ -113,5 +124,8 @@ export class FuzzySearchProvider {
             this.currentWebviewPanel.dispose();
             this.currentWebviewPanel = undefined;
         }
+        
+        // Reset the search path
+        this.currentSearchPath = undefined;
     }
 }
