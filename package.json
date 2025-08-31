@@ -1,8 +1,9 @@
 {
   "name": "fuzzy-search-telescope",
   "displayName": "Fuzzy Search Telescope",
-  "description": "A telescope-like fuzzy search extension for VSCode with split-pane interface",
+  "description": "A telescope-like fuzzy search extension for VSCode with split-pane interface (developed with LLM assistance)",
   "version": "0.0.1",
+  "author": "Maxime Clement",
   "engines": {
     "vscode": "^1.74.0"
   },
