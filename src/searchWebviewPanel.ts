@@ -103,18 +103,19 @@ export class SearchWebviewPanel {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { margin: 0; padding: 0; font-family: var(--vscode-font-family); background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
-        .container { display: flex; flex-direction: column; height: 100vh; }
-        .context-panel { height: 140px; padding: 6px; overflow: hidden; background: var(--vscode-editor-background); border-bottom: 1px solid var(--vscode-panel-border); }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: var(--vscode-font-family); background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
+        .container { display: flex; flex-direction: column; width: 100%; height: 100vh; overflow: hidden; }
+        .context-panel { height: 140px; padding: 6px; overflow: hidden; background: var(--vscode-editor-background); border-bottom: 1px solid var(--vscode-panel-border); flex-shrink: 0; width: 100%; }
         .context-line { font-family: var(--vscode-editor-font-family); font-size: 12px; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .context-match { background: var(--vscode-editor-findMatchBackground); font-weight: bold; }
-        .search-box { padding: 6px; border-bottom: 1px solid var(--vscode-panel-border); }
-        .search-input { width: 100%; padding: 6px; border: 1px solid var(--vscode-input-border); background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-size: 13px; }
-        .results-list { flex: 1; overflow-y: auto; overflow-x: hidden; }
-        .result-item { padding: 4px 8px; cursor: pointer; border-bottom: 1px solid var(--vscode-panel-border); }
+        .search-box { padding: 6px; border-bottom: 1px solid var(--vscode-panel-border); flex-shrink: 0; width: 100%; overflow: hidden; }
+        .search-input { width: 100%; padding: 6px; border: 1px solid var(--vscode-input-border); background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-size: 13px; box-sizing: border-box; }
+        .results-list { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; width: 100%; }
+        .result-item { padding: 4px 8px; cursor: pointer; border-bottom: 1px solid var(--vscode-panel-border); width: 100%; overflow: hidden; }
         .result-item:hover, .result-item.selected { background: var(--vscode-list-hoverBackground); }
-        .result-file { font-size: 11px; color: var(--vscode-descriptionForeground); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .result-text { font-size: 13px; font-family: var(--vscode-editor-font-family); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .result-file { font-size: 11px; color: var(--vscode-descriptionForeground); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .result-text { font-size: 13px; font-family: var(--vscode-editor-font-family); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .no-results { padding: 10px; text-align: center; color: var(--vscode-descriptionForeground); }
         .keybinds { position: absolute; bottom: 10px; right: 10px; font-size: 11px; color: var(--vscode-descriptionForeground); }
     </style>
