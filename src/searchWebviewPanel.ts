@@ -13,11 +13,22 @@ export class SearchWebviewPanel {
         private searchType: 'file' | 'folder',
         private onNavigate: (result: SearchResult) => void,
         private onCancel: () => void,
-        private onSearch: (query: string) => Promise<SearchResult[]>
+        private onSearch: (query: string) => Promise<SearchResult[]>,
+        private searchPath?: string
     ) {
+        const getTitle = () => {
+            if (searchType === 'file' && searchPath) {
+                return `Regex Search - file - ${searchPath}`;
+            }
+            if (searchType === 'folder' && searchPath) {
+                return `Regex Search - folder - ${searchPath}/`;
+            }
+            return `Regex Search - ${searchType === 'file' ? 'Current File' : 'Current Folder'}`;
+        };
+
         this.panel = vscode.window.createWebviewPanel(
             'regexSearch',
-            `Regex Search - ${searchType === 'file' ? 'Current File' : 'Current Folder'}`,
+            getTitle(),
             vscode.ViewColumn.One,
             {
                 enableScripts: true,

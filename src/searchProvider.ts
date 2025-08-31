@@ -67,7 +67,8 @@ export class RegexSearchProvider {
             searchType,
             (result: SearchResult) => this.navigateToResult(result),
             () => this.returnToOriginalEditor(),
-            (query: string) => this.performSearch(query, searchType)
+            (query: string) => this.performSearch(query, searchType),
+            this.currentSearchPath
         );
     }
 
