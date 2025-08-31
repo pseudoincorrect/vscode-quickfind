@@ -35,7 +35,7 @@ export class RipgrepService {
                 if (code === 0 || code === 1) {
                     // Code 0: matches found, Code 1: no matches (not an error)
                     try {
-                        const results = await this.parseRipgrepOutputSimple(output, filePath);
+                        const results = await this.parseRipgrepOutputSimple(output, filePath, true);
                         resolve(results);
                     } catch (error) {
                         reject(new Error(`Failed to parse ripgrep output: ${error}`));
@@ -86,7 +86,7 @@ export class RipgrepService {
                 if (code === 0 || code === 1) {
                     // Code 0: matches found, Code 1: no matches (not an error)
                     try {
-                        const results = await this.parseRipgrepOutputSimple(output, folderPath);
+                        const results = await this.parseRipgrepOutputSimple(output, folderPath, false);
                         resolve(results);
                     } catch (error) {
                         reject(new Error(`Failed to parse ripgrep output: ${error}`));
@@ -115,7 +115,7 @@ export class RipgrepService {
         }
     }
 
-    private async parseRipgrepOutputSimple(output: string, basePath: string): Promise<SearchResult[]> {
+    private async parseRipgrepOutputSimple(output: string, basePath: string, withContext: boolean = true): Promise<SearchResult[]> {
         const results: SearchResult[] = [];
         const lines = output.split('\n').filter(line => line.trim());
 
@@ -126,8 +126,8 @@ export class RipgrepService {
                 const [, filePath, lineNum, columnNum, text] = match;
                 const lineNumber = parseInt(lineNum, 10);
                 
-                // Read context lines manually
-                const context = await this.readContextLines(filePath, lineNumber);
+                // Read context lines manually only if withContext is true
+                const context = withContext ? await this.readContextLines(filePath, lineNumber) : [text.trim()];
                 
                 results.push({
                     file: filePath,
