@@ -152,10 +152,10 @@ export class SearchWebviewPanel {
                 clearTimeout(searchTimeout);
             }
             
-            // Set new timeout for 500ms debounce
+            // Set new timeout for 300ms debounce
             searchTimeout = setTimeout(() => {
                 vscode.postMessage({ command: 'search', query: e.target.value });
-            }, 500);
+            }, 300);
         });
 
         searchInput.addEventListener('keydown', (e) => {
@@ -214,7 +214,7 @@ export class SearchWebviewPanel {
                 const relativePath = result.file.replace(/^.*\\//, '');
                 
                 return \`<div class="result-item \${index === selectedIndex ? 'selected' : ''}" 
-                            onclick="selectResult(\${index})">
+                            onclick="navigateToResult(\${index})">
                     <div class="result-file">\${relativePath}:\${result.line}:\${result.column}</div>
                     <div class="result-text">\${escapeHtml(result.text)}</div>
                 </div>\`;
@@ -249,6 +249,12 @@ export class SearchWebviewPanel {
         function selectResult(index) {
             selectedIndex = index;
             updateSelection();
+        }
+
+        function navigateToResult(index) {
+            selectedIndex = index;
+            updateSelection();
+            vscode.postMessage({ command: 'select', index: index });
         }
 
         function updateSelection() {
