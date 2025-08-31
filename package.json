@@ -1,9 +1,15 @@
 {
-  "name": "regex-search-telescope",
+  "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "A telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
   "version": "0.0.1",
   "author": "Maxime Clement",
+  "publisher": "pseudoincorrect",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pseudoincorrect/vscode-fuzzy-search"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -45,7 +51,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "npm run compile && node ./out/test/suite/searchInFile.test.js"
+    "test": "npm run compile && node ./out/test/suite/searchInFile.test.js",
+    "install-extension": "npm run compile && vsce package && code --install-extension vscode-regex-search-telescope-0.0.1.vsix"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
