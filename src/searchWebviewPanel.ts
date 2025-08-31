@@ -5,6 +5,7 @@ export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
     private disposables: vscode.Disposable[] = [];
     private filteredResults: SearchResult[] = [];
+    private currentSearchQuery: string = '';
 
     constructor(
         private context: vscode.ExtensionContext,
@@ -68,6 +69,7 @@ export class SearchWebviewPanel {
 
     private async handleSearch(query: string) {
         try {
+            this.currentSearchQuery = query;
             const searchResults = await this.onSearch(query);
             this.filteredResults = searchResults;
             this.updateResults();
@@ -92,7 +94,8 @@ export class SearchWebviewPanel {
     private updateResults() {
         this.panel.webview.postMessage({
             command: 'updateResults',
-            results: this.filteredResults
+            results: this.filteredResults,
+            searchQuery: this.currentSearchQuery
         });
     }
 
@@ -109,6 +112,7 @@ export class SearchWebviewPanel {
         .context-panel { height: 140px; padding: 6px; overflow: hidden; background: var(--vscode-editor-background); border-bottom: 1px solid var(--vscode-panel-border); flex-shrink: 0; width: 100%; }
         .context-line { font-family: var(--vscode-editor-font-family); font-size: 12px; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .context-match { background: var(--vscode-editor-findMatchBackground); font-weight: bold; }
+        .search-highlight { background: var(--vscode-editor-findMatchHighlightBackground); color: var(--vscode-editor-findMatchForeground); font-weight: bold; border-radius: 2px; padding: 0 1px; }
         .search-box { padding: 6px; border-bottom: 1px solid var(--vscode-panel-border); flex-shrink: 0; width: 100%; overflow: hidden; }
         .search-input { width: 100%; padding: 6px; border: 1px solid var(--vscode-input-border); background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-size: 13px; box-sizing: border-box; }
         .results-list { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; width: 100%; }
@@ -137,6 +141,7 @@ export class SearchWebviewPanel {
         let results = [];
         let selectedIndex = 0;
         let searchTimeout = null;
+        let currentSearchQuery = '';
 
         const searchInput = document.querySelector('.search-input');
         const resultsList = document.getElementById('resultsList');
@@ -144,6 +149,7 @@ export class SearchWebviewPanel {
 
         // Initialize with all results
         results = ${JSON.stringify(this.filteredResults)};
+        currentSearchQuery = '${this.currentSearchQuery}';
         updateDisplay();
 
         searchInput.addEventListener('input', (e) => {
@@ -191,6 +197,7 @@ export class SearchWebviewPanel {
             const message = event.data;
             if (message.command === 'updateResults') {
                 results = message.results;
+                currentSearchQuery = message.searchQuery || '';
                 selectedIndex = 0;
                 updateDisplay();
             } else if (message.command === 'focus') {
@@ -212,11 +219,12 @@ export class SearchWebviewPanel {
             resultsList.innerHTML = results.map((result, index) => {
                 const fileName = result.file.split('/').pop();
                 const relativePath = result.file.replace(/^.*\\//, '');
+                const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
                 
                 return \`<div class="result-item \${index === selectedIndex ? 'selected' : ''}" 
                             onclick="navigateToResult(\${index})">
                     <div class="result-file">\${relativePath}:\${result.line}:\${result.column}</div>
-                    <div class="result-text">\${escapeHtml(result.text)}</div>
+                    <div class="result-text">\${highlightedText}</div>
                 </div>\`;
             }).join('');
         }
@@ -232,7 +240,8 @@ export class SearchWebviewPanel {
             const matchLine = result.text;
 
             if (context.length === 0) {
-                contextPanel.innerHTML = \`<div class="context-line context-match">\${escapeHtml(matchLine)}</div>\`;
+                const highlightedLine = highlightSearchTerm(escapeHtml(matchLine), currentSearchQuery);
+                contextPanel.innerHTML = \`<div class="context-line context-match">\${highlightedLine}</div>\`;
                 return;
             }
 
@@ -240,7 +249,8 @@ export class SearchWebviewPanel {
             
             context.forEach((line, index) => {
                 const isMatch = line.trim() === matchLine.trim();
-                contextHtml += \`<div class="context-line \${isMatch ? 'context-match' : ''}">\${escapeHtml(line)}</div>\`;
+                const highlightedLine = highlightSearchTerm(escapeHtml(line), currentSearchQuery);
+                contextHtml += \`<div class="context-line \${isMatch ? 'context-match' : ''}">\${highlightedLine}</div>\`;
             });
 
             contextPanel.innerHTML = contextHtml;
@@ -268,6 +278,35 @@ export class SearchWebviewPanel {
             }
         }
 
+        function highlightSearchTerm(text, searchQuery) {
+            if (!searchQuery || searchQuery.trim() === '') {
+                return text;
+            }
+            
+            try {
+                // Try to use the search query as a regex
+                const regex = new RegExp(searchQuery, 'gi');
+                return text.replace(regex, function(match) {
+                    return '<span class="search-highlight">' + match + '</span>';
+                });
+            } catch (error) {
+                // If regex fails, do a case-insensitive literal string search
+                const lowerText = text.toLowerCase();
+                const lowerQuery = searchQuery.toLowerCase();
+                let result = '';
+                let lastIndex = 0;
+                let index = lowerText.indexOf(lowerQuery);
+                
+                while (index !== -1) {
+                    result += text.substring(lastIndex, index);
+                    result += '<span class="search-highlight">' + text.substring(index, index + searchQuery.length) + '</span>';
+                    lastIndex = index + searchQuery.length;
+                    index = lowerText.indexOf(lowerQuery, lastIndex);
+                }
+                result += text.substring(lastIndex);
+                return result;
+            }
+        }
 
         function escapeHtml(text) {
             const div = document.createElement('div');
