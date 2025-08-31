@@ -70,9 +70,23 @@ A fast and intuitive regex search extension for Visual Studio Code, inspired by 
 
 - **VSCode**: Version 1.74.0 or higher
 - **ripgrep**: Must be installed and available in system PATH
-  - macOS: `brew install ripgrep`
-  - Ubuntu/Debian: `sudo apt install ripgrep`
-  - Windows: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
+
+### Installing ripgrep
+
+This extension depends on `ripgrep` for fast text searching. Please install it for your platform:
+
+#### Linux (Required)
+- **Ubuntu/Debian**: `sudo apt install ripgrep`
+- **Fedora/RHEL**: `sudo dnf install ripgrep` or `sudo yum install ripgrep`
+- **Arch Linux**: `sudo pacman -S ripgrep`
+- **Alpine**: `apk add ripgrep`
+- **From source**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
+
+#### Other Platforms
+- **macOS**: `brew install ripgrep`
+- **Windows**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
+
+> **Note**: The extension expects `rg` (ripgrep) to be available at `/usr/bin/rg` on Linux systems. If installed elsewhere, ensure it's in your system PATH.
 
 ## Development
 
