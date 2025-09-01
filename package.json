@@ -52,7 +52,10 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "npm run compile && node ./out/test/suite/searchInFile.test.js",
-    "install-extension": "npm run compile && vsce package && code --install-extension vscode-regex-search-telescope-0.0.1.vsix"
+    "package": "npm run compile && vsce package --out releases/",
+    "package-release": "npm run compile && vsce package --out releases/ && echo 'Extension packaged to releases/ folder'",
+    "install-extension": "npm run package && code --install-extension releases/vscode-regex-search-telescope-$(node -p \"require('./package.json').version\").vsix",
+    "clean-releases": "rm -f releases/*.vsix"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -62,6 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.6.0",
     "eslint": "^8.28.0",
     "mocha": "^11.7.1",
     "typescript": "^4.9.4"

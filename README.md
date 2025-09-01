@@ -31,10 +31,10 @@ A fast and intuitive regex search extension for Visual Studio Code, inspired by 
 ## Installation
 
 ### From VSIX (Recommended)
-1. Download the latest `.vsix` file from releases
+1. Download the latest `.vsix` file from the [releases folder](releases/)
 2. Install via command line:
    ```bash
-   code --install-extension regex-search-telescope-0.0.1.vsix
+   code --install-extension vscode-regex-search-telescope-0.0.1.vsix
    ```
 3. Or install through VSCode: `Ctrl+Shift+P` → "Extensions: Install from VSIX"
 
