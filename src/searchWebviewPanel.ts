@@ -14,7 +14,8 @@ export class SearchWebviewPanel {
         private onNavigate: (result: SearchResult) => void,
         private onCancel: () => void,
         private onSearch: (query: string) => Promise<SearchResult[]>,
-        private searchPath?: string
+        private searchPath?: string,
+        private viewColumn?: vscode.ViewColumn
     ) {
         const getTitle = () => {
             if (searchType === 'file' && searchPath) {
@@ -29,7 +30,7 @@ export class SearchWebviewPanel {
         this.panel = vscode.window.createWebviewPanel(
             'regexSearch',
             getTitle(),
-            vscode.ViewColumn.One,
+            viewColumn || vscode.ViewColumn.One,
             {
                 enableScripts: true,
                 retainContextWhenHidden: true

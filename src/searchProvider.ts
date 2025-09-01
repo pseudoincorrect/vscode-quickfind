@@ -61,6 +61,9 @@ export class RegexSearchProvider {
             this.currentWebviewPanel.dispose();
         }
 
+        // Get the current editor's view column, default to ViewColumn.One if no editor is active
+        const currentViewColumn = this.originalEditor?.viewColumn || vscode.ViewColumn.One;
+
         this.currentWebviewPanel = new SearchWebviewPanel(
             this.context,
             results,
@@ -68,7 +71,8 @@ export class RegexSearchProvider {
             (result: SearchResult) => this.navigateToResult(result),
             () => this.returnToOriginalEditor(),
             (query: string) => this.performSearch(query, searchType),
-            this.currentSearchPath
+            this.currentSearchPath,
+            currentViewColumn
         );
     }
 
