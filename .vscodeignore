@@ -2,6 +2,7 @@
 .git
 .gitignore
 **/*.ts
+!src/webview/**
 **/*.map
 .eslintrc.json
 src/test/**

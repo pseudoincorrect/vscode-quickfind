@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 import { SearchResult } from './searchProvider';
 
 export class SearchWebviewPanel {
@@ -147,286 +149,31 @@ export class SearchWebviewPanel {
     }
 
     private getWebviewContent(): string {
-        return `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: var(--vscode-font-family); background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
-        .container { display: flex; flex-direction: column; width: 100%; height: 100vh; overflow: hidden; }
-        .context-panel { height: 140px; padding: 6px 6px 6px 16px; overflow: hidden; background: var(--vscode-editor-background); border-bottom: 1px solid var(--vscode-panel-border); flex-shrink: 0; width: 100%; }
-        .context-line { font-family: var(--vscode-editor-font-family); font-size: 12px; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .context-match { background: var(--vscode-editor-findMatchBackground); font-weight: bold; }
-        .search-highlight { background: var(--vscode-editor-findMatchHighlightBackground); color: var(--vscode-editor-findMatchForeground); font-weight: bold; border-radius: 2px; padding: 0 1px; }
-        .search-box { padding: 6px; border-bottom: 1px solid var(--vscode-panel-border); flex-shrink: 0; width: 100%; overflow: hidden; }
-        .search-input { width: 100%; padding: 6px; border: 3px solid #00ff00; background: var(--vscode-input-background); color: var(--vscode-input-foreground); font-size: 16px; font-weight: bold; box-sizing: border-box; outline: none; }
-        .search-input:focus { border: 3px solid #00ff00; outline: none; box-shadow: none; }
-        .results-list { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; width: 100%; }
-        .result-item { padding: 4px 8px; margin-left: 0px; cursor: pointer; border-bottom: 1px solid var(--vscode-panel-border); width: calc(100% - 8px ); overflow: hidden; }
-        .result-item:hover, .result-item.selected { background: var(--vscode-list-hoverBackground); }
-        .result-item.selected { margin-left: 20px; padding-left: 16px; width: calc(100% - 20px); }
-        .result-file { font-size: 11px; color: var(--vscode-descriptionForeground); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .result-text { font-size: 13px; font-family: var(--vscode-editor-font-family); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .no-results { padding: 10px; text-align: center; color: var(--vscode-descriptionForeground); }
-        .load-more-container { padding: 8px; text-align: center; border-bottom: 1px solid var(--vscode-panel-border); }
-        .load-more-btn { padding: 6px 12px; background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
-        .load-more-btn:hover { background: var(--vscode-button-hoverBackground); }
-        .context-loading { padding: 10px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; }
-        .keybinds { position: absolute; bottom: 10px; right: 10px; font-size: 11px; color: var(--vscode-descriptionForeground); }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="context-panel" id="contextPanel">
-            <div class="no-results">Select a result to see context</div>
-        </div>
-        <div class="search-box">
-            <input type="text" class="search-input" placeholder="Type regex to search..." autofocus>
-        </div>
-        <div class="results-list" id="resultsList"></div>
-        <div class="keybinds">ESC: Cancel | Enter: Navigate | ↑↓: Navigate</div>
-    </div>
+        // Get URIs for the webview resources
+        const htmlPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.html');
+        const cssPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.css');
+        const jsPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.js');
 
-    <script>
-        const vscode = acquireVsCodeApi();
-        let results = [];
-        let selectedIndex = 0;
-        let searchTimeout = null;
-        let currentSearchQuery = '';
-        let displayedResults = 50; // Initially show only 50 results
-        const INITIAL_BATCH_SIZE = 50;
-        const LOAD_MORE_BATCH_SIZE = 25;
+        // Convert paths to webview URIs
+        const cssUri = this.panel.webview.asWebviewUri(vscode.Uri.file(cssPath));
+        const jsUri = this.panel.webview.asWebviewUri(vscode.Uri.file(jsPath));
 
-        const searchInput = document.querySelector('.search-input');
-        const resultsList = document.getElementById('resultsList');
-        const contextPanel = document.getElementById('contextPanel');
+        // Read the HTML template
+        let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
-        // Initialize with all results
-        results = ${JSON.stringify(this.filteredResults)};
-        currentSearchQuery = '${this.currentSearchQuery}';
-        const searchType = '${this.searchType}';
-        updateDisplay();
+        // Prepare initial data for injection
+        const initialData = {
+            results: this.filteredResults,
+            searchQuery: this.currentSearchQuery
+        };
 
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value;
-            
-            // Clear existing timeout
-            if (searchTimeout) {
-                clearTimeout(searchTimeout);
-            }
-            
-            // For file searches, no debounce needed - they should be instant
-            // For folder searches, use minimal debounce only for longer queries
-            
-            if (searchType === 'file' || query.length <= 2) {
-                // Immediate search for file searches and short queries
-                vscode.postMessage({ command: 'search', query: query });
-                return;
-            }
-            
-            // For folder searches with longer queries, use minimal 50ms debounce
-            searchTimeout = setTimeout(() => {
-                vscode.postMessage({ command: 'search', query: query });
-            }, 50);
-        });
+        // Replace placeholders in the HTML template
+        htmlContent = htmlContent
+            .replace('{{cssUri}}', cssUri.toString())
+            .replace('{{jsUri}}', jsUri.toString())
+            .replace('{{initialData}}', JSON.stringify(initialData))
+            .replace('{{searchType}}', this.searchType);
 
-        searchInput.addEventListener('keydown', (e) => {
-            switch (e.key) {
-                case 'Escape':
-                    e.preventDefault();
-                    vscode.postMessage({ command: 'cancel' });
-                    break;
-                case 'Enter':
-                    e.preventDefault();
-                    if (results.length > 0) {
-                        vscode.postMessage({ command: 'select', index: selectedIndex });
-                    }
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    if (selectedIndex < results.length - 1) {
-                        selectedIndex++;
-                        // Auto-load more results if we're near the end
-                        if (selectedIndex >= displayedResults - 5 && displayedResults < results.length) {
-                            displayedResults = Math.min(displayedResults + LOAD_MORE_BATCH_SIZE, results.length);
-                        }
-                        updateSelection();
-                    }
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    if (selectedIndex > 0) {
-                        selectedIndex--;
-                        updateSelection();
-                    }
-                    break;
-            }
-        });
-
-        window.addEventListener('message', event => {
-            const message = event.data;
-            if (message.command === 'updateResults') {
-                results = message.results;
-                currentSearchQuery = message.searchQuery || '';
-                selectedIndex = 0;
-                displayedResults = INITIAL_BATCH_SIZE; // Reset to initial batch size
-                updateDisplay();
-            } else if (message.command === 'updateContext') {
-                // Handle context update for a specific result
-                const { index, context } = message;
-                if (results[index]) {
-                    results[index].context = context;
-                    updateContext();
-                }
-            } else if (message.command === 'focus') {
-                searchInput.focus();
-            }
-        });
-
-        function loadMoreResults() {
-            displayedResults = Math.min(displayedResults + LOAD_MORE_BATCH_SIZE, results.length);
-            updateResultsList();
-        }
-
-        function updateDisplay() {
-            updateResultsList();
-            updateContext();
-        }
-
-        function updateResultsList() {
-            if (results.length === 0) {
-                resultsList.innerHTML = '<div class="no-results">No results found</div>';
-                return;
-            }
-
-            // Limit displayed results for performance
-            const resultsToShow = Math.min(displayedResults, results.length);
-            const hasMore = results.length > displayedResults;
-            
-            let html = results.slice(0, resultsToShow).map((result, index) => {
-                const fileName = result.file.split('/').pop();
-                const relativePath = result.file.replace(/^.*\\//, '');
-                const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
-                
-                return \`<div class="result-item \${index === selectedIndex ? 'selected' : ''}" 
-                            onclick="navigateToResult(\${index})">
-                    <div class="result-file">\${relativePath}:\${result.line}:\${result.column}</div>
-                    <div class="result-text">\${highlightedText}</div>
-                </div>\`;
-            }).join('');
-
-            // Add load more button if there are more results
-            if (hasMore) {
-                const remaining = results.length - displayedResults;
-                html += \`<div class="load-more-container">
-                    <button class="load-more-btn" onclick="loadMoreResults()">
-                        Load \${Math.min(LOAD_MORE_BATCH_SIZE, remaining)} more results (\${remaining} remaining)
-                    </button>
-                </div>\`;
-            }
-
-            resultsList.innerHTML = html;
-        }
-
-        function updateContext() {
-            if (results.length === 0 || !results[selectedIndex]) {
-                contextPanel.innerHTML = '<div class="no-results">Select a result to see context</div>';
-                return;
-            }
-
-            const result = results[selectedIndex];
-            const context = result.context || [];
-            const matchLine = result.text;
-
-            // If context has only one line (the match line), it means context hasn't been loaded yet
-            if (context.length === 1 && context[0] === matchLine.trim()) {
-                contextPanel.innerHTML = '<div class="context-loading">Loading context...</div>';
-                // Request context loading for this result (throttled to avoid spam)
-                if (!result.contextRequested) {
-                    result.contextRequested = true;
-                    vscode.postMessage({ command: 'loadContext', index: selectedIndex });
-                }
-                return;
-            }
-
-            if (context.length === 0) {
-                const highlightedLine = highlightSearchTerm(escapeHtml(matchLine), currentSearchQuery);
-                contextPanel.innerHTML = \`<div class="context-line context-match">\${highlightedLine}</div>\`;
-                return;
-            }
-
-            let contextHtml = '';
-            
-            context.forEach((line, index) => {
-                const isMatch = line.trim() === matchLine.trim();
-                const highlightedLine = highlightSearchTerm(escapeHtml(line), currentSearchQuery);
-                contextHtml += \`<div class="context-line \${isMatch ? 'context-match' : ''}">\${highlightedLine}</div>\`;
-            });
-
-            contextPanel.innerHTML = contextHtml;
-        }
-
-        function selectResult(index) {
-            selectedIndex = index;
-            updateSelection();
-        }
-
-        function navigateToResult(index) {
-            selectedIndex = index;
-            updateSelection();
-            vscode.postMessage({ command: 'select', index: index });
-        }
-
-        function updateSelection() {
-            updateResultsList();
-            updateContext();
-            
-            // Scroll selected item into view
-            const selectedItem = document.querySelector('.result-item.selected');
-            if (selectedItem) {
-                selectedItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-
-        function highlightSearchTerm(text, searchQuery) {
-            if (!searchQuery || searchQuery.trim() === '') {
-                return text;
-            }
-            
-            try {
-                // Try to use the search query as a regex
-                const regex = new RegExp(searchQuery, 'gi');
-                return text.replace(regex, function(match) {
-                    return '<span class="search-highlight">' + match + '</span>';
-                });
-            } catch (error) {
-                // If regex fails, do a case-insensitive literal string search
-                const lowerText = text.toLowerCase();
-                const lowerQuery = searchQuery.toLowerCase();
-                let result = '';
-                let lastIndex = 0;
-                let index = lowerText.indexOf(lowerQuery);
-                
-                while (index !== -1) {
-                    result += text.substring(lastIndex, index);
-                    result += '<span class="search-highlight">' + text.substring(index, index + searchQuery.length) + '</span>';
-                    lastIndex = index + searchQuery.length;
-                    index = lowerText.indexOf(lowerQuery, lastIndex);
-                }
-                result += text.substring(lastIndex);
-                return result;
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    </script>
-</body>
-</html>`;
+        return htmlContent;
     }
 }

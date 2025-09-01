@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{cssUri}}">
+</head>
+<body>
+    <div class="container">
+        <div class="context-panel" id="contextPanel">
+            <div class="no-results">Select a result to see context</div>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Type regex to search..." autofocus>
+        </div>
+        <div class="results-list" id="resultsList"></div>
+        <div class="keybinds">ESC: Cancel | Enter: Navigate | ↑↓: Navigate</div>
+    </div>
+
+    <script>
+        // Inject initial data
+        const initialData = {{initialData}};
+        const searchType = '{{searchType}}';
+    </script>
+    <script src="{{jsUri}}"></script>
+</body>
+</html>
