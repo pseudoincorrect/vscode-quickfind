@@ -60,6 +60,20 @@ export class SearchWebviewPanel {
     private setupEventHandlers() {
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
+        // Focus the search input when the panel becomes active/visible
+        this.panel.onDidChangeViewState(
+            e => {
+                if (e.webviewPanel.active) {
+                    // Small delay to ensure the webview is fully rendered
+                    setTimeout(() => {
+                        this.panel.webview.postMessage({ command: 'focus' });
+                    }, 50);
+                }
+            },
+            null,
+            this.disposables
+        );
+
         this.panel.webview.onDidReceiveMessage(
             message => {
                 switch (message.command) {
