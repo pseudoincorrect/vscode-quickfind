@@ -7,7 +7,7 @@
   "publisher": "pseudoincorrect",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pseudoincorrect/vscode-fuzzy-search"
+    "url": "https://github.com/pseudoincorrect/vscode-regex-search"
   },
   "license": "MIT",
   "engines": {
