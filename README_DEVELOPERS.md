@@ -1,16 +1,7 @@
 # VSCode Regex Search Telescope Extension - Developer Documentation
 
-## Installation
 
-### From VSIX (Recommended)
-1. Download the latest `.vsix` file from the [releases folder](releases/)
-2. Install via command line:
-   ```bash
-   code --install-extension vscode-regex-search-telescope-0.0.1.vsix
-   ```
-3. Or install through VSCode: `Ctrl+Shift+P` → "Extensions: Install from VSIX"
-
-### Development Installation
+## Development Installation
 1. Clone the repository:
    ```bash
    git clone <repository-url>
@@ -27,20 +18,14 @@
 ### Keybindings
 | Command | Windows/Linux | macOS | Description |
 |---------|---------------|-------|-------------|
-| Search Current File | `Ctrl+Shift+F` | `Cmd+Shift+F` | Search within active file |
-| Search Workspace | `Ctrl+Shift+P` | `Cmd+Shift+P` | Search all files in workspace |
+| Search Current File | `Ctrl+Alt+F` | `Cmd+Alt+F` | Search within active file |
+| Search Current Folder | `Ctrl+Alt+G` | `Cmd+Alt+G` | Search all files in current folder |
 
 ### Navigation
 - **Arrow Keys**: Navigate between search results
 - **Enter**: Jump to selected line and column
 - **Escape**: Close search and return to original file
 - **Type**: Filter results in real-time
-
-### Search Tips
-- Use abbreviations: `ErrInv` → `ErrInvalidInput`
-- Partial matches work: `userAuth` → `getUserAuthentication`
-- Case-insensitive by default
-- Search across both filenames and content
 
 ## Development
 
@@ -52,11 +37,26 @@ npm install
 # Compile TypeScript
 npm run compile
 
-# Watch for changes
+# Watch for changes during development
 npm run watch
 
 # Run linting
 npm run lint
+
+# Run tests
+npm run test
+
+# Package extension to releases folder
+npm run package
+
+# Package extension with release message
+npm run package-release
+
+# Install the extension directly
+npm run install-extension
+
+# Clean old .vsix files from releases folder
+npm run clean-releases
 ```
 
 ### Testing
@@ -66,11 +66,17 @@ npm run lint
 
 ### Packaging
 ```bash
-# Install VSCE
-npm install -g vsce
+# Package extension (creates .vsix in releases folder)
+npm run package
 
-# Package extension
-vsce package
+# Package with release message
+npm run package-release
+
+# Install packaged extension automatically
+npm run install-extension
+
+# Clean old releases
+npm run clean-releases
 ```
 
 ## Architecture
@@ -78,10 +84,17 @@ vsce package
 ```
 src/
 ├── extension.ts              # Main extension entry point
-├── regexSearchProvider.ts    # Core search orchestration
+├── searchProvider.ts         # Core search orchestration
 ├── ripgrepService.ts         # Ripgrep integration
-├── regexMatcher.ts          # Advanced regex matching algorithm
-└── searchWebviewPanel.ts    # Split-pane webview interface
+├── searchWebviewPanel.ts     # Split-pane webview interface
+├── test/                     # Test files and data
+│   ├── runTest.ts
+│   ├── suite/
+│   └── test_data/
+└── webview/                  # Webview UI components
+    ├── search.css
+    ├── search.html
+    └── search.js
 ```
 
 ## Contributing
