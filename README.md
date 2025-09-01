@@ -24,6 +24,10 @@ A fast and intuitive regex search extension for Visual Studio Code, inspired by 
 - Incremental search results as you type
 - Optimized for large codebases
 
+## Preview
+
+![Search View](assets/images/search_view.png)
+
 ## Installation
 
 ### From VSIX (Recommended)
