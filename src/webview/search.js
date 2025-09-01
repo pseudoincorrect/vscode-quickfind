@@ -196,7 +196,11 @@ function updateSelection() {
     // Scroll selected item into view
     const selectedItem = document.querySelector('.result-item.selected');
     if (selectedItem) {
-        selectedItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        selectedItem.scrollIntoView({ 
+            behavior: 'instant', 
+            block: 'nearest',
+            inline: 'nearest'
+        });
     }
 }
 
