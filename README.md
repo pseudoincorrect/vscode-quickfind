@@ -1,5 +1,9 @@
 # VSCode Regex Search Telescope Extension
 
+<div align="center">
+  <img src="assets/images/telescope-regex.png" alt="Regex Search Telescope Logo" width="128" height="128">
+</div>
+
 A fast and intuitive regex search extension for Visual Studio Code, inspired by vim telescope. Provides powerful text search capabilities with a clean split-pane interface.
 
 ## Features
