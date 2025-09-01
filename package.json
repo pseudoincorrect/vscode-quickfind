@@ -4,7 +4,7 @@
   "description": "A cross-platform telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
   "version": "0.0.1",
   "author": "Maxime Clement",
-  "publisher": "pseudoincorrect",
+  "publisher": "MaximeClement6",
   "repository": {
     "type": "git",
     "url": "https://github.com/pseudoincorrect/vscode-regex-search"
