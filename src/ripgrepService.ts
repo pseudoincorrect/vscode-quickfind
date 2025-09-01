@@ -15,6 +15,7 @@ export class RipgrepService {
                 '--no-heading',           // Don't group by filename
                 '--color', 'never',       // Disable color output
                 '--ignore-case',          // Case insensitive search
+                '--max-count', '500',     // Limit results per file for performance
                 pattern,
                 filePath
             ];
@@ -35,7 +36,7 @@ export class RipgrepService {
                 if (code === 0 || code === 1) {
                     // Code 0: matches found, Code 1: no matches (not an error)
                     try {
-                        const results = await this.parseRipgrepOutputSimple(output, filePath, true);
+                        const results = await this.parseRipgrepOutputSimple(output, filePath, false); // Don't load context initially
                         resolve(results);
                     } catch (error) {
                         reject(new Error(`Failed to parse ripgrep output: ${error}`));
@@ -61,15 +62,20 @@ export class RipgrepService {
                 '--no-heading',           // Don't group by filename
                 '--color', 'never',       // Disable color output
                 '--ignore-case',          // Case insensitive search
+                '--max-count', '10',      // Limit results per file to 10 for folder searches
+                '--max-filesize', '1M',   // Skip files larger than 1MB
                 '--type-add', 'web:*.{js,ts,jsx,tsx,html,css,scss,json,md}', // Common web files
                 '--type-add', 'config:*.{yaml,yml,toml,ini,conf}',           // Config files
                 '--hidden',               // Search hidden files
                 '--follow',               // Follow symbolic links  
-                '--max-depth', '10',      // Limit recursion depth
+                '--max-depth', '8',       // Limit recursion depth (reduced from 10)
                 '--no-ignore',            // Don't use any ignore files
                 '--glob', '!.git/',       // Explicitly exclude .git directory
                 '--glob', '!node_modules/', // Explicitly exclude node_modules
                 '--glob', '!*.log',       // Exclude log files
+                '--glob', '!target/',     // Exclude Rust target directory
+                '--glob', '!dist/',       // Exclude build directories
+                '--glob', '!build/',      // Exclude build directories
                 // '--respect-gitignore',    // Respect .gitignore files -- note: does not work
                 pattern,
                 folderPath
@@ -120,7 +126,21 @@ export class RipgrepService {
         }
     }
 
-    private async parseRipgrepOutputSimple(output: string, basePath: string, withContext: boolean = true): Promise<SearchResult[]> {
+    // Public method to load context for a specific search result on-demand
+    async loadContextForResult(result: SearchResult): Promise<SearchResult> {
+        if (result.context.length > 1) {
+            // Context already loaded
+            return result;
+        }
+
+        const context = await this.readContextLines(result.file, result.line);
+        return {
+            ...result,
+            context: context
+        };
+    }
+
+    private async parseRipgrepOutputSimple(output: string, basePath: string, withContext: boolean = false): Promise<SearchResult[]> {
         const results: SearchResult[] = [];
         const lines = output.split('\n').filter(line => line.trim());
 
@@ -131,7 +151,7 @@ export class RipgrepService {
                 const [, filePath, lineNum, columnNum, text] = match;
                 const lineNumber = parseInt(lineNum, 10);
                 
-                // Read context lines manually only if withContext is true
+                // Only read context if explicitly requested (for lazy loading)
                 const context = withContext ? await this.readContextLines(filePath, lineNumber) : [text.trim()];
                 
                 results.push({

@@ -14,6 +14,7 @@ export class SearchWebviewPanel {
         private onNavigate: (result: SearchResult) => void,
         private onCancel: () => void,
         private onSearch: (query: string) => Promise<SearchResult[]>,
+        private onLoadContext: (result: SearchResult) => Promise<SearchResult>,
         private searchPath?: string,
         private viewColumn?: vscode.ViewColumn
     ) {
@@ -83,6 +84,9 @@ export class SearchWebviewPanel {
                     case 'select':
                         this.handleSelect(message.index);
                         break;
+                    case 'loadContext':
+                        this.handleLoadContext(message.index);
+                        break;
                     case 'cancel':
                         this.handleCancel();
                         break;
@@ -103,6 +107,23 @@ export class SearchWebviewPanel {
             console.error('Search error:', error);
             this.filteredResults = [];
             this.updateResults();
+        }
+    }
+
+    private async handleLoadContext(index: number) {
+        try {
+            if (index >= 0 && index < this.filteredResults.length) {
+                const result = this.filteredResults[index];
+                const resultWithContext = await this.onLoadContext(result);
+                this.filteredResults[index] = resultWithContext;
+                this.panel.webview.postMessage({
+                    command: 'updateContext',
+                    index: index,
+                    context: resultWithContext.context
+                });
+            }
+        } catch (error) {
+            console.error('Context loading error:', error);
         }
     }
 
@@ -149,6 +170,10 @@ export class SearchWebviewPanel {
         .result-file { font-size: 11px; color: var(--vscode-descriptionForeground); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .result-text { font-size: 13px; font-family: var(--vscode-editor-font-family); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .no-results { padding: 10px; text-align: center; color: var(--vscode-descriptionForeground); }
+        .load-more-container { padding: 8px; text-align: center; border-bottom: 1px solid var(--vscode-panel-border); }
+        .load-more-btn { padding: 6px 12px; background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
+        .load-more-btn:hover { background: var(--vscode-button-hoverBackground); }
+        .context-loading { padding: 10px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; }
         .keybinds { position: absolute; bottom: 10px; right: 10px; font-size: 11px; color: var(--vscode-descriptionForeground); }
     </style>
 </head>
@@ -170,6 +195,9 @@ export class SearchWebviewPanel {
         let selectedIndex = 0;
         let searchTimeout = null;
         let currentSearchQuery = '';
+        let displayedResults = 50; // Initially show only 50 results
+        const INITIAL_BATCH_SIZE = 50;
+        const LOAD_MORE_BATCH_SIZE = 25;
 
         const searchInput = document.querySelector('.search-input');
         const resultsList = document.getElementById('resultsList');
@@ -178,18 +206,30 @@ export class SearchWebviewPanel {
         // Initialize with all results
         results = ${JSON.stringify(this.filteredResults)};
         currentSearchQuery = '${this.currentSearchQuery}';
+        const searchType = '${this.searchType}';
         updateDisplay();
 
         searchInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            
             // Clear existing timeout
             if (searchTimeout) {
                 clearTimeout(searchTimeout);
             }
             
-            // Set new timeout for 300ms debounce
+            // For file searches, no debounce needed - they should be instant
+            // For folder searches, use minimal debounce only for longer queries
+            
+            if (searchType === 'file' || query.length <= 2) {
+                // Immediate search for file searches and short queries
+                vscode.postMessage({ command: 'search', query: query });
+                return;
+            }
+            
+            // For folder searches with longer queries, use minimal 50ms debounce
             searchTimeout = setTimeout(() => {
-                vscode.postMessage({ command: 'search', query: e.target.value });
-            }, 300);
+                vscode.postMessage({ command: 'search', query: query });
+            }, 50);
         });
 
         searchInput.addEventListener('keydown', (e) => {
@@ -208,6 +248,10 @@ export class SearchWebviewPanel {
                     e.preventDefault();
                     if (selectedIndex < results.length - 1) {
                         selectedIndex++;
+                        // Auto-load more results if we're near the end
+                        if (selectedIndex >= displayedResults - 5 && displayedResults < results.length) {
+                            displayedResults = Math.min(displayedResults + LOAD_MORE_BATCH_SIZE, results.length);
+                        }
                         updateSelection();
                     }
                     break;
@@ -227,11 +271,24 @@ export class SearchWebviewPanel {
                 results = message.results;
                 currentSearchQuery = message.searchQuery || '';
                 selectedIndex = 0;
+                displayedResults = INITIAL_BATCH_SIZE; // Reset to initial batch size
                 updateDisplay();
+            } else if (message.command === 'updateContext') {
+                // Handle context update for a specific result
+                const { index, context } = message;
+                if (results[index]) {
+                    results[index].context = context;
+                    updateContext();
+                }
             } else if (message.command === 'focus') {
                 searchInput.focus();
             }
         });
+
+        function loadMoreResults() {
+            displayedResults = Math.min(displayedResults + LOAD_MORE_BATCH_SIZE, results.length);
+            updateResultsList();
+        }
 
         function updateDisplay() {
             updateResultsList();
@@ -244,7 +301,11 @@ export class SearchWebviewPanel {
                 return;
             }
 
-            resultsList.innerHTML = results.map((result, index) => {
+            // Limit displayed results for performance
+            const resultsToShow = Math.min(displayedResults, results.length);
+            const hasMore = results.length > displayedResults;
+            
+            let html = results.slice(0, resultsToShow).map((result, index) => {
                 const fileName = result.file.split('/').pop();
                 const relativePath = result.file.replace(/^.*\\//, '');
                 const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
@@ -255,6 +316,18 @@ export class SearchWebviewPanel {
                     <div class="result-text">\${highlightedText}</div>
                 </div>\`;
             }).join('');
+
+            // Add load more button if there are more results
+            if (hasMore) {
+                const remaining = results.length - displayedResults;
+                html += \`<div class="load-more-container">
+                    <button class="load-more-btn" onclick="loadMoreResults()">
+                        Load \${Math.min(LOAD_MORE_BATCH_SIZE, remaining)} more results (\${remaining} remaining)
+                    </button>
+                </div>\`;
+            }
+
+            resultsList.innerHTML = html;
         }
 
         function updateContext() {
@@ -266,6 +339,17 @@ export class SearchWebviewPanel {
             const result = results[selectedIndex];
             const context = result.context || [];
             const matchLine = result.text;
+
+            // If context has only one line (the match line), it means context hasn't been loaded yet
+            if (context.length === 1 && context[0] === matchLine.trim()) {
+                contextPanel.innerHTML = '<div class="context-loading">Loading context...</div>';
+                // Request context loading for this result (throttled to avoid spam)
+                if (!result.contextRequested) {
+                    result.contextRequested = true;
+                    vscode.postMessage({ command: 'loadContext', index: selectedIndex });
+                }
+                return;
+            }
 
             if (context.length === 0) {
                 const highlightedLine = highlightSearchTerm(escapeHtml(matchLine), currentSearchQuery);

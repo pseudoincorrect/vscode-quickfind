@@ -71,6 +71,7 @@ export class RegexSearchProvider {
             (result: SearchResult) => this.navigateToResult(result),
             () => this.returnToOriginalEditor(),
             (query: string) => this.performSearch(query, searchType),
+            (result: SearchResult) => this.loadContextForResult(result), // Add context loading callback
             this.currentSearchPath,
             currentViewColumn
         );
@@ -97,6 +98,10 @@ export class RegexSearchProvider {
             console.error('Search error:', error);
             return [];
         }
+    }
+
+    private async loadContextForResult(result: SearchResult): Promise<SearchResult> {
+        return await this.ripgrepService.loadContextForResult(result);
     }
 
     private async navigateToResult(result: SearchResult) {
