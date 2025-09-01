@@ -4,7 +4,8 @@
   <img src="assets/images/regex-search-telescope-logo.png" alt="Regex Search Telescope Logo" width="128" height="128">
 </div>
 
-A fast and intuitive regex search extension for Visual Studio Code, inspired by vim telescope. Provides powerful text search capabilities with a clean split-pane interface.
+A fast and intuitive regex search extension for Visual Studio Code, inspired by vim telescope. 
+Provides powerful text search capabilities with a clean split-pane (vertical) interface.
 
 ## Preview
 
@@ -32,25 +33,14 @@ Search across all files in your workspace with blazing-fast performance powered 
 This extension depends on `ripgrep` for fast text searching. Please install it for your platform:
 
 #### Windows
-- **Using winget**: `winget install BurntSushi.ripgrep.MSVC`
 - **Using Chocolatey**: `choco install ripgrep`
-- **Using Scoop**: `scoop install ripgrep`
-- **Manual**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
 
 #### macOS
 - **Using Homebrew**: `brew install ripgrep`
-- **Using MacPorts**: `sudo port install ripgrep`
-- **Manual**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
 
 #### Linux
 - **Ubuntu/Debian**: `sudo apt install ripgrep`
-- **Fedora/RHEL**: `sudo dnf install ripgrep` or `sudo yum install ripgrep`
-- **Arch Linux**: `sudo pacman -S ripgrep`
-- **Alpine**: `apk add ripgrep`
-- **Snap**: `sudo snap install ripgrep --classic`
-- **Manual**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
-
-> **Note**: The extension automatically detects the ripgrep installation path on Windows, macOS, and Linux. If ripgrep is not found, you'll see installation instructions.
+- **Fedora/RHEL**: `sudo yum install ripgrep`
 
 ## Customizing Keyboard Shortcuts
 
