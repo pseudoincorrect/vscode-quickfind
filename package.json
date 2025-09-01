@@ -1,11 +1,11 @@
 {
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
-  "description": "A cross-platform telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
-  "version": "0.0.4",
+  "description": "An in-editor telescope-like regex search extension for VSCode",
+  "version": "0.0.5",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
-  "icon": "assets/images/telescope-regex.png",
+  "icon": "assets/images/regex-search-telescope-logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/pseudoincorrect/vscode-regex-search"
@@ -45,13 +45,13 @@
     "keybindings": [
       {
         "command": "regexSearch.searchInFile",
-        "key": "ctrl+shift+f",
-        "mac": "cmd+shift+f"
+        "key": "ctrl+alt+f",
+        "mac": "cmd+alt+f"
       },
       {
         "command": "regexSearch.searchInFolder",
-        "key": "ctrl+shift+p",
-        "mac": "cmd+shift+p"
+        "key": "ctrl+alt+g",
+        "mac": "cmd+alt+g"
       }
     ]
   },
