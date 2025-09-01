@@ -2,9 +2,9 @@
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "A cross-platform telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
-  "version": "0.0.3",
-  "author": "Maxime Clement",
-  "publisher": "MaximeClement6",
+  "version": "0.0.4",
+  "author": "pseudoincorrect",
+  "publisher": "pseudoincorrect",
   "icon": "assets/images/telescope-regex.png",
   "repository": {
     "type": "git",
