@@ -23,6 +23,17 @@ Search within the currently active file with real-time regex matching and highli
 
 Search across all files in your workspace with blazing-fast performance powered by ripgrep.
 
+## Configuration
+
+### Context Size
+You can customize how many lines of context are shown around each search result:
+
+1. Open VS Code settings (`Ctrl+,` or `Cmd+,`)
+2. Search for `regexSearch.contextSize`
+3. Set the number of lines to show before and after each match (0-20, default: 3)
+
+This setting controls both the content displayed in the context panel and its height, adapting automatically to show more or less context as needed.
+
 ## Requirements
 
 - **VSCode**: Version 1.74.0 or higher

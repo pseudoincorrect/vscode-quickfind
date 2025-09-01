@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SearchResult } from './searchProvider';
+import { RipgrepService } from './ripgrepService';
 
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
@@ -17,6 +18,7 @@ export class SearchWebviewPanel {
         private onCancel: () => void,
         private onSearch: (query: string) => Promise<SearchResult[]>,
         private onLoadContext: (result: SearchResult) => Promise<SearchResult>,
+        private ripgrepService: RipgrepService,
         private searchPath?: string,
         private viewColumn?: vscode.ViewColumn
     ) {
@@ -43,6 +45,15 @@ export class SearchWebviewPanel {
         this.filteredResults = initialResults;
         this.panel.webview.html = this.getWebviewContent();
         this.setupEventHandlers();
+        
+        // Listen for configuration changes to update context panel height
+        const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
+            if (event.affectsConfiguration('regexSearch.contextSize')) {
+                this.ripgrepService.refreshConfiguration();
+                this.panel.webview.html = this.getWebviewContent(); // Reload webview with new height
+            }
+        });
+        this.disposables.push(configChangeListener);
         
         // Focus the search input after a brief delay
         setTimeout(() => {
@@ -148,6 +159,17 @@ export class SearchWebviewPanel {
         });
     }
 
+    private calculateContextPanelHeight(): number {
+        const contextSize = this.ripgrepService.getContextSize();
+        // Base height (padding, borders, etc.) + lines
+        // Each context line is approximately 16px (12px font + 2px margin)
+        // Add some extra padding for better UX
+        const baseHeight = 40; // Padding and borders
+        const lineHeight = 16; // Approximate height per line
+        const maxLines = Math.max(contextSize * 2 + 1, 3); // context before + match + context after, minimum 3 lines
+        return Math.min(Math.max(baseHeight + (maxLines * lineHeight), 80), 300); // Min 80px, max 300px
+    }
+
     private getWebviewContent(): string {
         // Get URIs for the webview resources
         const htmlPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.html');
@@ -167,12 +189,16 @@ export class SearchWebviewPanel {
             searchQuery: this.currentSearchQuery
         };
 
+        // Calculate dynamic context panel height
+        const contextPanelHeight = this.calculateContextPanelHeight();
+
         // Replace placeholders in the HTML template
         htmlContent = htmlContent
             .replace('{{cssUri}}', cssUri.toString())
             .replace('{{jsUri}}', jsUri.toString())
             .replace('{{initialData}}', JSON.stringify(initialData))
-            .replace('{{searchType}}', this.searchType);
+            .replace('{{searchType}}', this.searchType)
+            .replace('{{contextPanelHeight}}', contextPanelHeight.toString());
 
         return htmlContent;
     }

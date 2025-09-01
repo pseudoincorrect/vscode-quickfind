@@ -2,13 +2,29 @@ import * as cp from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
+import * as vscode from 'vscode';
 import { SearchResult } from './searchProvider';
 
 export class RipgrepService {
     private rgPath: string;
+    private contextSize: number = 3; // Default value
 
     constructor() {
         this.rgPath = this.findRipgrepPath();
+        this.updateContextSize();
+    }
+
+    private updateContextSize(): void {
+        const config = vscode.workspace.getConfiguration('regexSearch');
+        this.contextSize = config.get<number>('contextSize', 3);
+    }
+
+    public refreshConfiguration(): void {
+        this.updateContextSize();
+    }
+
+    public getContextSize(): number {
+        return this.contextSize;
     }
 
     private findRipgrepPath(): string {
@@ -244,10 +260,10 @@ export class RipgrepService {
         return results;
     }
 
-    private async readContextLines(filePath: string, targetLine: number, contextSize: number = 3): Promise<string[]> {
+    private async readContextLines(filePath: string, targetLine: number): Promise<string[]> {
         return new Promise((resolve) => {
-            const startLine = Math.max(1, targetLine - contextSize);
-            const endLine = targetLine + contextSize;
+            const startLine = Math.max(1, targetLine - this.contextSize);
+            const endLine = targetLine + this.contextSize;
             
             try {
                 // Use Node.js fs to read the file instead of sed for cross-platform compatibility

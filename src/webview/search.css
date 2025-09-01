@@ -22,7 +22,7 @@ html, body {
 }
 
 .context-panel { 
-    height: 140px; 
+    height: var(--context-panel-height, 140px); 
     padding: 6px 6px 6px 16px; 
     overflow: hidden; 
     background: var(--vscode-editor-background); 
@@ -35,7 +35,7 @@ html, body {
     font-family: var(--vscode-editor-font-family); 
     font-size: 12px; 
     margin: 1px 0; 
-    white-space: nowrap; 
+    white-space: pre; 
     overflow: hidden; 
     text-overflow: ellipsis; 
 }

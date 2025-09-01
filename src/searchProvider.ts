@@ -20,6 +20,14 @@ export class RegexSearchProvider {
 
     constructor(private context: vscode.ExtensionContext) {
         this.ripgrepService = new RipgrepService();
+        
+        // Listen for configuration changes
+        const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
+            if (event.affectsConfiguration('regexSearch.contextSize')) {
+                this.ripgrepService.refreshConfiguration();
+            }
+        });
+        this.context.subscriptions.push(configChangeListener);
     }
 
     async searchInCurrentFile() {
@@ -72,6 +80,7 @@ export class RegexSearchProvider {
             () => this.returnToOriginalEditor(),
             (query: string) => this.performSearch(query, searchType),
             (result: SearchResult) => this.loadContextForResult(result), // Add context loading callback
+            this.ripgrepService,
             this.currentSearchPath,
             currentViewColumn
         );
