@@ -77,6 +77,9 @@ temp/
 *.swo
 *~
 
+# LLM related files
+CLAUDE.md
+
 # Package manager lock files (uncomment if you want to ignore them)
-# package-lock.json
-# yarn.lock
+package-lock.json
+yarn.lock
