@@ -152,10 +152,15 @@ export class SearchWebviewPanel {
     }
 
     private updateResults() {
+        // Get workspace folder for relative path calculation
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : undefined;
+
         this.panel.webview.postMessage({
             command: 'updateResults',
             results: this.filteredResults,
-            searchQuery: this.currentSearchQuery
+            searchQuery: this.currentSearchQuery,
+            workspacePath: workspacePath
         });
     }
 
@@ -183,10 +188,15 @@ export class SearchWebviewPanel {
         // Read the HTML template
         let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
+        // Get workspace folder for relative path calculation
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : undefined;
+
         // Prepare initial data for injection
         const initialData = {
             results: this.filteredResults,
-            searchQuery: this.currentSearchQuery
+            searchQuery: this.currentSearchQuery,
+            workspacePath: workspacePath
         };
 
         // Calculate dynamic context panel height

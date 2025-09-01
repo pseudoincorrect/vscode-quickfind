@@ -2,7 +2,7 @@
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "An in-editor telescope-like regex search extension for VSCode",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/regex-search-telescope-logo.png",

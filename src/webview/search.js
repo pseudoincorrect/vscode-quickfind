@@ -3,6 +3,7 @@ let results = [];
 let selectedIndex = 0;
 let searchTimeout = null;
 let currentSearchQuery = '';
+let workspacePath = '';
 let displayedResults = 50; // Initially show only 50 results
 const INITIAL_BATCH_SIZE = 50;
 const LOAD_MORE_BATCH_SIZE = 25;
@@ -15,6 +16,7 @@ const contextPanel = document.getElementById('contextPanel');
 if (typeof initialData !== 'undefined') {
     results = initialData.results || [];
     currentSearchQuery = initialData.searchQuery || '';
+    workspacePath = initialData.workspacePath || '';
 }
 
 updateDisplay();
@@ -80,6 +82,7 @@ window.addEventListener('message', event => {
     if (message.command === 'updateResults') {
         results = message.results;
         currentSearchQuery = message.searchQuery || '';
+        workspacePath = message.workspacePath || '';
         selectedIndex = 0;
         displayedResults = INITIAL_BATCH_SIZE; // Reset to initial batch size
         updateDisplay();
@@ -116,8 +119,7 @@ function updateResultsList() {
     const hasMore = results.length > displayedResults;
     
     let html = results.slice(0, resultsToShow).map((result, index) => {
-        const fileName = result.file.split('/').pop();
-        const relativePath = result.file.replace(/^.*\\/, '');
+        const relativePath = getRelativePath(result.file, workspacePath);
         const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
         
         return `<div class="result-item ${index === selectedIndex ? 'selected' : ''}" 
@@ -238,4 +240,28 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function getRelativePath(fullPath, workspacePath) {
+    if (!workspacePath || !fullPath) {
+        // Fallback to just the filename if no workspace path
+        return fullPath.split('/').pop() || fullPath.split('\\').pop() || fullPath;
+    }
+    
+    // Normalize paths to use forward slashes
+    const normalizedFullPath = fullPath.replace(/\\/g, '/');
+    const normalizedWorkspacePath = workspacePath.replace(/\\/g, '/');
+    
+    // Ensure workspace path ends with slash for proper comparison
+    const workspacePathWithSlash = normalizedWorkspacePath.endsWith('/') 
+        ? normalizedWorkspacePath 
+        : normalizedWorkspacePath + '/';
+    
+    if (normalizedFullPath.startsWith(workspacePathWithSlash)) {
+        // Return relative path
+        return normalizedFullPath.substring(workspacePathWithSlash.length);
+    }
+    
+    // If not within workspace, return just the filename
+    return normalizedFullPath.split('/').pop() || normalizedFullPath;
 }
