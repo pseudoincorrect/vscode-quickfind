@@ -66,6 +66,11 @@ export class RipgrepService {
                 '--hidden',               // Search hidden files
                 '--follow',               // Follow symbolic links  
                 '--max-depth', '10',      // Limit recursion depth
+                '--no-ignore',            // Don't use any ignore files
+                '--glob', '!.git/',       // Explicitly exclude .git directory
+                '--glob', '!node_modules/', // Explicitly exclude node_modules
+                '--glob', '!*.log',       // Exclude log files
+                // '--respect-gitignore',    // Respect .gitignore files -- note: does not work
                 pattern,
                 folderPath
             ];
