@@ -1,9 +1,72 @@
 import * as cp from 'child_process';
 import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
 import { SearchResult } from './searchProvider';
 
 export class RipgrepService {
-    private readonly rgPath = '/usr/bin/rg';
+    private rgPath: string;
+
+    constructor() {
+        this.rgPath = this.findRipgrepPath();
+    }
+
+    private findRipgrepPath(): string {
+        const platform = os.platform();
+        const possiblePaths: string[] = [];
+
+        if (platform === 'win32') {
+            // Windows paths
+            possiblePaths.push(
+                'rg.exe',
+                'rg',
+                path.join(process.env.PROGRAMFILES || '', 'ripgrep', 'rg.exe'),
+                path.join(process.env['PROGRAMFILES(X86)'] || '', 'ripgrep', 'rg.exe'),
+                path.join(process.env.LOCALAPPDATA || '', 'Programs', 'ripgrep', 'rg.exe')
+            );
+        } else if (platform === 'darwin') {
+            // macOS paths
+            possiblePaths.push(
+                'rg',
+                '/usr/local/bin/rg',
+                '/opt/homebrew/bin/rg',
+                '/usr/bin/rg'
+            );
+        } else {
+            // Linux and other Unix-like systems
+            possiblePaths.push(
+                'rg',
+                '/usr/bin/rg',
+                '/usr/local/bin/rg',
+                '/snap/bin/rg'
+            );
+        }
+
+        // Try to find ripgrep in PATH first
+        try {
+            const whichCommand = platform === 'win32' ? 'where' : 'which';
+            const result = cp.execSync(`${whichCommand} rg`, { encoding: 'utf8' }).trim();
+            if (result) {
+                return result.split('\n')[0]; // Take the first result
+            }
+        } catch (error) {
+            // Continue to check predefined paths
+        }
+
+        // Check predefined paths
+        for (const rgPath of possiblePaths) {
+            try {
+                if (path.isAbsolute(rgPath) && fs.existsSync(rgPath)) {
+                    return rgPath;
+                }
+            } catch (error) {
+                // Continue checking other paths
+            }
+        }
+
+        // Fallback to just 'rg' and hope it's in PATH
+        return 'rg';
+    }
 
     async searchInFile(filePath: string, pattern: string): Promise<SearchResult[]> {
         return new Promise((resolve, reject) => {
@@ -47,7 +110,14 @@ export class RipgrepService {
             });
 
             rg.on('error', (error) => {
-                reject(new Error(`Failed to start ripgrep: ${error.message}`));
+                if (error.message.includes('ENOENT')) {
+                    reject(new Error(`Ripgrep (rg) not found. Please install ripgrep:\n` +
+                        `- Windows: Download from https://github.com/BurntSushi/ripgrep/releases or use 'winget install BurntSushi.ripgrep.MSVC'\n` +
+                        `- macOS: Use 'brew install ripgrep'\n` +
+                        `- Linux: Use your package manager (e.g., 'apt install ripgrep', 'dnf install ripgrep', 'pacman -S ripgrep')`));
+                } else {
+                    reject(new Error(`Failed to start ripgrep: ${error.message}`));
+                }
             });
         });
     }
@@ -108,7 +178,14 @@ export class RipgrepService {
             });
 
             rg.on('error', (error) => {
-                reject(new Error(`Failed to start ripgrep: ${error.message}`));
+                if (error.message.includes('ENOENT')) {
+                    reject(new Error(`Ripgrep (rg) not found. Please install ripgrep:\n` +
+                        `- Windows: Download from https://github.com/BurntSushi/ripgrep/releases or use 'winget install BurntSushi.ripgrep.MSVC'\n` +
+                        `- macOS: Use 'brew install ripgrep'\n` +
+                        `- Linux: Use your package manager (e.g., 'apt install ripgrep', 'dnf install ripgrep', 'pacman -S ripgrep')`));
+                } else {
+                    reject(new Error(`Failed to start ripgrep: ${error.message}`));
+                }
             });
         });
     }
@@ -172,25 +249,18 @@ export class RipgrepService {
             const startLine = Math.max(1, targetLine - contextSize);
             const endLine = targetLine + contextSize;
             
-            // Use sed to extract lines with context around the match
-            const args = ['-n', `${startLine},${endLine}p`, filePath];
-            
-            const sed = cp.spawn('sed', args);
-            let output = '';
-            
-            sed.stdout.on('data', (data) => {
-                output += data.toString();
-            });
-            
-            sed.on('close', () => {
-                const lines = output.split('\n').filter(line => line.length > 0);
-                resolve(lines);
-            });
-            
-            sed.on('error', () => {
-                // If sed fails, return empty context
+            try {
+                // Use Node.js fs to read the file instead of sed for cross-platform compatibility
+                const fileContent = fs.readFileSync(filePath, 'utf8');
+                const lines = fileContent.split('\n');
+                
+                // Extract the relevant lines (convert to 0-based indexing)
+                const contextLines = lines.slice(startLine - 1, endLine);
+                resolve(contextLines.filter(line => line !== undefined));
+            } catch (error) {
+                // If reading fails, return empty context
                 resolve([]);
-            });
+            }
         });
     }
 

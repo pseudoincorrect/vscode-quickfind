@@ -79,18 +79,26 @@ A fast and intuitive regex search extension for Visual Studio Code, inspired by 
 
 This extension depends on `ripgrep` for fast text searching. Please install it for your platform:
 
-#### Linux (Required)
+#### Windows
+- **Using winget**: `winget install BurntSushi.ripgrep.MSVC`
+- **Using Chocolatey**: `choco install ripgrep`
+- **Using Scoop**: `scoop install ripgrep`
+- **Manual**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
+
+#### macOS
+- **Using Homebrew**: `brew install ripgrep`
+- **Using MacPorts**: `sudo port install ripgrep`
+- **Manual**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
+
+#### Linux
 - **Ubuntu/Debian**: `sudo apt install ripgrep`
 - **Fedora/RHEL**: `sudo dnf install ripgrep` or `sudo yum install ripgrep`
 - **Arch Linux**: `sudo pacman -S ripgrep`
 - **Alpine**: `apk add ripgrep`
-- **From source**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
+- **Snap**: `sudo snap install ripgrep --classic`
+- **Manual**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
 
-#### Other Platforms
-- **macOS**: `brew install ripgrep`
-- **Windows**: Download from [ripgrep releases](https://github.com/BurntSushi/ripgrep/releases)
-
-> **Note**: The extension expects `rg` (ripgrep) to be available at `/usr/bin/rg` on Linux systems. If installed elsewhere, ensure it's in your system PATH.
+> **Note**: The extension automatically detects the ripgrep installation path on Windows, macOS, and Linux. If ripgrep is not found, you'll see installation instructions.
 
 ## Development
 

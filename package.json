@@ -1,7 +1,7 @@
 {
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
-  "description": "A telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
+  "description": "A cross-platform telescope-like regex search extension for VSCode with split-pane interface (developed with LLM assistance)",
   "version": "0.0.1",
   "author": "Maxime Clement",
   "publisher": "pseudoincorrect",
@@ -13,6 +13,11 @@
   "engines": {
     "vscode": "^1.74.0"
   },
+  "os": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
   "categories": [
     "Other"
   ],
@@ -55,7 +60,7 @@
     "package": "npm run compile && vsce package --out releases/",
     "package-release": "npm run compile && vsce package --out releases/ && echo 'Extension packaged to releases/ folder'",
     "install-extension": "npm run package && code --install-extension releases/vscode-regex-search-telescope-$(node -p \"require('./package.json').version\").vsix",
-    "clean-releases": "rm -f releases/*.vsix"
+    "clean-releases": "node -e \"const fs = require('fs'); const path = require('path'); try { fs.readdirSync('releases').filter(f => f.endsWith('.vsix')).forEach(f => fs.unlinkSync(path.join('releases', f))); } catch(e) { console.log('No .vsix files to clean'); }\""
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
