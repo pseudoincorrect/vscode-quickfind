@@ -115,17 +115,18 @@ export class RegexSearchProvider {
 
     private async navigateToResult(result: SearchResult) {
         try {
-            const document = await vscode.workspace.openTextDocument(result.file);
-            const editor = await vscode.window.showTextDocument(document);
-            
-            const position = new vscode.Position(result.line - 1, result.column - 1);
-            editor.selection = new vscode.Selection(position, position);
-            editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
-            
+            // First, dispose the webview panel to ensure focus returns to the editor
             if (this.currentWebviewPanel) {
                 this.currentWebviewPanel.dispose();
                 this.currentWebviewPanel = undefined;
             }
+            
+            const document = await vscode.workspace.openTextDocument(result.file);
+            const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One);
+            
+            const position = new vscode.Position(result.line - 1, result.column - 1);
+            editor.selection = new vscode.Selection(position, position);
+            editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
             
             // Reset the search path
             this.currentSearchPath = undefined;

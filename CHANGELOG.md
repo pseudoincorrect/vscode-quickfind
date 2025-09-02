@@ -9,10 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [0.4.1] - 2024-09-02
+
+### Fixed
+- File navigation when searching in folder
+
 ## [0.4.0] - 2024-09-02
 
 ### Added
-- Changed ripgrep to fast-glob
+- Changed ripgrep to native js search
 
 ## [0.3.3] - 2024-09-02
 

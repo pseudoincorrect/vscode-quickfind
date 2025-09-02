@@ -167,9 +167,13 @@ export class SearchWebviewPanel {
     }
 
     private handleSelect(index: number) {
+        console.log(`handleSelect called with index: ${index}, filteredResults length: ${this.filteredResults.length}`);
         if (index >= 0 && index < this.filteredResults.length) {
             const result = this.filteredResults[index];
+            console.log('Selected result:', result);
             this.onNavigate(result);
+        } else {
+            console.log('Index out of bounds or no results');
         }
     }
 
