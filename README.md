@@ -14,12 +14,12 @@ Provides powerful text search capabilities with a clean split-pane (vertical) in
 ## Functions
 
 ### 🔍 Search Current File
-**Keybinding**: `Ctrl+Alt+F` (Windows/Linux) / `Cmd+Alt+F` (macOS)
+**Keybinding**: `Ctrl+K Ctrl+F` (Windows/Linux) / `Cmd+K Cmd+F` (macOS)
 
 Search within the currently active file with real-time regex matching and highlighting.
 
 ### 🔍 Search Workspace
-**Keybinding**: `Ctrl+Alt+G` (Windows/Linux) / `Cmd+Alt+G` (macOS)
+**Keybinding**: `Ctrl+K Ctrl+G` (Windows/Linux) / `Cmd+K Cmd+G` (macOS)
 
 Search across all files in your workspace with blazing-fast performance.
 
@@ -50,8 +50,8 @@ You can customize the keyboard shortcuts for this extension:
 5. Set your preferred key combination
 
 **Available commands:**
-- `Regex Search: Search in Current File` (default: `Ctrl+Alt+F` / `Cmd+Alt+F`)
-- `Regex Search: Search in Current Folder` (default: `Ctrl+Alt+G` / `Cmd+Alt+G`)
+- `Regex Search: Search in Current File` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
+- `Regex Search: Search in Current Folder` (default: `Ctrl+K Ctrl+G` / `Cmd+K Cmd+G`)
 
 ---
 

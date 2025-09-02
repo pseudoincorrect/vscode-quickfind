@@ -106,7 +106,6 @@ export class SearchService {
     async searchInFolder(folderPath: string, pattern: string): Promise<SearchResult[]> {
         try {
             const files = await this.discoverFiles(folderPath);
-            console.log(`Found ${files.length} files to search in ${folderPath}`);
             const results: SearchResult[] = [];
 
             // Process files in batches to avoid overwhelming the system
@@ -127,10 +126,6 @@ export class SearchService {
                 }
             }
 
-            console.log(`searchInFolder returning ${results.length} results`);
-            if (results.length > 0) {
-                console.log('Sample result:', results[0]);
-            }
             return results.slice(0, this.defaultOptions.maxResults);
         } catch (error) {
             console.error(`Error searching in folder ${folderPath}:`, error);

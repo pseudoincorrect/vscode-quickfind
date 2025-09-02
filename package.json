@@ -2,7 +2,7 @@
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "An in-editor telescope-like regex search extension for VSCode",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/regex-search-telescope-logo.png",
@@ -45,13 +45,13 @@
     "keybindings": [
       {
         "command": "regexSearch.searchInFile",
-        "key": "ctrl+alt+f",
-        "mac": "cmd+alt+f"
+        "key": "ctrl+k ctrl+f",
+        "mac": "cmd+k cmd+f"
       },
       {
         "command": "regexSearch.searchInFolder",
-        "key": "ctrl+alt+g",
-        "mac": "cmd+alt+g"
+        "key": "ctrl+k ctrl+g",
+        "mac": "cmd+k cmd+g"
       }
     ],
     "configuration": {
