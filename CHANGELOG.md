@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Changelog
 
-## [0.3.2] - 2024-09-01
+## [0.3.2] - 2024-09-02
 
 ### Added
 - Close the search view when out of focus

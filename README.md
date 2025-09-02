@@ -9,7 +9,7 @@ Provides powerful text search capabilities with a clean split-pane (vertical) in
 
 ## Preview
 
-![Search View](assets/images/search_view.png)
+![Regex Search Telescope Demo](assets/images/regex-search-telescope.gif)
 
 ## Functions
 
