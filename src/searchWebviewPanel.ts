@@ -9,6 +9,7 @@ export class SearchWebviewPanel {
     private disposables: vscode.Disposable[] = [];
     private filteredResults: SearchResult[] = [];
     private currentSearchQuery: string = '';
+    private isInitialized: boolean = false;
 
     constructor(
         private context: vscode.ExtensionContext,
@@ -55,10 +56,11 @@ export class SearchWebviewPanel {
         });
         this.disposables.push(configChangeListener);
         
-        // Focus the search input after a brief delay
+        // Focus the search input after a brief delay and mark as initialized
         setTimeout(() => {
             this.panel.webview.postMessage({ command: 'focus' });
-        }, 100);
+            this.isInitialized = true;
+        }, 200);
     }
 
     dispose() {
@@ -82,11 +84,35 @@ export class SearchWebviewPanel {
                     setTimeout(() => {
                         this.panel.webview.postMessage({ command: 'focus' });
                     }, 50);
+                } else if (e.webviewPanel.visible && !e.webviewPanel.active && this.isInitialized) {
+                    // Panel is visible but not active (lost focus) - close it
+                    // Only close if the panel has been fully initialized to avoid closing during startup
+                    this.handleCancel();
                 }
             },
             null,
             this.disposables
         );
+
+        // Listen for active text editor changes (switching files via shortcuts like Ctrl+Tab)
+        const activeEditorChangeListener = vscode.window.onDidChangeActiveTextEditor((editor) => {
+            // Only close if the panel is still active and visible and has been initialized
+            // This ensures we close when user switches files via shortcuts
+            if (this.panel.active && this.panel.visible && this.isInitialized) {
+                this.handleCancel();
+            }
+        });
+        this.disposables.push(activeEditorChangeListener);
+
+        // Listen for window focus changes (clicking on other views like Explorer, Terminal, etc.)
+        const windowStateChangeListener = vscode.window.onDidChangeWindowState(state => {
+            if (!state.focused && this.isInitialized) {
+                // VS Code window lost focus entirely - close the panel
+                // Only close if the panel has been fully initialized
+                this.handleCancel();
+            }
+        });
+        this.disposables.push(windowStateChangeListener);
 
         this.panel.webview.onDidReceiveMessage(
             message => {
