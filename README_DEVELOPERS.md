@@ -85,7 +85,7 @@ npm run clean-releases
 src/
 ├── extension.ts              # Main extension entry point
 ├── searchProvider.ts         # Core search orchestration
-├── ripgrepService.ts         # Ripgrep integration
+├── searchService.ts          # Search service implementation
 ├── searchWebviewPanel.ts     # Split-pane webview interface
 ├── test/                     # Test files and data
 │   ├── runTest.ts
@@ -122,4 +122,3 @@ See [README_RELEASES.md](releases/README_RELEASES.md)
 ## Acknowledgments
 
 - Inspired by [vim telescope](https://github.com/nvim-telescope/telescope.nvim)
-- Powered by [ripgrep](https://github.com/BurntSushi/ripgrep) for fast text search

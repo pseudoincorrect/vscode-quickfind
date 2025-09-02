@@ -21,37 +21,23 @@ Search within the currently active file with real-time regex matching and highli
 ### 🔍 Search Workspace
 **Keybinding**: `Ctrl+Alt+G` (Windows/Linux) / `Cmd+Alt+G` (macOS)
 
-Search across all files in your workspace with blazing-fast performance powered by ripgrep.
+Search across all files in your workspace with blazing-fast performance.
 
 ## Configuration
 
 ### Context Size
-You can customize how many lines of context are shown around each search result:
+**`regexSearch.contextSize`** (number, default: 3)
 
-1. Open VS Code settings (`Ctrl+,` or `Cmd+,`)
-2. Search for `regexSearch.contextSize`
-3. Set the number of lines to show before and after each match (0-20, default: 3)
+Controls how many lines of context are shown around each search result. Set the number of lines to show before and after each match (0-20). This setting controls both the content displayed in the context panel and its height, adapting automatically to show more or less context as needed.
 
-This setting controls both the content displayed in the context panel and its height, adapting automatically to show more or less context as needed.
+### Search Performance Options
+
+- **`regexSearch.maxFileSize`** (string, default: "1MB"): Maximum file size for search operations. Supports units like '500KB', '1MB', '2GB'.
+- **`regexSearch.maxResults`** (number, default: 1000): Maximum number of search results to display (1-10000).
 
 ## Requirements
 
 - **VSCode**: Version 1.74.0 or higher
-- **ripgrep**: Must be installed and available in system PATH
-
-### Installing ripgrep
-
-This extension depends on `ripgrep` for fast text searching. Please install it for your platform:
-
-#### Windows
-- **Using Chocolatey**: `choco install ripgrep`
-
-#### macOS
-- **Using Homebrew**: `brew install ripgrep`
-
-#### Linux
-- **Ubuntu/Debian**: `sudo apt install ripgrep`
-- **Fedora/RHEL**: `sudo yum install ripgrep`
 
 ## Customizing Keyboard Shortcuts
 

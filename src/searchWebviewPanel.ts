@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SearchResult } from './searchProvider';
-import { RipgrepService } from './ripgrepService';
+import { SearchService } from './searchService';
 
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
@@ -19,7 +19,7 @@ export class SearchWebviewPanel {
         private onCancel: () => void,
         private onSearch: (query: string) => Promise<SearchResult[]>,
         private onLoadContext: (result: SearchResult) => Promise<SearchResult>,
-        private ripgrepService: RipgrepService,
+        private searchService: SearchService,
         private searchPath?: string,
         private viewColumn?: vscode.ViewColumn
     ) {
@@ -50,7 +50,7 @@ export class SearchWebviewPanel {
         // Listen for configuration changes to update context panel height
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
             if (event.affectsConfiguration('regexSearch.contextSize')) {
-                this.ripgrepService.refreshConfiguration();
+                this.searchService.refreshConfiguration();
                 this.panel.webview.html = this.getWebviewContent(); // Reload webview with new height
             }
         });
@@ -191,7 +191,7 @@ export class SearchWebviewPanel {
     }
 
     private calculateContextPanelHeight(): number {
-        const contextSize = this.ripgrepService.getContextSize();
+        const contextSize = this.searchService.getContextSize();
         // Base height (padding, borders, etc.) + lines
         // Each context line is approximately 16px (12px font + 2px margin)
         // Add some extra padding for better UX

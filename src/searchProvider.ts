@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { RipgrepService } from './ripgrepService';
+import { SearchService } from './searchService';
 import { SearchWebviewPanel } from './searchWebviewPanel';
 
 export interface SearchResult {
@@ -12,19 +12,19 @@ export interface SearchResult {
 }
 
 export class RegexSearchProvider {
-    private ripgrepService: RipgrepService;
+    private searchService: SearchService;
     private currentWebviewPanel: SearchWebviewPanel | undefined;
     private originalEditor: vscode.TextEditor | undefined;
     private initialResults: SearchResult[] = [];
     private currentSearchPath: string | undefined;
 
     constructor(private context: vscode.ExtensionContext) {
-        this.ripgrepService = new RipgrepService();
+        this.searchService = new SearchService();
         
         // Listen for configuration changes
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
             if (event.affectsConfiguration('regexSearch.contextSize')) {
-                this.ripgrepService.refreshConfiguration();
+                this.searchService.refreshConfiguration();
             }
         });
         this.context.subscriptions.push(configChangeListener);
@@ -80,7 +80,7 @@ export class RegexSearchProvider {
             () => this.returnToOriginalEditor(),
             (query: string) => this.performSearch(query, searchType),
             (result: SearchResult) => this.loadContextForResult(result), // Add context loading callback
-            this.ripgrepService,
+            this.searchService,
             this.currentSearchPath,
             currentViewColumn
         );
@@ -96,12 +96,12 @@ export class RegexSearchProvider {
                 if (!this.currentSearchPath) {
                     return [];
                 }
-                return await this.ripgrepService.searchWithQuery(this.currentSearchPath, query, true);
+                return await this.searchService.searchWithQuery(this.currentSearchPath, query, true);
             } else {
                 if (!this.currentSearchPath) {
                     return [];
                 }
-                return await this.ripgrepService.searchWithQuery(this.currentSearchPath, query, false);
+                return await this.searchService.searchWithQuery(this.currentSearchPath, query, false);
             }
         } catch (error) {
             console.error('Search error:', error);
@@ -110,7 +110,7 @@ export class RegexSearchProvider {
     }
 
     private async loadContextForResult(result: SearchResult): Promise<SearchResult> {
-        return await this.ripgrepService.loadContextForResult(result);
+        return await this.searchService.loadContextForResult(result);
     }
 
     private async navigateToResult(result: SearchResult) {

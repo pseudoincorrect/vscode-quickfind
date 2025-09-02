@@ -2,7 +2,7 @@
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "An in-editor telescope-like regex search extension for VSCode",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/regex-search-telescope-logo.png",
@@ -63,6 +63,18 @@
           "minimum": 0,
           "maximum": 20,
           "description": "Number of lines to show before and after each search result for context"
+        },
+        "regexSearch.maxFileSize": {
+          "type": "string",
+          "default": "1MB",
+          "description": "Maximum file size for search (e.g., '1MB', '500KB', '2GB')"
+        },
+        "regexSearch.maxResults": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Maximum number of search results"
         }
       }
     }
@@ -73,7 +85,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "npm run compile && node ./out/test/suite/searchInFile.test.js",
+    "test": "node ./out/test/runTest.js",
     "package": "npm run compile && vsce package --out releases/",
     "package-release": "npm run compile && vsce package --out releases/ && echo 'Extension packaged to releases/ folder'",
     "install-extension": "npm run package && code --install-extension releases/vscode-regex-search-telescope-$(node -p \"require('./package.json').version\").vsix",
