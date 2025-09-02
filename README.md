@@ -69,4 +69,4 @@ You can customize the keyboard shortcuts for this extension:
 
 ---
 
-For installation instructions, detailed usage, development setup, and contribution guidelines, see [README_DEVELOPERS.md](README_DEVELOPERS.md).
+For installation instructions, changelog, detailed usage, development setup, releases, and contribution guidelines, see [README_DEVELOPERS.md](README_DEVELOPERS.md).

@@ -110,6 +110,15 @@ src/
 
 MIT License - see LICENSE file for details.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md)
+
+## Release process
+
+See [README_RELEASES.md](releases/README_RELEASES.md)
+
+
 ## Acknowledgments
 
 - Inspired by [vim telescope](https://github.com/nvim-telescope/telescope.nvim)

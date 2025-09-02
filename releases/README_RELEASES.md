@@ -21,10 +21,6 @@ To install a release:
 - `npm run install-extension` - Package and install the extension locally
 - `npm run clean-releases` - Remove all .vsix files from this folder
 
-## Version History
+## Changelog
 
-- **v0.0.1** - Initial release
-  - Dual search modes (current file and workspace)
-  - Advanced regex matching with CamelCase support
-  - Split-pane interface
-  - Built on ripgrep for performance
+See [CHANGELOG.md](../../CHANGELOG.md)
