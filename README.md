@@ -9,7 +9,7 @@ Provides powerful text search capabilities with a clean split-pane (vertical) in
 
 ## Preview
 
-![Regex Search Telescope Demo](assets/images/regex-search-telescope.gif)
+![Regex Search Telescope Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-regex-search/main/assets/images/regex-search-telescope.gif)
 
 ## Functions
 
