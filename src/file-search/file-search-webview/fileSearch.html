@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{cssUri}}">
+    <style>
+        :root {
+            --context-panel-height: {{contextPanelHeight}}px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="context-panel" id="contextPanel">
+            <div class="no-selection">Select a file to see context</div>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Type to search files..." autofocus>
+        </div>
+        <div class="results-list" id="resultsList"></div>
+        <div class="keybinds">ESC: Cancel | Enter: Open File | ↑↓: Navigate</div>
+    </div>
+
+    <script>
+        // Inject initial data
+        const initialData = {{initialData}};
+    </script>
+    <script src="{{jsUri}}"></script>
+</body>
+</html>

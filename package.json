@@ -28,7 +28,8 @@
   ],
   "activationEvents": [
     "onCommand:regexSearch.searchInFile",
-    "onCommand:regexSearch.searchInFolder"
+    "onCommand:regexSearch.searchInFolder",
+    "onCommand:regexSearch.searchFiles"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -40,18 +41,27 @@
       {
         "command": "regexSearch.searchInFolder",
         "title": "Regex Search: Search in Current Folder"
+      },
+      {
+        "command": "regexSearch.searchFiles",
+        "title": "Regex Search: Search Files"
       }
     ],
     "keybindings": [
       {
         "command": "regexSearch.searchInFile",
-        "key": "ctrl+k ctrl+f",
-        "mac": "cmd+k cmd+f"
+        "key": "ctrl+k ctrl+t",
+        "mac": "cmd+k cmd+t"
       },
       {
         "command": "regexSearch.searchInFolder",
         "key": "ctrl+k ctrl+g",
         "mac": "cmd+k cmd+g"
+      },
+      {
+        "command": "regexSearch.searchFiles",
+        "key": "ctrl+k ctrl+f",
+        "mac": "cmd+k cmd+f"
       }
     ],
     "configuration": {
@@ -103,5 +113,8 @@
     "eslint": "^8.28.0",
     "mocha": "^11.7.1",
     "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "fuse.js": "^7.1.0"
   }
 }
