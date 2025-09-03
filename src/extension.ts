@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { RegexSearchProvider } from './searchProvider';
+import { RegexSearchProvider } from './text-search/textSearchProvider';
 
 export function activate(context: vscode.ExtensionContext) {
     const regexSearchProvider = new RegexSearchProvider(context);

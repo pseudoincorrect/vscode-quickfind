@@ -1,7 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { SearchResult } from './searchProvider';
+
+export interface SearchResult {
+    file: string;
+    line: number;
+    column: number;
+    text: string;
+    context: string[];
+}
 
 interface SearchOptions {
     maxFileSize: number;

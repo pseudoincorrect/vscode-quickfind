@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SearchResult } from './searchProvider';
-import { SearchService } from './searchService';
+import { SearchService, SearchResult } from './textSearchService';
 
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
@@ -203,9 +202,9 @@ export class SearchWebviewPanel {
 
     private getWebviewContent(): string {
         // Get URIs for the webview resources
-        const htmlPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.html');
-        const cssPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.css');
-        const jsPath = path.join(this.context.extensionPath, 'src', 'webview', 'search.js');
+        const htmlPath = path.join(this.context.extensionPath, 'src', 'text-search', 'text-search-webview', 'textSearch.html');
+        const cssPath = path.join(this.context.extensionPath, 'src', 'text-search', 'text-search-webview', 'textSearch.css');
+        const jsPath = path.join(this.context.extensionPath, 'src', 'text-search', 'text-search-webview', 'textSearch.js');
 
         // Convert paths to webview URIs
         const cssUri = this.panel.webview.asWebviewUri(vscode.Uri.file(cssPath));

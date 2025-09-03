@@ -1,15 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SearchService } from './searchService';
-import { SearchWebviewPanel } from './searchWebviewPanel';
-
-export interface SearchResult {
-    file: string;
-    line: number;
-    column: number;
-    text: string;
-    context: string[];
-}
+import { SearchService, SearchResult } from './textSearchService';
+import { SearchWebviewPanel } from './textSearchWebviewPanel';
 
 export class RegexSearchProvider {
     private searchService: SearchService;
