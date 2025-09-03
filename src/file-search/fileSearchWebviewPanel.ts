@@ -23,7 +23,7 @@ export class FileSearchWebviewPanel {
     ) {
         const getTitle = () => {
             if (searchPath) {
-                return `File Search - ${searchPath}`;
+                return `File Search in ${searchPath}`;
             }
             return 'File Search';
         };
@@ -44,7 +44,7 @@ export class FileSearchWebviewPanel {
         
         // Listen for configuration changes
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('regexSearch.maxResults')) {
+            if (event.affectsConfiguration('quickFind.maxResults')) {
                 this.searchService.refreshConfiguration();
             }
         });
@@ -221,7 +221,7 @@ export class FileSearchWebviewPanel {
     }
 
     private calculateContextPanelHeight(): number {
-        const config = vscode.workspace.getConfiguration('regexSearch');
+        const config = vscode.workspace.getConfiguration('quickFind');
         const contextSize = config.get<number>('contextSize', 5);
         // Base height (padding, borders, etc.) + lines
         // Each context line is approximately 16.8px (12px font * 1.4 line-height)

@@ -15,7 +15,7 @@ export class RegexSearchProvider {
         
         // Listen for configuration changes
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('regexSearch.contextSize')) {
+            if (event.affectsConfiguration('quickFind.contextSize')) {
                 this.searchService.refreshConfiguration();
             }
         });

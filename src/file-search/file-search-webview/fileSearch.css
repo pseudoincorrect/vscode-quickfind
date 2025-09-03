@@ -23,7 +23,7 @@ html, body {
 
 .context-panel { 
     height: var(--context-panel-height, 140px); 
-    padding: 12px 16px; 
+    padding: 0px 16px 12px 16px; 
     overflow-y: auto; 
     overflow-x: hidden; 
     background: var(--vscode-editor-background); 
@@ -33,6 +33,22 @@ html, body {
     font-family: var(--vscode-editor-font-family); 
     font-size: 12px; 
     line-height: 1.4; 
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+
+.app-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--vscode-editor-foreground);
 }
 
 .context-line { 

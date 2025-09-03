@@ -1,8 +1,8 @@
 {
-  "name": "vscode-regex-search-telescope",
-  "displayName": "Regex Search Telescope",
-  "description": "An in-editor telescope-like regex search extension for VSCode",
-  "version": "0.5.0",
+  "name": "vscode-quickfind",
+  "displayName": "QuickFind",
+  "description": "Fast text search and file finding extension for VSCode with regex support",
+  "version": "0.6.0",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/regex-search-telescope-logo.png",
@@ -26,60 +26,67 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:regexSearch.searchInFile",
-    "onCommand:regexSearch.searchInFolder",
-    "onCommand:regexSearch.searchFiles"
+  "keywords": [
+    "search",
+    "find",
+    "regex",
+    "fuzzy",
+    "telescope",
+    "quick",
+    "file search",
+    "text search",
+    "grep",
+    "ripgrep"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "regexSearch.searchInFile",
-        "title": "Regex Search: Search in Current File"
+        "command": "quickFind.searchInFile",
+        "title": "QuickFind: Search in Current File"
       },
       {
-        "command": "regexSearch.searchInFolder",
-        "title": "Regex Search: Search in Current Folder"
+        "command": "quickFind.searchInFolder",
+        "title": "QuickFind: Search in Current Folder"
       },
       {
-        "command": "regexSearch.searchFiles",
-        "title": "Regex Search: Search Files"
+        "command": "quickFind.searchFiles",
+        "title": "QuickFind: Search Files"
       }
     ],
     "keybindings": [
       {
-        "command": "regexSearch.searchInFile",
+        "command": "quickFind.searchInFile",
         "key": "ctrl+k ctrl+t",
         "mac": "cmd+k cmd+t"
       },
       {
-        "command": "regexSearch.searchInFolder",
+        "command": "quickFind.searchInFolder",
         "key": "ctrl+k ctrl+g",
         "mac": "cmd+k cmd+g"
       },
       {
-        "command": "regexSearch.searchFiles",
+        "command": "quickFind.searchFiles",
         "key": "ctrl+k ctrl+f",
         "mac": "cmd+k cmd+f"
       }
     ],
     "configuration": {
-      "title": "Regex Search Telescope",
+      "title": "QuickFind",
       "properties": {
-        "regexSearch.contextSize": {
+        "quickFind.contextSize": {
           "type": "number",
           "default": 7,
           "minimum": 0,
           "maximum": 20,
           "description": "Number of lines to show before and after each search result for context"
         },
-        "regexSearch.maxFileSize": {
+        "quickFind.maxFileSize": {
           "type": "string",
           "default": "1MB",
           "description": "Maximum file size for search (e.g., '1MB', '500KB', '2GB')"
         },
-        "regexSearch.maxResults": {
+        "quickFind.maxResults": {
           "type": "number",
           "default": 1000,
           "minimum": 1,
@@ -98,7 +105,7 @@
     "test": "node ./out/test/runTest.js",
     "package": "npm run compile && vsce package --out releases/",
     "package-release": "npm run compile && vsce package --out releases/ && echo 'Extension packaged to releases/ folder'",
-    "install-extension": "npm run package && code --install-extension releases/vscode-regex-search-telescope-$(node -p \"require('./package.json').version\").vsix",
+    "install-extension": "npm run package && code --install-extension releases/vscode-quickfind-$(node -p \"require('./package.json').version\").vsix",
     "clean-releases": "node -e \"const fs = require('fs'); const path = require('path'); try { fs.readdirSync('releases').filter(f => f.endsWith('.vsix')).forEach(f => fs.unlinkSync(path.join('releases', f))); } catch(e) { console.log('No .vsix files to clean'); }\""
   },
   "devDependencies": {

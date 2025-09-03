@@ -1,4 +1,4 @@
-# VSCode Regex Search Telescope Extension - Developer Documentation
+# QuickFind Extension - Developer Documentation
 
 
 ## Development Installation

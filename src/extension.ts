@@ -7,17 +7,17 @@ export function activate(context: vscode.ExtensionContext) {
     const fileSearchProvider = new FileSearchProvider(context);
 
     // Register command for searching in current file
-    const searchInFileCommand = vscode.commands.registerCommand('regexSearch.searchInFile', () => {
+    const searchInFileCommand = vscode.commands.registerCommand('quickFind.searchInFile', () => {
         regexSearchProvider.searchInCurrentFile();
     });
 
     // Register command for searching in current folder/workspace
-    const searchInFolderCommand = vscode.commands.registerCommand('regexSearch.searchInFolder', () => {
+    const searchInFolderCommand = vscode.commands.registerCommand('quickFind.searchInFolder', () => {
         regexSearchProvider.searchInCurrentFolder();
     });
 
     // Register command for file search
-    const searchFilesCommand = vscode.commands.registerCommand('regexSearch.searchFiles', () => {
+    const searchFilesCommand = vscode.commands.registerCommand('quickFind.searchFiles', () => {
         fileSearchProvider.searchFiles();
     });
 

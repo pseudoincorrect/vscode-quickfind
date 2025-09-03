@@ -62,7 +62,7 @@ export class FileSearchService {
     }
 
     private updateConfiguration(): void {
-        const config = vscode.workspace.getConfiguration('regexSearch');
+        const config = vscode.workspace.getConfiguration('quickFind');
         
         // Use existing maxResults setting or default
         this.defaultOptions.maxResults = config.get<number>('maxResults', 500);

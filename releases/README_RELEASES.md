@@ -1,6 +1,6 @@
 # Releases
 
-This folder contains packaged `.vsix` files for the VSCode Regex Search Telescope extension.
+This folder contains packaged `.vsix` files for the QuickFind extension.
 Releases are automatically generated using `npm run package` with versions matching package.json.
 
 ## Installation
@@ -10,7 +10,7 @@ To install a release:
 1. Download the desired `.vsix` file
 2. Install via command line:
    ```bash
-   code --install-extension vscode-regex-search-telescope-[version].vsix
+   code --install-extension vscode-quickfind-[version].vsix
    ```
 3. Or install through VSCode: `Ctrl+Shift+P` → "Extensions: Install from VSIX"
 

@@ -24,16 +24,16 @@ export class SearchWebviewPanel {
     ) {
         const getTitle = () => {
             if (searchType === 'file' && searchPath) {
-                return `Regex Search - file - ${searchPath}`;
+                return `Text Search in ${searchPath}`;
             }
             if (searchType === 'folder' && searchPath) {
-                return `Regex Search - folder - ${searchPath}/`;
+                return `Text Search in ${searchPath}/`;
             }
-            return `Regex Search - ${searchType === 'file' ? 'Current File' : 'Current Folder'}`;
+            return `Text Search in ${searchType === 'file' ? 'Current File' : 'Current Folder'}`;
         };
 
         this.panel = vscode.window.createWebviewPanel(
-            'regexSearch',
+            'quickFind',
             getTitle(),
             viewColumn || vscode.ViewColumn.One,
             {
@@ -48,7 +48,7 @@ export class SearchWebviewPanel {
         
         // Listen for configuration changes to update context panel height
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('regexSearch.contextSize')) {
+            if (event.affectsConfiguration('quickFind.contextSize')) {
                 this.searchService.refreshConfiguration();
                 this.panel.webview.html = this.getWebviewContent(); // Reload webview with new height
             }

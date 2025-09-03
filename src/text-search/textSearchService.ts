@@ -46,7 +46,7 @@ export class SearchService {
     }
 
     private updateContextSize(): void {
-        const config = vscode.workspace.getConfiguration('regexSearch');
+        const config = vscode.workspace.getConfiguration('quickFind');
         this.contextSize = config.get<number>('contextSize', 3);
     }
 
@@ -70,7 +70,7 @@ export class SearchService {
     }
 
     private updateConfiguration(): void {
-        const config = vscode.workspace.getConfiguration('regexSearch');
+        const config = vscode.workspace.getConfiguration('quickFind');
         
         // Update context size
         this.contextSize = config.get<number>('contextSize', 3);

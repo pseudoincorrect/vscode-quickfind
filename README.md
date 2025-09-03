@@ -1,15 +1,15 @@
-# VSCode Regex Search Telescope Extension
+# QuickFind - VSCode Extension
 
 <div align="center">
-  <img src="assets/images/regex-search-telescope-logo.png" alt="Regex Search Telescope Logo" width="128" height="128">
+  <img src="assets/images/regex-search-telescope-logo.png" alt="QuickFind Logo" width="128" height="128">
 </div>
 
-A fast and intuitive regex search extension for Visual Studio Code, inspired by vim telescope. 
-Provides powerful text search and file search capabilities with a clean split-pane (vertical) interface.
+A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope. 
+Provides powerful text search and file search capabilities with a clean split-pane interface.
 
 ## Preview
 
-![Regex Search Telescope Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-regex-search/main/assets/images/regex-search-telescope.gif)
+![QuickFind Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-regex-search/main/assets/images/regex-search-telescope.gif)
 
 ![File Search Demo](assets/images/search-files.jpg)
 
@@ -33,14 +33,14 @@ Fuzzy search for files in your workspace. Find files by name with intelligent ma
 ## Configuration
 
 ### Context Size
-**`regexSearch.contextSize`** (number, default: 7)
+**`quickFind.contextSize`** (number, default: 7)
 
 Controls how many lines of context are shown around each search result. Set the number of lines to show before and after each match (0-20). This setting controls both the content displayed in the context panel and its height, adapting automatically to show more or less context as needed.
 
 ### Search Performance Options
 
-- **`regexSearch.maxFileSize`** (string, default: "1MB"): Maximum file size for search operations. Supports units like '500KB', '1MB', '2GB'.
-- **`regexSearch.maxResults`** (number, default: 1000): Maximum number of search results to display (1-10000).
+- **`quickFind.maxFileSize`** (string, default: "1MB"): Maximum file size for search operations. Supports units like '500KB', '1MB', '2GB'.
+- **`quickFind.maxResults`** (number, default: 1000): Maximum number of search results to display (1-10000).
 
 ## Requirements
 
@@ -52,14 +52,14 @@ You can customize the keyboard shortcuts for this extension:
 
 1. Open VS Code settings (`Ctrl+,` or `Cmd+,`)
 2. Go to **Keyboard Shortcuts** (`Ctrl+K Ctrl+S` or `Cmd+K Cmd+S`)
-3. Search for "Regex Search" to find the extension commands
+3. Search for "QuickFind" to find the extension commands
 4. Click the pencil icon next to any command to change its keybinding
 5. Set your preferred key combination
 
 **Available commands:**
-- `Regex Search: Search in Current File` (default: `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T`)
-- `Regex Search: Search in Current Folder` (default: `Ctrl+K Ctrl+G` / `Cmd+K Cmd+G`)
-- `Regex Search: Search Files` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
+- `QuickFind: Search in Current File` (default: `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T`)
+- `QuickFind: Search in Current Folder` (default: `Ctrl+K Ctrl+G` / `Cmd+K Cmd+G`)
+- `QuickFind: Search Files` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
 
 ---
 

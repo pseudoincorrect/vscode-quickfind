@@ -15,7 +15,7 @@ export class FileSearchProvider {
         
         // Listen for configuration changes
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('regexSearch.maxResults')) {
+            if (event.affectsConfiguration('quickFind.maxResults')) {
                 this.searchService.refreshConfiguration();
             }
         });
@@ -76,7 +76,7 @@ export class FileSearchProvider {
     }
 
     private async loadContextForResult(result: FileSearchResult): Promise<string[]> {
-        const config = vscode.workspace.getConfiguration('regexSearch');
+        const config = vscode.workspace.getConfiguration('quickFind');
         const contextSize = config.get<number>('contextSize', 5);
         return await this.searchService.getFileContext(result.file, contextSize);
     }
