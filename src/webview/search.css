@@ -94,6 +94,9 @@ html, body {
     border-bottom: 1px solid var(--vscode-panel-border); 
     width: calc(100% - 8px ); 
     overflow: hidden; 
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
 }
 
 .result-item:hover, .result-item.selected { 
@@ -109,11 +112,19 @@ html, body {
 .result-file { 
     font-size: 11px; 
     color: var(--vscode-descriptionForeground); 
-    margin-bottom: 1px; 
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis; 
-    width: 100%; 
+    width: 33.333%; 
+    flex-shrink: 0;
+    direction: rtl;
+    text-align: left;
+}
+
+.filename {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--vscode-editor-foreground);
 }
 
 .result-text { 
@@ -122,7 +133,8 @@ html, body {
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis; 
-    width: 100%; 
+    width: 66.667%; 
+    flex-grow: 1;
 }
 
 .no-results { 

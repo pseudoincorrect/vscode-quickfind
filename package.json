@@ -2,7 +2,7 @@
   "name": "vscode-regex-search-telescope",
   "displayName": "Regex Search Telescope",
   "description": "An in-editor telescope-like regex search extension for VSCode",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/regex-search-telescope-logo.png",
@@ -59,7 +59,7 @@
       "properties": {
         "regexSearch.contextSize": {
           "type": "number",
-          "default": 3,
+          "default": 5,
           "minimum": 0,
           "maximum": 20,
           "description": "Number of lines to show before and after each search result for context"

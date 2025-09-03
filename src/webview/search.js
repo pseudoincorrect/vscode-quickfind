@@ -122,10 +122,15 @@ function updateResultsList() {
         const relativePath = getRelativePath(result.file, workspacePath);
         const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
         
+        // Extract filename and directory path
+        const pathParts = relativePath.split('/');
+        const filename = pathParts.pop();
+        const dirPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
+        
         return `<div class="result-item ${index === selectedIndex ? 'selected' : ''}" 
                     onclick="navigateToResult(${index})">
-            <div class="result-file">${relativePath}:${result.line}:${result.column}</div>
             <div class="result-text">${highlightedText}</div>
+            <div class="result-file">${dirPath}<span class="filename">${filename}</span> ${result.line}</div>
         </div>`;
     }).join('');
 
