@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2024-09-03
+
+### Fix
+- File opening in the wrong split
+
+## [0.6.0] - 2024-09-03
+
 ### Changed
-- Extension rebranded to "QuickFind" for better discoverability
-- Updated name, description, and command titles
-- Added keywords for telescope, search, fuzzy, regex searches
-- **BREAKING**: Command names changed from `regexSearch.*` to `quickFind.*`
-- **BREAKING**: Configuration settings changed from `regexSearch.*` to `quickFind.*`
+- Extension rebranded to "QuickFind"
 
 ### Added
 

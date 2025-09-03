@@ -114,7 +114,8 @@ export class RegexSearchProvider {
             }
             
             const document = await vscode.workspace.openTextDocument(result.file);
-            const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One);
+            const targetViewColumn = this.originalEditor?.viewColumn || vscode.ViewColumn.One;
+            const editor = await vscode.window.showTextDocument(document, targetViewColumn);
             
             const position = new vscode.Position(result.line - 1, result.column - 1);
             editor.selection = new vscode.Selection(position, position);

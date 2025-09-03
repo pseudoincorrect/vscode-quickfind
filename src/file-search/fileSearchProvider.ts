@@ -93,9 +93,10 @@ export class FileSearchProvider {
                 // Open the directory in Explorer
                 await vscode.commands.executeCommand('revealInExplorer', vscode.Uri.file(result.file));
             } else {
-                // Open the file
+                // Open the file in the same view column as the original editor
                 const document = await vscode.workspace.openTextDocument(result.file);
-                const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One);
+                const targetViewColumn = this.originalEditor?.viewColumn || vscode.ViewColumn.One;
+                const editor = await vscode.window.showTextDocument(document, targetViewColumn);
                 
                 // Focus on the first line of the file
                 const position = new vscode.Position(0, 0);
