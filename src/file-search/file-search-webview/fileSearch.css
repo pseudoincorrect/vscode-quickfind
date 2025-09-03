@@ -139,8 +139,7 @@ html, body {
 }
 
 .file-name { 
-    font-size: 14px; 
-    font-weight: 700; 
+    font-weight: 600; 
     color: var(--vscode-editor-foreground); 
     flex-shrink: 0;
 }

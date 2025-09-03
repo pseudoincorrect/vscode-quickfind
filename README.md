@@ -5,16 +5,18 @@
 </div>
 
 A fast and intuitive regex search extension for Visual Studio Code, inspired by vim telescope. 
-Provides powerful text search capabilities with a clean split-pane (vertical) interface.
+Provides powerful text search and file search capabilities with a clean split-pane (vertical) interface.
 
 ## Preview
 
 ![Regex Search Telescope Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-regex-search/main/assets/images/regex-search-telescope.gif)
 
+![File Search Demo](assets/images/search-files.jpg)
+
 ## Functions
 
 ### 🔍 Search Current File
-**Keybinding**: `Ctrl+K Ctrl+F` (Windows/Linux) / `Cmd+K Cmd+F` (macOS)
+**Keybinding**: `Ctrl+K Ctrl+T` (Windows/Linux) / `Cmd+K Cmd+T` (macOS)
 
 Search within the currently active file with real-time regex matching and highlighting.
 
@@ -23,10 +25,15 @@ Search within the currently active file with real-time regex matching and highli
 
 Search across all files in your workspace with blazing-fast performance.
 
+### 📁 Search Files
+**Keybinding**: `Ctrl+K Ctrl+F` (Windows/Linux) / `Cmd+K Cmd+F` (macOS)
+
+Fuzzy search for files in your workspace. Find files by name with intelligent matching and see file metadata in the context panel.
+
 ## Configuration
 
 ### Context Size
-**`regexSearch.contextSize`** (number, default: 3)
+**`regexSearch.contextSize`** (number, default: 7)
 
 Controls how many lines of context are shown around each search result. Set the number of lines to show before and after each match (0-20). This setting controls both the content displayed in the context panel and its height, adapting automatically to show more or less context as needed.
 
@@ -50,8 +57,9 @@ You can customize the keyboard shortcuts for this extension:
 5. Set your preferred key combination
 
 **Available commands:**
-- `Regex Search: Search in Current File` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
+- `Regex Search: Search in Current File` (default: `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T`)
 - `Regex Search: Search in Current Folder` (default: `Ctrl+K Ctrl+G` / `Cmd+K Cmd+G`)
+- `Regex Search: Search Files` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
 
 ---
 

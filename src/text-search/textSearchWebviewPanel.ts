@@ -197,7 +197,16 @@ export class SearchWebviewPanel {
         const baseHeight = 40; // Padding and borders
         const lineHeight = 16; // Approximate height per line
         const maxLines = Math.max(contextSize * 2 + 1, 3); // context before + match + context after, minimum 3 lines
-        return Math.min(Math.max(baseHeight + (maxLines * lineHeight), 80), 300); // Min 80px, max 300px
+        
+        // Calculate desired height based on content
+        const desiredHeight = baseHeight + (maxLines * lineHeight);
+        
+        // Calculate 50% of screen height (assuming typical screen height of 1080px)
+        // In VSCode webview, we can't directly get screen dimensions, so we use a reasonable estimate
+        const maxScreenHeightPercent = Math.floor(1080 * 0.5); // 50% of typical screen height
+        
+        // Return height: minimum 80px, maximum 50% of screen or desired height, whichever is smaller
+        return Math.min(Math.max(desiredHeight, 80), maxScreenHeightPercent);
     }
 
     private getWebviewContent(): string {
