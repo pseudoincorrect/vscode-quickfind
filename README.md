@@ -1,7 +1,7 @@
 # QuickFind - VSCode Extension
 
 <div align="center">
-  <img src="assets/images/regex-search-telescope-logo.png" alt="QuickFind Logo" width="128" height="128">
+  <img src="assets/images/quickfind-logo.png" alt="QuickFind Logo" width="128" height="128">
 </div>
 
 A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope. 
@@ -9,9 +9,9 @@ Provides powerful text search and file search capabilities with a clean split-pa
 
 ## Preview
 
-![QuickFind Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-regex-search/main/assets/images/regex-search-telescope.gif)
+![QuickFind Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
 
-![File Search Demo](assets/images/search-files.jpg)
+![File Search Demo](assets/images/file-search.jpg)
 
 ## Functions
 

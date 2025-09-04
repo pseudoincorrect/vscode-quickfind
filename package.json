@@ -5,15 +5,15 @@
   "version": "0.6.1",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
-  "icon": "assets/images/regex-search-telescope-logo.png",
+  "icon": "assets/images/quickfind-logo-128.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pseudoincorrect/vscode-regex-search"
+    "url": "https://github.com/pseudoincorrect/vscode-quickfind"
   },
   "bugs": {
-    "url": "https://github.com/pseudoincorrect/vscode-regex-search/issues"
+    "url": "https://github.com/pseudoincorrect/vscode-quickfind/issues"
   },
-  "homepage": "https://github.com/pseudoincorrect/vscode-regex-search#readme",
+  "homepage": "https://github.com/pseudoincorrect/vscode-quickfind#readme",
   "license": "MIT",
   "engines": {
     "vscode": "^1.74.0"

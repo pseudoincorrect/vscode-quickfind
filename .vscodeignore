@@ -20,5 +20,6 @@ releases/**
 **/*.test.ts
 
 # Exclude large assets (keep only the required icon)
-assets/images/regex-search-telescope.gif
-assets/images/regex-search-telescope.png
+assets/images/text-search.gif
+assets/images/quickfind-logo.png
+assets/images/file-search.jpg
