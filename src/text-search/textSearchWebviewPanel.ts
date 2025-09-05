@@ -147,6 +147,12 @@ export class SearchWebviewPanel {
                     case 'historyNext':
                         this.panel.webview.postMessage({ command: 'historyNext' });
                         break;
+                    case 'loadConfig':
+                        this.handleLoadConfig();
+                        break;
+                    case 'updateConfig':
+                        this.handleUpdateConfig(message.config);
+                        break;
                 }
             },
             null,
@@ -234,6 +240,26 @@ export class SearchWebviewPanel {
         }
     }
 
+    private async handleLoadConfig() {
+        try {
+            const config = this.searchService.getSearchConfig();
+            this.panel.webview.postMessage({
+                command: 'configLoaded',
+                config: config
+            });
+        } catch (error) {
+            console.error('Error loading search config:', error);
+        }
+    }
+
+    private async handleUpdateConfig(configUpdates: any) {
+        try {
+            this.searchService.updateSearchConfig(configUpdates);
+        } catch (error) {
+            console.error('Error updating search config:', error);
+        }
+    }
+
     private updateResults() {
         // Get workspace folder for relative path calculation
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -288,7 +314,11 @@ export class SearchWebviewPanel {
         const initialData = {
             results: this.filteredResults,
             searchQuery: this.currentSearchQuery,
-            workspacePath: workspacePath
+            workspacePath: workspacePath,
+            searchConfig: {
+                caseSensitive: this.searchService.getSearchConfig()['case-sensitive'],
+                wholeWord: this.searchService.getSearchConfig()['whole-word']
+            }
         };
 
         // Calculate dynamic context panel height

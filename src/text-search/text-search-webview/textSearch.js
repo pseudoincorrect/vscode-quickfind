@@ -18,6 +18,16 @@ const searchInput = document.querySelector('.search-input');
 const resultsList = document.getElementById('resultsList');
 const contextPanel = document.getElementById('contextPanel');
 
+// Toggle buttons
+const caseSensitiveToggle = document.getElementById('caseSensitiveToggle');
+const wholeWordToggle = document.getElementById('wholeWordToggle');
+
+// Search configuration state
+let searchConfig = {
+    caseSensitive: false,
+    wholeWord: false
+};
+
 // Load search history from file
 function loadSearchHistory() {
     vscode.postMessage({ command: 'loadHistory', file: HISTORY_FILE });
@@ -49,15 +59,63 @@ function addToHistory(query) {
     saveSearchHistory();
 }
 
+// Initialize search configuration
+function initializeSearchConfig() {
+    // Request initial config from the extension
+    vscode.postMessage({ command: 'loadConfig' });
+    
+    // Setup toggle button event listeners
+    caseSensitiveToggle.addEventListener('click', () => {
+        searchConfig.caseSensitive = !searchConfig.caseSensitive;
+        updateToggleButtons();
+        // Invert logic: UI caseSensitive means config case-sensitive should be false
+        vscode.postMessage({ 
+            command: 'updateConfig', 
+            config: { 'case-sensitive': !searchConfig.caseSensitive } 
+        });
+        
+        // Re-search with new configuration if there's a query
+        if (searchInput.value.trim()) {
+            vscode.postMessage({ command: 'search', query: searchInput.value });
+        }
+    });
+    
+    wholeWordToggle.addEventListener('click', () => {
+        searchConfig.wholeWord = !searchConfig.wholeWord;
+        updateToggleButtons();
+        vscode.postMessage({ 
+            command: 'updateConfig', 
+            config: { 'whole-word': searchConfig.wholeWord } 
+        });
+        
+        // Re-search with new configuration if there's a query
+        if (searchInput.value.trim()) {
+            vscode.postMessage({ command: 'search', query: searchInput.value });
+        }
+    });
+    
+    updateToggleButtons();
+}
+
+// Update toggle button visual states
+function updateToggleButtons() {
+    caseSensitiveToggle.classList.toggle('active', searchConfig.caseSensitive);
+    wholeWordToggle.classList.toggle('active', searchConfig.wholeWord);
+}
+
 // Initialize with initial data (will be set by the HTML template)
 if (typeof initialData !== 'undefined') {
     results = initialData.results || [];
     currentSearchQuery = initialData.searchQuery || '';
     workspacePath = initialData.workspacePath || '';
+    searchConfig = initialData.searchConfig || searchConfig;
 }
 
 // Load search history on initialization
 loadSearchHistory();
+
+// Load initial config and setup toggle buttons
+initializeSearchConfig();
 
 updateDisplay();
 
@@ -175,6 +233,13 @@ window.addEventListener('message', event => {
         navigateToPreviousHistory();
     } else if (message.command === 'historyNext') {
         navigateToNextHistory();
+    } else if (message.command === 'configLoaded') {
+        // Handle loaded search configuration
+        const config = message.config || {};
+        // Invert case-sensitive logic: UI shows case-insensitive button, config tracks case-sensitive
+        searchConfig.caseSensitive = !(config['case-sensitive'] || false);
+        searchConfig.wholeWord = config['whole-word'] || false;
+        updateToggleButtons();
     }
 });
 

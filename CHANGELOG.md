@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2024-09-05
+
 ### Added
 - Search history with configurable keyboard navigation (Ctrl+Up/Down)
+- Case-sensitive and whole-word search toggle buttons with persistent configuration
 
 ## [0.6.1] - 2024-09-03
 

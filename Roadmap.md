@@ -6,7 +6,7 @@
 - [ ] **Case sensitive toggle** - Button in search UI for case-sensitive matching
 - [ ] **Whole word match** - Option to match complete words only (`\b` boundaries)
 - [ ] **Search result count** - Display "X results in Y files" in status/header
-- [ ] **Search history** - Dropdown with last 20 searches, persist across sessions
+- [X] **Search history** - Dropdown with last 20 searches, persist across sessions
   - Auto-select last search on panel open
   - Clear history option
 

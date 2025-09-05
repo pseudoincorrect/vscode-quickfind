@@ -18,17 +18,34 @@ Provides powerful text search and file search capabilities with a clean split-pa
 ### 🔍 Search Current File
 **Keybinding**: `Ctrl+K Ctrl+T` (Windows/Linux) / `Cmd+K Cmd+T` (macOS)
 
-Search within the currently active file with real-time regex matching and highlighting.
+Search within the currently active file with real-time regex matching and highlighting. Features toggle buttons for case-sensitive and whole-word search options.
 
 ### 🔍 Search Workspace
 **Keybinding**: `Ctrl+K Ctrl+G` (Windows/Linux) / `Cmd+K Cmd+G` (macOS)
 
-Search across all files in your workspace with blazing-fast performance.
+Search across all files in your workspace with blazing-fast performance. Features toggle buttons for case-sensitive and whole-word search options.
 
 ### 📁 Search Files
 **Keybinding**: `Ctrl+K Ctrl+F` (Windows/Linux) / `Cmd+K Cmd+F` (macOS)
 
 Fuzzy search for files in your workspace. Find files by name with intelligent matching and see file metadata in the context panel.
+
+## 🎛️ Search Options
+
+QuickFind provides convenient toggle buttons for advanced search options in text search:
+
+### Features:
+- **Case-Sensitive Search**: Toggle the `Aa` button to enable/disable case-sensitive matching
+- **Whole-Word Search**: Toggle the `W` button to match only complete words
+- **Persistent Settings**: Your toggle preferences are automatically saved and remembered across sessions
+- **Real-time Updates**: Changes apply immediately to your current search
+- **Visual Feedback**: Inactive buttons appear muted, active buttons are highlighted with full color and green border
+
+### Usage:
+- Click the `Aa` button to toggle case-sensitive search on/off
+- Click the `W` button to toggle whole-word search on/off
+- Both options start disabled by default
+- Settings are stored in `/tmp/vscode-quickfind-config.json`
 
 ## ⏳ Search History
 

@@ -19,7 +19,17 @@
             <div class="no-results">Select a result to see context</div>
         </div>
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="Type regex to search..." autofocus>
+            <div class="search-controls">
+                <input type="text" class="search-input" placeholder="Type regex to search..." autofocus>
+                <div class="search-toggles">
+                    <button class="toggle-btn" id="caseSensitiveToggle" title="Case Insensitive">
+                        <span class="toggle-icon">Aa</span>
+                    </button>
+                    <button class="toggle-btn" id="wholeWordToggle" title="Whole Word">
+                        <span class="toggle-icon">W</span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="results-list" id="resultsList"></div>
         <div class="keybinds">ESC: Cancel | Enter: Navigate | ↑↓: Navigate | Ctrl+↑↓: History</div>

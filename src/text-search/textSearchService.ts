@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { ConfigService, TextSearchConfig } from '../config/configService';
 
 export interface SearchResult {
     file: string;
@@ -22,6 +23,7 @@ interface SearchOptions {
 
 export class SearchService {
     private contextSize: number = 3;
+    private configService: ConfigService;
     private defaultOptions: SearchOptions = {
         maxFileSize: 1024 * 1024, // 1MB
         maxResults: 1000,
@@ -42,6 +44,7 @@ export class SearchService {
     };
 
     constructor() {
+        this.configService = new ConfigService();
         this.refreshConfiguration();
     }
 
@@ -89,6 +92,14 @@ export class SearchService {
 
     public getContextSize(): number {
         return this.contextSize;
+    }
+
+    public getSearchConfig(): TextSearchConfig {
+        return this.configService.getTextSearchConfig();
+    }
+
+    public updateSearchConfig(updates: Partial<TextSearchConfig>): void {
+        this.configService.updateTextSearchConfig(updates);
     }
 
     async searchInFile(filePath: string, pattern: string): Promise<SearchResult[]> {
@@ -304,10 +315,19 @@ export class SearchService {
     private async searchInContent(content: string, pattern: string, filePath: string): Promise<SearchResult[]> {
         const results: SearchResult[] = [];
         const lines = content.split('\n');
+        const config = this.getSearchConfig();
 
         try {
-            // Create case-insensitive regex
-            const regex = new RegExp(pattern, 'gi');
+            let regexPattern = pattern;
+            
+            // Apply whole-word option
+            if (config['whole-word']) {
+                regexPattern = `\\b${regexPattern}\\b`;
+            }
+
+            // Create regex with case sensitivity based on config
+            const flags = config['case-sensitive'] ? 'g' : 'gi';
+            const regex = new RegExp(regexPattern, flags);
 
             for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
                 const line = lines[lineIndex];
@@ -352,17 +372,36 @@ export class SearchService {
     private searchLiteral(content: string, searchTerm: string, filePath: string): SearchResult[] {
         const results: SearchResult[] = [];
         const lines = content.split('\n');
-        const lowerSearchTerm = searchTerm.toLowerCase();
+        const config = this.getSearchConfig();
+        
+        // Apply case sensitivity
+        const searchPattern = config['case-sensitive'] ? searchTerm : searchTerm.toLowerCase();
 
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
             const line = lines[lineIndex];
-            const lowerLine = line.toLowerCase();
+            const searchLine = config['case-sensitive'] ? line : line.toLowerCase();
             let startIndex = 0;
 
             while (true) {
-                const matchIndex = lowerLine.indexOf(lowerSearchTerm, startIndex);
+                let matchIndex = searchLine.indexOf(searchPattern, startIndex);
                 if (matchIndex === -1) {
                     break;
+                }
+
+                // Apply whole-word option for literal search
+                if (config['whole-word']) {
+                    // Check if the match is a whole word
+                    const beforeChar = matchIndex > 0 ? searchLine[matchIndex - 1] : '';
+                    const afterChar = matchIndex + searchPattern.length < searchLine.length 
+                        ? searchLine[matchIndex + searchPattern.length] : '';
+                    
+                    const isWordBoundaryBefore = matchIndex === 0 || /\W/.test(beforeChar);
+                    const isWordBoundaryAfter = matchIndex + searchPattern.length === searchLine.length || /\W/.test(afterChar);
+                    
+                    if (!isWordBoundaryBefore || !isWordBoundaryAfter) {
+                        startIndex = matchIndex + 1;
+                        continue;
+                    }
                 }
 
                 results.push({
