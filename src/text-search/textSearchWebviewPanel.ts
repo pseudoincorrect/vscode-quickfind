@@ -269,7 +269,9 @@ export class SearchWebviewPanel {
             command: 'updateResults',
             results: this.filteredResults,
             searchQuery: this.currentSearchQuery,
-            workspacePath: workspacePath
+            workspacePath: workspacePath,
+            searchType: this.searchType,
+            maxResults: this.searchType === 'file' ? 100 : 1000
         });
     }
 

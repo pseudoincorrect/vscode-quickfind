@@ -5,6 +5,8 @@ let searchTimeout = null;
 let currentSearchQuery = '';
 let workspacePath = '';
 let displayedResults = 50; // Initially show only 50 results
+let currentSearchType = 'folder';
+let maxResults = 1000;
 const INITIAL_BATCH_SIZE = 50;
 const LOAD_MORE_BATCH_SIZE = 25;
 
@@ -112,6 +114,12 @@ if (typeof initialData !== 'undefined') {
     searchConfig = initialData.searchConfig || searchConfig;
 }
 
+// Initialize search type from HTML global variable if available
+if (typeof searchType !== 'undefined') {
+    currentSearchType = searchType;
+    maxResults = searchType === 'file' ? 100 : 1000;
+}
+
 // Load search history on initialization
 loadSearchHistory();
 
@@ -208,6 +216,8 @@ window.addEventListener('message', event => {
         results = message.results;
         currentSearchQuery = message.searchQuery || '';
         workspacePath = message.workspacePath || '';
+        currentSearchType = message.searchType || 'folder';
+        maxResults = message.maxResults || 1000;
         selectedIndex = 0;
         displayedResults = INITIAL_BATCH_SIZE; // Reset to initial batch size
         updateDisplay();
@@ -251,19 +261,10 @@ function loadMoreResults() {
 }
 
 function updateResultCount() {
-    if (results.length === 0) {
-        resultCount.textContent = '0 results';
-        return;
-    }
-    
     const total = results.length;
-    const displayed = Math.min(displayedResults, results.length);
-    
-    if (total <= displayed) {
-        resultCount.textContent = `${total} results`;
-    } else {
-        resultCount.textContent = `${displayed}/${total} results`;
-    }
+    const hitLimit = results.length >= maxResults;
+    const suffix = hitLimit ? '+' : '';
+    resultCount.textContent = `${total}${suffix} results`;
 }
 
 function updateDisplay() {
