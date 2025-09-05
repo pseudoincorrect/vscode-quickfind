@@ -44,8 +44,11 @@ export class FileSearchWebviewPanel {
         
         // Listen for configuration changes
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('quickFind.maxResults')) {
+            if (event.affectsConfiguration('quickFind.maxResults') || event.affectsConfiguration('quickFind.accentColor')) {
                 this.searchService.refreshConfiguration();
+                if (event.affectsConfiguration('quickFind.accentColor')) {
+                    this.panel.webview.html = this.getWebviewContent(); // Reload webview with new accent color
+                }
             }
         });
         this.disposables.push(configChangeListener);
@@ -209,13 +212,17 @@ export class FileSearchWebviewPanel {
 
         // Calculate dynamic context panel height
         const contextPanelHeight = this.calculateContextPanelHeight();
+        
+        // Get accent color from configuration
+        const accentColor = vscode.workspace.getConfiguration('quickFind').get<string>('accentColor') || '#00ff88';
 
         // Replace placeholders in the HTML template
         htmlContent = htmlContent
             .replace('{{cssUri}}', cssUri.toString())
             .replace('{{jsUri}}', jsUri.toString())
             .replace('{{initialData}}', JSON.stringify(initialData))
-            .replace('{{contextPanelHeight}}', contextPanelHeight.toString());
+            .replace('{{contextPanelHeight}}', contextPanelHeight.toString())
+            .replace('{{accentColor}}', accentColor);
 
         return htmlContent;
     }

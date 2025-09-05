@@ -74,6 +74,10 @@ QuickFind automatically saves your search history for text searches, making it e
 
 Controls how many lines of context are shown around each search result. Set the number of lines to show before and after each match (0-20). This setting controls both the content displayed in the context panel and its height, adapting automatically to show more or less context as needed.
 
+### Appearance
+
+- **`quickFind.accentColor`** (string, default: "#00ff88"): Hex color code for search box border and selected result highlight (e.g., #ff5733 for orange, #0066cc for blue).
+
 ### Search Performance Options
 
 - **`quickFind.maxFileSize`** (string, default: "1MB"): Maximum file size for search operations. Supports units like '500KB', '1MB', '2GB'.

@@ -50,11 +50,11 @@ export class SearchWebviewPanel {
         // Register this panel as the active QuickFind panel
         setActiveQuickFindPanel(this.panel);
         
-        // Listen for configuration changes to update context panel height
+        // Listen for configuration changes to update context panel height and accent color
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('quickFind.contextSize')) {
+            if (event.affectsConfiguration('quickFind.contextSize') || event.affectsConfiguration('quickFind.accentColor')) {
                 this.searchService.refreshConfiguration();
-                this.panel.webview.html = this.getWebviewContent(); // Reload webview with new height
+                this.panel.webview.html = this.getWebviewContent(); // Reload webview with new settings
             }
         });
         this.disposables.push(configChangeListener);
@@ -342,6 +342,9 @@ export class SearchWebviewPanel {
 
         // Calculate dynamic context panel height
         const contextPanelHeight = this.calculateContextPanelHeight();
+        
+        // Get accent color from configuration
+        const accentColor = vscode.workspace.getConfiguration('quickFind').get<string>('accentColor') || '#00ff88';
 
         // Replace placeholders in the HTML template
         htmlContent = htmlContent
@@ -349,7 +352,8 @@ export class SearchWebviewPanel {
             .replace('{{jsUri}}', jsUri.toString())
             .replace('{{initialData}}', JSON.stringify(initialData))
             .replace('{{searchType}}', this.searchType)
-            .replace('{{contextPanelHeight}}', contextPanelHeight.toString());
+            .replace('{{contextPanelHeight}}', contextPanelHeight.toString())
+            .replace('{{accentColor}}', accentColor);
 
         return htmlContent;
     }

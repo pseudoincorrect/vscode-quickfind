@@ -1,3 +1,7 @@
+:root {
+    --quickfind-accent-color: #00ff88;
+}
+
 * { 
     box-sizing: border-box; 
 }
@@ -91,7 +95,7 @@ html, body {
 .search-input { 
     width: 100%; 
     padding: 6px; 
-    border: 3px solid #00ff00; 
+    border: 3px solid var(--quickfind-accent-color); 
     background: var(--vscode-input-background); 
     color: var(--vscode-input-foreground); 
     font-size: 16px; 
@@ -101,7 +105,7 @@ html, body {
 }
 
 .search-input:focus { 
-    border: 3px solid #00ff00; 
+    border: 3px solid var(--quickfind-accent-color); 
     outline: none; 
     box-shadow: none; 
 }
@@ -132,7 +136,7 @@ html, body {
 }
 
 .result-item.selected { 
-    border-color: #00ff00; 
+    border-color: var(--quickfind-accent-color); 
 }
 
 .file-type-icon { 
