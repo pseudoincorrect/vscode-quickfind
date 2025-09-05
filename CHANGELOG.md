@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Search history with configurable keyboard navigation (Ctrl+Up/Down)
+
 ## [0.6.1] - 2024-09-03
 
 ### Fix

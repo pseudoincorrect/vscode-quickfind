@@ -8,9 +8,46 @@ let displayedResults = 50; // Initially show only 50 results
 const INITIAL_BATCH_SIZE = 50;
 const LOAD_MORE_BATCH_SIZE = 25;
 
+// Search history management
+let searchHistory = [];
+let historyIndex = -1;
+const HISTORY_FILE = '/tmp/vscode-quickfind-text-search-history.json';
+const MAX_HISTORY_SIZE = 50;
+
 const searchInput = document.querySelector('.search-input');
 const resultsList = document.getElementById('resultsList');
 const contextPanel = document.getElementById('contextPanel');
+
+// Load search history from file
+function loadSearchHistory() {
+    vscode.postMessage({ command: 'loadHistory', file: HISTORY_FILE });
+}
+
+// Save search history to file
+function saveSearchHistory() {
+    vscode.postMessage({ command: 'saveHistory', file: HISTORY_FILE, history: searchHistory });
+}
+
+// Add search to history
+function addToHistory(query) {
+    if (!query || query.trim() === '') return;
+    
+    // Remove if already exists to move to top
+    const index = searchHistory.indexOf(query);
+    if (index > -1) {
+        searchHistory.splice(index, 1);
+    }
+    
+    // Add to beginning
+    searchHistory.unshift(query);
+    
+    // Limit history size
+    if (searchHistory.length > MAX_HISTORY_SIZE) {
+        searchHistory = searchHistory.slice(0, MAX_HISTORY_SIZE);
+    }
+    
+    saveSearchHistory();
+}
 
 // Initialize with initial data (will be set by the HTML template)
 if (typeof initialData !== 'undefined') {
@@ -18,6 +55,9 @@ if (typeof initialData !== 'undefined') {
     currentSearchQuery = initialData.searchQuery || '';
     workspacePath = initialData.workspacePath || '';
 }
+
+// Load search history on initialization
+loadSearchHistory();
 
 updateDisplay();
 
@@ -44,6 +84,27 @@ searchInput.addEventListener('input', (e) => {
     }, 50);
 });
 
+// History navigation functions
+function navigateToPreviousHistory() {
+    if (searchHistory.length > 0 && historyIndex < searchHistory.length - 1) {
+        historyIndex++;
+        searchInput.value = searchHistory[historyIndex];
+        searchInput.select();
+    }
+}
+
+function navigateToNextHistory() {
+    if (historyIndex > 0) {
+        historyIndex--;
+        searchInput.value = searchHistory[historyIndex];
+        searchInput.select();
+    } else if (historyIndex === 0) {
+        historyIndex = -1;
+        searchInput.value = '';
+        searchInput.focus();
+    }
+}
+
 searchInput.addEventListener('keydown', (e) => {
     switch (e.key) {
         case 'Escape':
@@ -52,6 +113,11 @@ searchInput.addEventListener('keydown', (e) => {
             break;
         case 'Enter':
             e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                addToHistory(query);
+                historyIndex = -1; // Reset history index
+            }
             if (results.length > 0) {
                 vscode.postMessage({ command: 'select', index: selectedIndex });
             }
@@ -95,6 +161,20 @@ window.addEventListener('message', event => {
         }
     } else if (message.command === 'focus') {
         searchInput.focus();
+    } else if (message.command === 'historyLoaded') {
+        // Handle loaded search history
+        searchHistory = message.history || [];
+        historyIndex = -1;
+        
+        // Set the last search term in input if history exists
+        if (searchHistory.length > 0 && !searchInput.value) {
+            searchInput.value = searchHistory[0];
+            searchInput.select();
+        }
+    } else if (message.command === 'historyPrevious') {
+        navigateToPreviousHistory();
+    } else if (message.command === 'historyNext') {
+        navigateToNextHistory();
     }
 });
 

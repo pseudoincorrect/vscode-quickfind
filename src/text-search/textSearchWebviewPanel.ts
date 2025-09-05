@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SearchService, SearchResult } from './textSearchService';
+import { setActiveQuickFindPanel } from '../extension';
 
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
@@ -46,6 +47,9 @@ export class SearchWebviewPanel {
         this.panel.webview.html = this.getWebviewContent();
         this.setupEventHandlers();
         
+        // Register this panel as the active QuickFind panel
+        setActiveQuickFindPanel(this.panel);
+        
         // Listen for configuration changes to update context panel height
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
             if (event.affectsConfiguration('quickFind.contextSize')) {
@@ -63,6 +67,9 @@ export class SearchWebviewPanel {
     }
 
     dispose() {
+        // Unregister this panel as the active QuickFind panel
+        setActiveQuickFindPanel(null);
+        
         this.panel.dispose();
         while (this.disposables.length) {
             const disposable = this.disposables.pop();
@@ -128,6 +135,18 @@ export class SearchWebviewPanel {
                     case 'cancel':
                         this.handleCancel();
                         break;
+                    case 'loadHistory':
+                        this.handleLoadHistory(message.file);
+                        break;
+                    case 'saveHistory':
+                        this.handleSaveHistory(message.file, message.history);
+                        break;
+                    case 'historyPrevious':
+                        this.panel.webview.postMessage({ command: 'historyPrevious' });
+                        break;
+                    case 'historyNext':
+                        this.panel.webview.postMessage({ command: 'historyNext' });
+                        break;
                 }
             },
             null,
@@ -174,6 +193,45 @@ export class SearchWebviewPanel {
 
     private handleCancel() {
         this.onCancel();
+    }
+
+    private async handleLoadHistory(filePath: string) {
+        try {
+            if (fs.existsSync(filePath)) {
+                const historyData = fs.readFileSync(filePath, 'utf8');
+                const history = JSON.parse(historyData);
+                this.panel.webview.postMessage({
+                    command: 'historyLoaded',
+                    history: Array.isArray(history) ? history : []
+                });
+            } else {
+                // File doesn't exist, return empty history
+                this.panel.webview.postMessage({
+                    command: 'historyLoaded',
+                    history: []
+                });
+            }
+        } catch (error) {
+            console.error('Error loading search history:', error);
+            this.panel.webview.postMessage({
+                command: 'historyLoaded',
+                history: []
+            });
+        }
+    }
+
+    private async handleSaveHistory(filePath: string, history: string[]) {
+        try {
+            // Ensure the directory exists
+            const dir = path.dirname(filePath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            
+            fs.writeFileSync(filePath, JSON.stringify(history, null, 2), 'utf8');
+        } catch (error) {
+            console.error('Error saving search history:', error);
+        }
     }
 
     private updateResults() {

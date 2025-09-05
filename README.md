@@ -30,6 +30,23 @@ Search across all files in your workspace with blazing-fast performance.
 
 Fuzzy search for files in your workspace. Find files by name with intelligent matching and see file metadata in the context panel.
 
+## ⏳ Search History
+
+QuickFind automatically saves your search history for text searches, making it easy to reuse previous search queries.
+
+### Features:
+- **Automatic History**: Every search is automatically saved to your search history
+- **Smart Defaults**: When opening text search, the most recent search is pre-filled and selected
+- **Easy Navigation**: Use configurable keyboard shortcuts to browse through your search history
+- **Persistent Storage**: Search history is saved to `/tmp/vscode-quickfind-text-search-history.json`
+- **Limited Size**: History is automatically limited to 50 entries to keep it manageable
+
+### History Navigation:
+- **Previous Search**: `Ctrl+Up` (Windows/Linux) / `Cmd+Up` (macOS) - Navigate to older searches
+- **Next Search**: `Ctrl+Down` (Windows/Linux) / `Cmd+Down` (macOS) - Navigate to newer searches or clear input
+
+> **Note**: History navigation keybindings are configurable (see Customizing Keyboard Shortcuts below).
+
 ## Configuration
 
 ### Context Size
@@ -60,6 +77,8 @@ You can customize the keyboard shortcuts for this extension:
 - `QuickFind: Search in Current File` (default: `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T`)
 - `QuickFind: Search in Current Folder` (default: `Ctrl+K Ctrl+G` / `Cmd+K Cmd+G`)
 - `QuickFind: Search Files` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
+- `QuickFind: Previous Search History` (default: `Ctrl+Up` / `Cmd+Up`)
+- `QuickFind: Next Search History` (default: `Ctrl+Down` / `Cmd+Down`)
 
 ---
 

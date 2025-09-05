@@ -52,6 +52,14 @@
       {
         "command": "quickFind.searchFiles",
         "title": "QuickFind: Search Files"
+      },
+      {
+        "command": "quickFind.historyPrevious",
+        "title": "QuickFind: Previous Search History"
+      },
+      {
+        "command": "quickFind.historyNext",
+        "title": "QuickFind: Next Search History"
       }
     ],
     "keybindings": [
@@ -69,6 +77,18 @@
         "command": "quickFind.searchFiles",
         "key": "ctrl+k ctrl+f",
         "mac": "cmd+k cmd+f"
+      },
+      {
+        "command": "quickFind.historyPrevious",
+        "key": "ctrl+up",
+        "mac": "cmd+up",
+        "when": "quickFindFocused"
+      },
+      {
+        "command": "quickFind.historyNext",
+        "key": "ctrl+down",
+        "mac": "cmd+down",
+        "when": "quickFindFocused"
       }
     ],
     "configuration": {
