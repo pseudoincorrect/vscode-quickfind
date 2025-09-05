@@ -7,6 +7,8 @@
 A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope. 
 Provides powerful text search and file search capabilities with a clean split-pane interface.
 
+QuickFind creates dedicated webview panels that provide a more user-friendly and immersive search experience with better context visualization, rather than using modal dialogs or terminal panels.
+
 ## Preview
 
 ![QuickFind Demo](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
@@ -37,15 +39,9 @@ QuickFind provides convenient toggle buttons for advanced search options in text
 ### Features:
 - **Case-Sensitive Search**: Toggle the `Aa` button to enable/disable case-sensitive matching
 - **Whole-Word Search**: Toggle the `W` button to match only complete words
-- **Persistent Settings**: Your toggle preferences are automatically saved and remembered across sessions
+- **Persistent Settings**: Your toggle preferences are automatically saved (in `/tmp/vscode-quickfind-config.json`) and remembered across sessions
 - **Real-time Updates**: Changes apply immediately to your current search
 - **Visual Feedback**: Inactive buttons appear muted, active buttons are highlighted with full color and green border
-
-### Usage:
-- Click the `Aa` button to toggle case-sensitive search on/off
-- Click the `W` button to toggle whole-word search on/off
-- Both options start disabled by default
-- Settings are stored in `/tmp/vscode-quickfind-config.json`
 
 ## ⏳ Search History
 
@@ -64,8 +60,6 @@ QuickFind automatically saves your search history for text searches, making it e
 
 ### History Management:
 - **Clear History**: Use Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for "QuickFind: Clear Search History" to remove all saved search history
-
-> **Note**: History navigation keybindings are configurable (see Customizing Keyboard Shortcuts below).
 
 ## Configuration
 

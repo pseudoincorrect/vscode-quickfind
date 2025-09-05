@@ -5,7 +5,7 @@
 
 - [X] **Case sensitive toggle** - Button in search UI for case-sensitive matching
 - [X] **Whole word match** - Option to match complete words only (`\b` boundaries)
-- [ ] **Search result count** - Display "X results in Y files" in status/header
+- [X] **Search result count** - Display "X results in Y files" in status/header
 - [X] **Search history** - Dropdown with last 20 searches, persist across sessions
   - Auto-select last search on panel open
   - Clear history option
@@ -13,8 +13,7 @@
 ## 🎨 Phase 2: Customization
 *Better user control*
 
-- [ ] **Accent color config** - Theme matching for highlights
-- [ ] **Debounce time config** - Adjustable search-as-you-type delay (default: 300ms)
+- [X] **Accent color config** - Theme matching for highlights
 - [ ] **Include/exclude patterns UI** - Visual pattern builder
   - Quick toggles for common exclusions (node_modules, .git, etc.)
   - Save pattern presets
@@ -36,9 +35,6 @@
   - Fuzzy match on symbol names
   - Group by symbol type
 - [ ] **Symbol filtering config** - Whitelist/blacklist symbol types
-- [ ] **Search profiles** - Save search configurations
-  - Pattern + includes/excludes + options
-  - Quick switch between profiles
 
 ## 🔀 Phase 5: Layout Options
 *Flexible viewing preferences*
