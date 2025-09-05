@@ -1,9 +1,17 @@
+/**
+ * Webview panel for displaying and managing text search results.
+ * Handles the UI, user interactions, and communication between webview and extension.
+ */
+
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SearchService, SearchResult } from './textSearchService';
 import { setActiveQuickFindPanel } from '../extension';
 
+/**
+ * Manages the webview panel for text search with results display and navigation.
+ */
 export class SearchWebviewPanel {
     private panel: vscode.WebviewPanel;
     private disposables: vscode.Disposable[] = [];
@@ -11,6 +19,9 @@ export class SearchWebviewPanel {
     private currentSearchQuery: string = '';
     private isInitialized: boolean = false;
 
+    /**
+     * Creates a new search webview panel with specified configuration.
+     */
     constructor(
         private context: vscode.ExtensionContext,
         private initialResults: SearchResult[],
@@ -66,6 +77,9 @@ export class SearchWebviewPanel {
         }, 200);
     }
 
+    /**
+     * Disposes the panel and cleans up resources.
+     */
     dispose() {
         // Unregister this panel as the active QuickFind panel
         setActiveQuickFindPanel(null);
@@ -79,6 +93,9 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Sets up event handlers for webview and VSCode interactions.
+     */
     private setupEventHandlers() {
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
@@ -163,6 +180,10 @@ export class SearchWebviewPanel {
         );
     }
 
+    /**
+     * Handles search requests from the webview.
+     * @param query - Search query/pattern from the webview input
+     */
     private async handleSearch(query: string) {
         try {
             this.currentSearchQuery = query;
@@ -176,6 +197,10 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Loads additional context for a specific search result.
+     * @param index - Index of the result in the filtered results array
+     */
     private async handleLoadContext(index: number) {
         try {
             if (index >= 0 && index < this.filteredResults.length) {
@@ -193,6 +218,10 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Handles selection of a search result.
+     * @param index - Index of the selected result
+     */
     private handleSelect(index: number) {
         if (index >= 0 && index < this.filteredResults.length) {
             const result = this.filteredResults[index];
@@ -200,10 +229,17 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Handles panel cancellation.
+     */
     private handleCancel() {
         this.onCancel();
     }
 
+    /**
+     * Loads search history from file.
+     * @param filePath - Path to the history file to load
+     */
     private async handleLoadHistory(filePath: string) {
         try {
             if (fs.existsSync(filePath)) {
@@ -229,6 +265,11 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Saves search history to file.
+     * @param filePath - Path to save the history file
+     * @param history - Array of search history strings
+     */
     private async handleSaveHistory(filePath: string, history: string[]) {
         try {
             // Ensure the directory exists
@@ -243,6 +284,9 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Loads current search configuration.
+     */
     private async handleLoadConfig() {
         try {
             const config = this.searchService.getSearchConfig();
@@ -255,6 +299,10 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Updates search configuration.
+     * @param configUpdates - Configuration updates from webview
+     */
     private async handleUpdateConfig(configUpdates: any) {
         try {
             this.searchService.updateSearchConfig(configUpdates);
@@ -263,6 +311,9 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Clears search history.
+     */
     private async handleClearHistory() {
         try {
             const HISTORY_FILE = '/tmp/vscode-quickfind-text-search-history.json';
@@ -277,6 +328,9 @@ export class SearchWebviewPanel {
         }
     }
 
+    /**
+     * Updates the webview with current search results.
+     */
     private updateResults() {
         // Get workspace folder for relative path calculation
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -292,6 +346,9 @@ export class SearchWebviewPanel {
         });
     }
 
+    /**
+     * Calculates optimal height for context panel based on configuration.
+     */
     private calculateContextPanelHeight(): number {
         const contextSize = this.searchService.getContextSize();
         // Base height (padding, borders, etc.) + lines
@@ -312,6 +369,9 @@ export class SearchWebviewPanel {
         return Math.min(Math.max(desiredHeight, 80), maxScreenHeightPercent);
     }
 
+    /**
+     * Generates the HTML content for the webview.
+     */
     private getWebviewContent(): string {
         // Get URIs for the webview resources
         const htmlPath = path.join(this.context.extensionPath, 'src', 'text-search', 'text-search-webview', 'textSearch.html');

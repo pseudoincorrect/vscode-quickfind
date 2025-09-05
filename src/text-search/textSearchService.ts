@@ -1,3 +1,8 @@
+/**
+ * Core text search service providing file content searching with regex support.
+ * Handles file discovery, pattern matching, and context loading for search results.
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -21,6 +26,9 @@ interface SearchOptions {
     excludePatterns: string[];
 }
 
+/**
+ * Service for performing text searches in files and folders with configurable options.
+ */
 export class SearchService {
     private contextSize: number = 3;
     private configService: ConfigService;
@@ -43,16 +51,26 @@ export class SearchService {
         ]
     };
 
+    /**
+     * Creates a new SearchService instance with default configuration.
+     */
     constructor() {
         this.configService = new ConfigService();
         this.refreshConfiguration();
     }
 
+    /**
+     * Updates context size from VSCode configuration.
+     */
     private updateContextSize(): void {
         const config = vscode.workspace.getConfiguration('quickFind');
         this.contextSize = config.get<number>('contextSize', 3);
     }
 
+    /**
+     * Parses file size string (e.g., '1MB') into bytes.
+     * @param sizeStr - File size string like '1MB', '500KB'
+     */
     private parseFileSize(sizeStr: string): number {
         const units: { [key: string]: number } = {
             'B': 1,
@@ -72,6 +90,9 @@ export class SearchService {
         return Math.floor(value * units[unit]);
     }
 
+    /**
+     * Updates service configuration from VSCode settings.
+     */
     private updateConfiguration(): void {
         const config = vscode.workspace.getConfiguration('quickFind');
         
@@ -86,22 +107,40 @@ export class SearchService {
         this.defaultOptions.maxResults = config.get<number>('maxResults', 1000);
     }
 
+    /**
+     * Refreshes configuration from VSCode settings.
+     */
     public refreshConfiguration(): void {
         this.updateConfiguration();
     }
 
+    /**
+     * Gets the current context size setting.
+     */
     public getContextSize(): number {
         return this.contextSize;
     }
 
+    /**
+     * Gets the current search configuration.
+     */
     public getSearchConfig(): TextSearchConfig {
         return this.configService.getTextSearchConfig();
     }
 
+    /**
+     * Updates search configuration with partial updates.
+     * @param updates - Partial configuration object with properties to update
+     */
     public updateSearchConfig(updates: Partial<TextSearchConfig>): void {
         this.configService.updateTextSearchConfig(updates);
     }
 
+    /**
+     * Searches for a pattern within a single file.
+     * @param filePath - Absolute path to the file to search
+     * @param pattern - Regex pattern or literal string to search for
+     */
     async searchInFile(filePath: string, pattern: string): Promise<SearchResult[]> {
         try {
             // Check file size first
@@ -121,6 +160,11 @@ export class SearchService {
         }
     }
 
+    /**
+     * Searches for a pattern across all files in a folder.
+     * @param folderPath - Absolute path to the folder to search
+     * @param pattern - Regex pattern or literal string to search for
+     */
     async searchInFolder(folderPath: string, pattern: string): Promise<SearchResult[]> {
         try {
             const files = await this.discoverFiles(folderPath);
@@ -151,6 +195,12 @@ export class SearchService {
         }
     }
 
+    /**
+     * Performs search with query on specified path (file or folder).
+     * @param searchPath - Path to search in (file or folder)
+     * @param query - Search query/pattern
+     * @param isFile - Whether the searchPath is a file (true) or folder (false)
+     */
     async searchWithQuery(searchPath: string, query: string, isFile: boolean = false): Promise<SearchResult[]> {
         if (!query.trim()) {
             return [];
@@ -163,6 +213,10 @@ export class SearchService {
         }
     }
 
+    /**
+     * Loads additional context lines around a search result.
+     * @param result - Search result to load context for
+     */
     async loadContextForResult(result: SearchResult): Promise<SearchResult> {
         if (result.context.length > 1) {
             return result; // Already loaded
@@ -175,10 +229,17 @@ export class SearchService {
         };
     }
 
+    /**
+     * Returns information about the search service.
+     */
     public getServiceInfo(): { service: string; version?: string } {
         return { service: 'native' };
     }
 
+    /**
+     * Discovers searchable files in a directory tree.
+     * @param basePath - Root directory path to start discovery from
+     */
     private async discoverFiles(basePath: string): Promise<string[]> {
         try {
             const files: string[] = [];
@@ -195,6 +256,14 @@ export class SearchService {
         }
     }
 
+    /**
+     * Recursively walks directory tree to find text files.
+     * @param currentPath - Current directory being processed
+     * @param basePath - Original root directory path
+     * @param files - Array to accumulate found file paths
+     * @param ignorePatterns - Patterns to ignore during traversal
+     * @param depth - Current recursion depth
+     */
     private async walkDirectory(
         currentPath: string, 
         basePath: string, 
@@ -243,6 +312,10 @@ export class SearchService {
         }
     }
 
+    /**
+     * Loads ignore patterns from .gitignore and default excludes.
+     * @param basePath - Directory path to look for .gitignore file
+     */
     private async loadIgnorePatterns(basePath: string): Promise<string[]> {
         const patterns = [...this.defaultOptions.excludePatterns];
         
@@ -261,6 +334,11 @@ export class SearchService {
         return patterns;
     }
 
+    /**
+     * Determines if a path should be ignored based on patterns.
+     * @param relativePath - Relative path to check
+     * @param ignorePatterns - Array of glob patterns to match against
+     */
     private shouldIgnore(relativePath: string, ignorePatterns: string[]): boolean {
         const normalizedPath = relativePath.replace(/\\/g, '/');
         
@@ -276,6 +354,11 @@ export class SearchService {
         return false;
     }
 
+    /**
+     * Matches a path against a glob pattern.
+     * @param path - Path to test
+     * @param pattern - Glob pattern to match against
+     */
     private matchesPattern(path: string, pattern: string): boolean {
         // Simple pattern matching - basic implementation
         if (pattern.endsWith('/**')) {
@@ -301,6 +384,10 @@ export class SearchService {
         return path === pattern || path.startsWith(pattern + '/');
     }
 
+    /**
+     * Determines if a file is a searchable text file.
+     * @param filename - Name of the file to check
+     */
     private isTextFile(filename: string): boolean {
         const textExtensions = [
             '.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.scss', '.json', '.md', '.txt',
@@ -312,6 +399,12 @@ export class SearchService {
         return textExtensions.includes(ext);
     }
 
+    /**
+     * Searches for pattern within file content using regex.
+     * @param content - File content to search in
+     * @param pattern - Regex pattern to search for
+     * @param filePath - Path of the file being searched (for results)
+     */
     private async searchInContent(content: string, pattern: string, filePath: string): Promise<SearchResult[]> {
         const results: SearchResult[] = [];
         const lines = content.split('\n');
@@ -369,6 +462,12 @@ export class SearchService {
         return results;
     }
 
+    /**
+     * Performs literal string search as fallback for invalid regex.
+     * @param content - File content to search in
+     * @param searchTerm - Literal string to search for
+     * @param filePath - Path of the file being searched (for results)
+     */
     private searchLiteral(content: string, searchTerm: string, filePath: string): SearchResult[] {
         const results: SearchResult[] = [];
         const lines = content.split('\n');
@@ -428,6 +527,11 @@ export class SearchService {
         return results;
     }
 
+    /**
+     * Reads context lines around a target line in a file.
+     * @param filePath - Path to the file to read from
+     * @param targetLine - Line number to read context around (1-based)
+     */
     private async readContextLines(filePath: string, targetLine: number): Promise<string[]> {
         try {
             const content = await fs.promises.readFile(filePath, 'utf8');

@@ -1,3 +1,8 @@
+/**
+ * Configuration service for managing persistent QuickFind settings.
+ * Handles case-sensitive and whole-word search options stored in temp file.
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
@@ -11,15 +16,24 @@ export interface QuickFindConfig {
     'text-search': TextSearchConfig;
 }
 
+/**
+ * Service for managing QuickFind configuration with persistent storage.
+ */
 export class ConfigService {
     private configPath: string;
     private config: QuickFindConfig;
 
+    /**
+     * Creates a new ConfigService instance and loads existing configuration.
+     */
     constructor() {
         this.configPath = path.join(os.tmpdir(), 'vscode-quickfind-config.json');
         this.config = this.loadConfig();
     }
 
+    /**
+     * Returns the default configuration values.
+     */
     private getDefaultConfig(): QuickFindConfig {
         return {
             'text-search': {
@@ -29,6 +43,9 @@ export class ConfigService {
         };
     }
 
+    /**
+     * Loads configuration from file, falling back to defaults.
+     */
     private loadConfig(): QuickFindConfig {
         try {
             if (fs.existsSync(this.configPath)) {
@@ -52,6 +69,9 @@ export class ConfigService {
         return this.getDefaultConfig();
     }
 
+    /**
+     * Saves current configuration to file.
+     */
     private saveConfig(): void {
         try {
             // Ensure the directory exists
@@ -66,10 +86,17 @@ export class ConfigService {
         }
     }
 
+    /**
+     * Gets the current text search configuration.
+     */
     public getTextSearchConfig(): TextSearchConfig {
         return this.config['text-search'];
     }
 
+    /**
+     * Updates text search configuration with partial updates.
+     * @param updates - Partial configuration object with properties to update
+     */
     public updateTextSearchConfig(updates: Partial<TextSearchConfig>): void {
         this.config['text-search'] = {
             ...this.config['text-search'],
@@ -78,10 +105,18 @@ export class ConfigService {
         this.saveConfig();
     }
 
+    /**
+     * Sets case-sensitive search option.
+     * @param caseSensitive - Whether to enable case-sensitive searching
+     */
     public setCaseSensitive(caseSensitive: boolean): void {
         this.updateTextSearchConfig({ 'case-sensitive': caseSensitive });
     }
 
+    /**
+     * Sets whole-word search option.
+     * @param wholeWord - Whether to enable whole-word matching
+     */
     public setWholeWord(wholeWord: boolean): void {
         this.updateTextSearchConfig({ 'whole-word': wholeWord });
     }

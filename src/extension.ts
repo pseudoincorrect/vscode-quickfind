@@ -1,3 +1,8 @@
+/**
+ * Main extension entry point for QuickFind VSCode extension.
+ * Provides fast text and file search with webview panels and history tracking.
+ */
+
 import * as vscode from 'vscode';
 import { RegexSearchProvider } from './text-search/textSearchProvider';
 import { FileSearchProvider } from './file-search/fileSearchProvider';
@@ -5,6 +10,10 @@ import { FileSearchProvider } from './file-search/fileSearchProvider';
 // Global variable to track the active QuickFind webview
 let activeQuickFindPanel: vscode.WebviewPanel | null = null;
 
+/**
+ * Sets the currently active QuickFind panel and updates VSCode context.
+ * @param panel - The webview panel to set as active, or null to clear
+ */
 export function setActiveQuickFindPanel(panel: vscode.WebviewPanel | null) {
     activeQuickFindPanel = panel;
     
@@ -12,6 +21,10 @@ export function setActiveQuickFindPanel(panel: vscode.WebviewPanel | null) {
     vscode.commands.executeCommand('setContext', 'quickFindFocused', panel !== null);
 }
 
+/**
+ * Activates the extension and registers all commands and providers.
+ * @param context - VSCode extension context for subscriptions and resources
+ */
 export function activate(context: vscode.ExtensionContext) {
     const regexSearchProvider = new RegexSearchProvider(context);
     const fileSearchProvider = new FileSearchProvider(context);
@@ -74,6 +87,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(clearHistoryCommand);
 }
 
+/**
+ * Deactivates the extension and performs cleanup.
+ */
 export function deactivate() {
     // Cleanup logic if needed
 }

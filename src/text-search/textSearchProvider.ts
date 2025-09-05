@@ -1,8 +1,16 @@
+/**
+ * Main provider for text search functionality within files and folders.
+ * Manages webview panels, search operations, and navigation to results.
+ */
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { SearchService, SearchResult } from './textSearchService';
 import { SearchWebviewPanel } from './textSearchWebviewPanel';
 
+/**
+ * Provides text search functionality with regex support.
+ */
 export class RegexSearchProvider {
     private searchService: SearchService;
     private currentWebviewPanel: SearchWebviewPanel | undefined;
@@ -10,6 +18,10 @@ export class RegexSearchProvider {
     private initialResults: SearchResult[] = [];
     private currentSearchPath: string | undefined;
 
+    /**
+     * Creates a new RegexSearchProvider instance.
+     * @param context - VSCode extension context for subscriptions and resources
+     */
     constructor(private context: vscode.ExtensionContext) {
         this.searchService = new SearchService();
         
@@ -22,6 +34,9 @@ export class RegexSearchProvider {
         this.context.subscriptions.push(configChangeListener);
     }
 
+    /**
+     * Initiates search within the currently active file.
+     */
     async searchInCurrentFile() {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
@@ -39,6 +54,9 @@ export class RegexSearchProvider {
         }
     }
 
+    /**
+     * Initiates search within the current workspace folder.
+     */
     async searchInCurrentFolder() {
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
         if (!workspaceFolder) {
@@ -56,6 +74,11 @@ export class RegexSearchProvider {
         }
     }
 
+    /**
+     * Shows the search webview panel with initial results.
+     * @param results - Initial search results to display
+     * @param searchType - Whether searching in 'file' or 'folder'
+     */
     private showSearchWebview(results: SearchResult[], searchType: 'file' | 'folder') {
         if (this.currentWebviewPanel) {
             this.currentWebviewPanel.dispose();
@@ -78,6 +101,11 @@ export class RegexSearchProvider {
         );
     }
 
+    /**
+     * Performs the actual search operation based on query and type.
+     * @param query - Search pattern/regex to match
+     * @param searchType - Whether searching in 'file' or 'folder'
+     */
     private async performSearch(query: string, searchType: 'file' | 'folder'): Promise<SearchResult[]> {
         if (!query.trim()) {
             return this.initialResults;
@@ -101,10 +129,18 @@ export class RegexSearchProvider {
         }
     }
 
+    /**
+     * Loads additional context lines around a search result.
+     * @param result - Search result to load context for
+     */
     private async loadContextForResult(result: SearchResult): Promise<SearchResult> {
         return await this.searchService.loadContextForResult(result);
     }
 
+    /**
+     * Navigates to a specific search result in the editor.
+     * @param result - Search result to navigate to
+     */
     private async navigateToResult(result: SearchResult) {
         try {
             // First, dispose the webview panel to ensure focus returns to the editor
@@ -128,6 +164,9 @@ export class RegexSearchProvider {
         }
     }
 
+    /**
+     * Returns focus to the original editor and closes webview.
+     */
     private returnToOriginalEditor() {
         if (this.originalEditor) {
             vscode.window.showTextDocument(this.originalEditor.document);

@@ -1,3 +1,8 @@
+/**
+ * File search service providing fuzzy file matching using Fuse.js.
+ * Handles file discovery, filtering, and search result ranking.
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -21,6 +26,9 @@ interface SearchOptions {
     includeDirectories: boolean;
 }
 
+/**
+ * Service for fuzzy file searching with configurable options.
+ */
 export class FileSearchService {
     private static readonly CONTEXT_MULTIPLIER = 3;
     
@@ -57,10 +65,16 @@ export class FileSearchService {
         distance: 100
     };
 
+    /**
+     * Creates a new FileSearchService instance with default configuration.
+     */
     constructor() {
         this.refreshConfiguration();
     }
 
+    /**
+     * Updates service configuration from VSCode settings.
+     */
     private updateConfiguration(): void {
         const config = vscode.workspace.getConfiguration('quickFind');
         
@@ -68,10 +82,18 @@ export class FileSearchService {
         this.defaultOptions.maxResults = config.get<number>('maxResults', 500);
     }
 
+    /**
+     * Refreshes configuration from VSCode settings.
+     */
     public refreshConfiguration(): void {
         this.updateConfiguration();
     }
 
+    /**
+     * Searches for files matching the query using fuzzy matching.
+     * @param folderPath - Root folder path to search in
+     * @param query - Search query for fuzzy file name matching
+     */
     async searchFiles(folderPath: string, query: string = ''): Promise<FileSearchResult[]> {
         try {
             // First, discover all files
@@ -96,6 +118,11 @@ export class FileSearchService {
         }
     }
 
+    /**
+     * Gets file content preview for context display.
+     * @param filePath - Path to the file to preview
+     * @param contextSize - Number of lines to include in preview
+     */
     async getFileContext(filePath: string, contextSize: number): Promise<string[]> {
         try {
             const content = await fs.promises.readFile(filePath, 'utf8');
@@ -108,6 +135,10 @@ export class FileSearchService {
         }
     }
 
+    /**
+     * Formats file size in human-readable format.
+     * @param bytes - File size in bytes
+     */
     private formatFileSize(bytes: number): string {
         if (bytes === 0) return '0 B';
         const k = 1024;
@@ -116,6 +147,10 @@ export class FileSearchService {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     }
 
+    /**
+     * Discovers all searchable files in a directory tree.
+     * @param basePath - Root directory path to start discovery from
+     */
     private async discoverFiles(basePath: string): Promise<FileSearchResult[]> {
         try {
             const files: FileSearchResult[] = [];
@@ -133,6 +168,14 @@ export class FileSearchService {
         }
     }
 
+    /**
+     * Recursively walks directory tree to find files.
+     * @param currentPath - Current directory being processed
+     * @param basePath - Original root directory path
+     * @param files - Array to accumulate found files
+     * @param ignorePatterns - Patterns to ignore during traversal
+     * @param depth - Current recursion depth
+     */
     private async walkDirectory(
         currentPath: string, 
         basePath: string, 
@@ -201,6 +244,10 @@ export class FileSearchService {
         }
     }
 
+    /**
+     * Loads ignore patterns from .gitignore and default excludes.
+     * @param basePath - Directory path to look for .gitignore file
+     */
     private async loadIgnorePatterns(basePath: string): Promise<string[]> {
         const patterns = [...this.defaultOptions.excludePatterns];
         
@@ -219,6 +266,11 @@ export class FileSearchService {
         return patterns;
     }
 
+    /**
+     * Determines if a path should be ignored based on patterns.
+     * @param relativePath - Relative path to check
+     * @param ignorePatterns - Array of glob patterns to match against
+     */
     private shouldIgnore(relativePath: string, ignorePatterns: string[]): boolean {
         const normalizedPath = relativePath.replace(/\\/g, '/');
         
@@ -233,6 +285,11 @@ export class FileSearchService {
         return false;
     }
 
+    /**
+     * Matches a path against a glob pattern.
+     * @param path - Path to test
+     * @param pattern - Glob pattern to match against
+     */
     private matchesPattern(path: string, pattern: string): boolean {
         // Simple pattern matching - basic implementation
         if (pattern.endsWith('/**')) {

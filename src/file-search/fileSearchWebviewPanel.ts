@@ -1,8 +1,16 @@
+/**
+ * Webview panel for displaying and managing file search results.
+ * Provides UI for fuzzy file searching and navigation with file previews.
+ */
+
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { FileSearchService, FileSearchResult } from './fileSearchService';
 
+/**
+ * Manages the webview panel for file search with fuzzy matching.
+ */
 export class FileSearchWebviewPanel {
     private panel: vscode.WebviewPanel;
     private disposables: vscode.Disposable[] = [];
@@ -10,6 +18,9 @@ export class FileSearchWebviewPanel {
     private currentSearchQuery: string = '';
     private isInitialized: boolean = false;
 
+    /**
+     * Creates a new file search webview panel.
+     */
     constructor(
         private context: vscode.ExtensionContext,
         private initialResults: FileSearchResult[],
@@ -60,6 +71,9 @@ export class FileSearchWebviewPanel {
         }, 200);
     }
 
+    /**
+     * Disposes the panel and cleans up resources.
+     */
     dispose() {
         this.panel.dispose();
         while (this.disposables.length) {
@@ -70,6 +84,9 @@ export class FileSearchWebviewPanel {
         }
     }
 
+    /**
+     * Sets up event handlers for webview interactions.
+     */
     private setupEventHandlers() {
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
@@ -133,6 +150,10 @@ export class FileSearchWebviewPanel {
         );
     }
 
+    /**
+     * Handles file search requests from webview.
+     * @param query - File search query for fuzzy matching
+     */
     private async handleSearch(query: string) {
         try {
             this.currentSearchQuery = query;
@@ -146,6 +167,10 @@ export class FileSearchWebviewPanel {
         }
     }
 
+    /**
+     * Loads context preview for a file result.
+     * @param index - Index of the file result to load context for
+     */
     private async handleLoadContext(index: number) {
         try {
             if (index >= 0 && index < this.filteredResults.length) {
@@ -162,6 +187,10 @@ export class FileSearchWebviewPanel {
         }
     }
 
+    /**
+     * Handles selection of a file result.
+     * @param index - Index of the selected file result
+     */
     private handleSelect(index: number) {
         if (index >= 0 && index < this.filteredResults.length) {
             const result = this.filteredResults[index];
@@ -169,10 +198,16 @@ export class FileSearchWebviewPanel {
         }
     }
 
+    /**
+     * Handles panel cancellation.
+     */
     private handleCancel() {
         this.onCancel();
     }
 
+    /**
+     * Updates the webview with current search results.
+     */
     private updateResults() {
         // Get workspace folder for relative path calculation
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -186,6 +221,9 @@ export class FileSearchWebviewPanel {
         });
     }
 
+    /**
+     * Generates HTML content for the file search webview.
+     */
     private getWebviewContent(): string {
         // Get URIs for the webview resources
         const htmlPath = path.join(this.context.extensionPath, 'src', 'file-search', 'file-search-webview', 'fileSearch.html');
@@ -227,6 +265,9 @@ export class FileSearchWebviewPanel {
         return htmlContent;
     }
 
+    /**
+     * Calculates optimal height for file preview panel.
+     */
     private calculateContextPanelHeight(): number {
         const config = vscode.workspace.getConfiguration('quickFind');
         const contextSize = config.get<number>('contextSize', 5);
