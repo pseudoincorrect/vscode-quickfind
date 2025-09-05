@@ -45,11 +45,33 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    // Register command for clearing search history
+    const clearHistoryCommand = vscode.commands.registerCommand('quickFind.clearHistory', async () => {
+        try {
+            const fs = require('fs');
+            const HISTORY_FILE = '/tmp/vscode-quickfind-text-search-history.json';
+            
+            // Clear the history file directly
+            fs.writeFileSync(HISTORY_FILE, JSON.stringify([], null, 2), 'utf8');
+            
+            // If there's an active panel, also clear its in-memory history
+            if (activeQuickFindPanel) {
+                activeQuickFindPanel.webview.postMessage({ command: 'historyCleared' });
+            }
+            
+            vscode.window.showInformationMessage('Search history cleared successfully');
+        } catch (error) {
+            console.error('Error clearing search history:', error);
+            vscode.window.showErrorMessage('Failed to clear search history');
+        }
+    });
+
     context.subscriptions.push(searchInFileCommand);
     context.subscriptions.push(searchInFolderCommand);
     context.subscriptions.push(searchFilesCommand);
     context.subscriptions.push(historyPreviousCommand);
     context.subscriptions.push(historyNextCommand);
+    context.subscriptions.push(clearHistoryCommand);
 }
 
 export function deactivate() {

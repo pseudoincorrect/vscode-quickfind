@@ -153,22 +153,47 @@ searchInput.addEventListener('input', (e) => {
 
 // History navigation functions
 function navigateToPreviousHistory() {
-    if (searchHistory.length > 0 && historyIndex < searchHistory.length - 1) {
+    if (searchHistory.length === 0) return;
+    
+    // If we're at the beginning of history navigation and current input matches the most recent history
+    if (historyIndex === -1 && searchInput.value.trim() === searchHistory[0]) {
+        // Skip the first item (current search) and go to the second item if it exists
+        if (searchHistory.length > 1) {
+            historyIndex = 1;
+            searchInput.value = searchHistory[historyIndex];
+            searchInput.select();
+            // Trigger search with the history item
+            vscode.postMessage({ command: 'search', query: searchHistory[historyIndex] });
+        }
+    } else if (historyIndex < searchHistory.length - 1) {
         historyIndex++;
         searchInput.value = searchHistory[historyIndex];
         searchInput.select();
+        // Trigger search with the history item
+        vscode.postMessage({ command: 'search', query: searchHistory[historyIndex] });
     }
 }
 
 function navigateToNextHistory() {
-    if (historyIndex > 0) {
+    if (historyIndex > 1) {
         historyIndex--;
         searchInput.value = searchHistory[historyIndex];
         searchInput.select();
+        // Trigger search with the history item
+        vscode.postMessage({ command: 'search', query: searchHistory[historyIndex] });
+    } else if (historyIndex === 1) {
+        // Go back to the most recent search (index 0)
+        historyIndex = 0;
+        searchInput.value = searchHistory[historyIndex];
+        searchInput.select();
+        // Trigger search with the history item
+        vscode.postMessage({ command: 'search', query: searchHistory[historyIndex] });
     } else if (historyIndex === 0) {
         historyIndex = -1;
         searchInput.value = '';
         searchInput.focus();
+        // Clear search results when going to empty search
+        vscode.postMessage({ command: 'search', query: '' });
     }
 }
 
@@ -239,6 +264,8 @@ window.addEventListener('message', event => {
         if (searchHistory.length > 0 && !searchInput.value) {
             searchInput.value = searchHistory[0];
             searchInput.select();
+            // Trigger search with the last history item
+            vscode.postMessage({ command: 'search', query: searchHistory[0] });
         }
     } else if (message.command === 'historyPrevious') {
         navigateToPreviousHistory();
@@ -251,6 +278,15 @@ window.addEventListener('message', event => {
         searchConfig.caseSensitive = !(config['case-sensitive'] || false);
         searchConfig.wholeWord = config['whole-word'] || false;
         updateToggleButtons();
+    } else if (message.command === 'historyCleared') {
+        // Handle history clearing
+        searchHistory = [];
+        historyIndex = -1;
+        // Clear the search input if it was showing a history item
+        searchInput.value = '';
+        searchInput.focus();
+        // Clear search results
+        vscode.postMessage({ command: 'search', query: '' });
     }
 });
 

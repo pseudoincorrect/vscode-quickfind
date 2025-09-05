@@ -153,6 +153,9 @@ export class SearchWebviewPanel {
                     case 'updateConfig':
                         this.handleUpdateConfig(message.config);
                         break;
+                    case 'clearHistory':
+                        this.handleClearHistory();
+                        break;
                 }
             },
             null,
@@ -257,6 +260,20 @@ export class SearchWebviewPanel {
             this.searchService.updateSearchConfig(configUpdates);
         } catch (error) {
             console.error('Error updating search config:', error);
+        }
+    }
+
+    private async handleClearHistory() {
+        try {
+            const HISTORY_FILE = '/tmp/vscode-quickfind-text-search-history.json';
+            // Clear the history by writing an empty array
+            await this.handleSaveHistory(HISTORY_FILE, []);
+            // Notify the webview to clear its local history
+            this.panel.webview.postMessage({
+                command: 'historyCleared'
+            });
+        } catch (error) {
+            console.error('Error clearing search history:', error);
         }
     }
 

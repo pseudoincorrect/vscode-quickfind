@@ -62,6 +62,9 @@ QuickFind automatically saves your search history for text searches, making it e
 - **Previous Search**: `Ctrl+Up` (Windows/Linux) / `Cmd+Up` (macOS) - Navigate to older searches
 - **Next Search**: `Ctrl+Down` (Windows/Linux) / `Cmd+Down` (macOS) - Navigate to newer searches or clear input
 
+### History Management:
+- **Clear History**: Use Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for "QuickFind: Clear Search History" to remove all saved search history
+
 > **Note**: History navigation keybindings are configurable (see Customizing Keyboard Shortcuts below).
 
 ## Configuration
@@ -96,6 +99,7 @@ You can customize the keyboard shortcuts for this extension:
 - `QuickFind: Search Files` (default: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`)
 - `QuickFind: Previous Search History` (default: `Ctrl+Up` / `Cmd+Up`)
 - `QuickFind: Next Search History` (default: `Ctrl+Down` / `Cmd+Down`)
+- `QuickFind: Clear Search History` (Command Palette only, no default keybinding)
 
 ---
 

@@ -60,6 +60,10 @@
       {
         "command": "quickFind.historyNext",
         "title": "QuickFind: Next Search History"
+      },
+      {
+        "command": "quickFind.clearHistory",
+        "title": "QuickFind: Clear Search History"
       }
     ],
     "keybindings": [

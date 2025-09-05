@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Search history with configurable keyboard navigation (Ctrl+Up/Down)
 - Case-sensitive and whole-word search toggle buttons with persistent configuration
 - Enhanced selected item visual feedback with neon green borders and improved keybinds visibility
+- Result count with limit indicators (shows "100+" when search limits are reached)
+- Clear search history command accessible via Command Palette
+
+### Fixed
+- History navigation now automatically triggers search and skips duplicate current search
 
 ## [0.6.1] - 2024-09-03
 
