@@ -84,6 +84,12 @@ html, body {
     width: 100%;
 }
 
+.search-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .search-input { 
     flex: 1; 
     padding: 6px; 
@@ -191,6 +197,17 @@ html, body {
     text-align: center; 
     color: var(--vscode-descriptionForeground); 
     font-style: italic; 
+}
+
+.result-count {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: right;
+    padding: 2px 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
 }
 
 .search-toggles {

@@ -124,7 +124,7 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "package": "npm run compile && vsce package --out releases/",
-    "package-release": "npm run compile && vsce package --out releases/ && echo 'Extension packaged to releases/ folder'",
+    "release": "npm run compile && vsce package --out releases/ && echo 'Extension packaged to releases/ folder'",
     "install-extension": "npm run package && code --install-extension releases/vscode-quickfind-$(node -p \"require('./package.json').version\").vsix",
     "clean-releases": "node -e \"const fs = require('fs'); const path = require('path'); try { fs.readdirSync('releases').filter(f => f.endsWith('.vsix')).forEach(f => fs.unlinkSync(path.join('releases', f))); } catch(e) { console.log('No .vsix files to clean'); }\""
   },

@@ -3,8 +3,8 @@
 ## 🚀 Phase 1: Essential Search Features
 *Quick wins*
 
-- [ ] **Case sensitive toggle** - Button in search UI for case-sensitive matching
-- [ ] **Whole word match** - Option to match complete words only (`\b` boundaries)
+- [X] **Case sensitive toggle** - Button in search UI for case-sensitive matching
+- [X] **Whole word match** - Option to match complete words only (`\b` boundaries)
 - [ ] **Search result count** - Display "X results in Y files" in status/header
 - [X] **Search history** - Dropdown with last 20 searches, persist across sessions
   - Auto-select last search on panel open

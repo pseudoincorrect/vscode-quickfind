@@ -17,6 +17,7 @@ const MAX_HISTORY_SIZE = 50;
 const searchInput = document.querySelector('.search-input');
 const resultsList = document.getElementById('resultsList');
 const contextPanel = document.getElementById('contextPanel');
+const resultCount = document.getElementById('resultCount');
 
 // Toggle buttons
 const caseSensitiveToggle = document.getElementById('caseSensitiveToggle');
@@ -246,10 +247,28 @@ window.addEventListener('message', event => {
 function loadMoreResults() {
     displayedResults = Math.min(displayedResults + LOAD_MORE_BATCH_SIZE, results.length);
     updateResultsList();
+    updateResultCount();
+}
+
+function updateResultCount() {
+    if (results.length === 0) {
+        resultCount.textContent = '0 results';
+        return;
+    }
+    
+    const total = results.length;
+    const displayed = Math.min(displayedResults, results.length);
+    
+    if (total <= displayed) {
+        resultCount.textContent = `${total} results`;
+    } else {
+        resultCount.textContent = `${displayed}/${total} results`;
+    }
 }
 
 function updateDisplay() {
     updateResultsList();
+    updateResultCount();
     updateContext();
 }
 
