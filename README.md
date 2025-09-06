@@ -7,7 +7,7 @@
 A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope. 
 Provides powerful text search and file search capabilities with a clean split-pane interface.
 
-QuickFind creates dedicated webview panels that provide a more user-friendly and immersive search experience with better context visualization, rather than using modal dialogs or terminal panels.
+QuickFind creates dedicated webview panels that provide a more user-friendly and immersive search experience with better context visualization.
 
 ## Preview
 

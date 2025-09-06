@@ -32,7 +32,7 @@ interface SearchOptions {
 export class SearchService {
     // Layout-aware context sizes
     private static readonly HORIZONTAL_CONTEXT_SIZE = 10;
-    private static readonly VERTICAL_CONTEXT_SIZE = 25;
+    private static readonly VERTICAL_CONTEXT_SIZE = 60;
     
     private configService: ConfigService;
     private defaultOptions: SearchOptions = {

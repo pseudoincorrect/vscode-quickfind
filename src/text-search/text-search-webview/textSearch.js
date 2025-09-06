@@ -18,6 +18,10 @@ let historyIndex = -1;
 const HISTORY_FILE = '/tmp/vscode-quickfind-text-search-history.json';
 const MAX_HISTORY_SIZE = 50;
 
+// Cache for rendered result items to avoid re-rendering
+let renderedResultsCache = new Map();
+let lastRenderedQuery = '';
+
 const searchInput = document.querySelector('.search-input');
 const resultsList = document.getElementById('resultsList');
 const contextPanel = document.getElementById('contextPanel');
@@ -231,6 +235,8 @@ searchInput.addEventListener('keydown', (e) => {
                 // Auto-load more results if we're near the end
                 if (selectedIndex >= displayedResults - 5 && displayedResults < results.length) {
                     displayedResults = Math.min(displayedResults + LOAD_MORE_BATCH_SIZE, results.length);
+                    // Update results list first to ensure the DOM contains the newly loaded items
+                    updateResultsList();
                 }
                 updateSelection();
             }
@@ -255,6 +261,9 @@ window.addEventListener('message', event => {
         maxResults = message.maxResults || 1000;
         selectedIndex = 0;
         displayedResults = INITIAL_BATCH_SIZE; // Reset to initial batch size
+        // Clear cache when new results come in
+        renderedResultsCache.clear();
+        lastRenderedQuery = currentSearchQuery;
         updateDisplay();
     } else if (message.command === 'updateContext') {
         // Handle context update for a specific result
@@ -322,40 +331,80 @@ function updateDisplay() {
 function updateResultsList() {
     if (results.length === 0) {
         resultsList.innerHTML = '<div class="no-results">No results found</div>';
+        renderedResultsCache.clear();
         return;
+    }
+
+    // Clear cache if search query changed
+    if (lastRenderedQuery !== currentSearchQuery) {
+        renderedResultsCache.clear();
+        lastRenderedQuery = currentSearchQuery;
     }
 
     // Limit displayed results for performance
     const resultsToShow = Math.min(displayedResults, results.length);
     const hasMore = results.length > displayedResults;
     
-    let html = results.slice(0, resultsToShow).map((result, index) => {
-        const relativePath = getRelativePath(result.file, workspacePath);
-        const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
+    // Use document fragment for efficient DOM manipulation
+    const fragment = document.createDocumentFragment();
+    
+    for (let index = 0; index < resultsToShow; index++) {
+        const result = results[index];
+        let resultElement;
         
-        // Extract filename and directory path
-        const pathParts = relativePath.split('/');
-        const filename = pathParts.pop();
-        const dirPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
+        // Check if we have a cached version
+        const cacheKey = `${result.file}:${result.line}:${result.text}`;
+        if (renderedResultsCache.has(cacheKey)) {
+            resultElement = renderedResultsCache.get(cacheKey).cloneNode(true);
+        } else {
+            // Create new element
+            resultElement = createResultElement(result, index);
+            // Cache the element (clone to avoid DOM reference issues)
+            renderedResultsCache.set(cacheKey, resultElement.cloneNode(true));
+        }
         
-        return `<div class="result-item ${index === selectedIndex ? 'selected' : ''}" 
-                    onclick="navigateToResult(${index})">
-            <div class="result-text">${highlightedText}</div>
-            <div class="result-file">${dirPath}<span class="filename">${filename}</span> ${result.line}</div>
-        </div>`;
-    }).join('');
+        // Set selection class
+        resultElement.classList.toggle('selected', index === selectedIndex);
+        // Update onclick handler with current index
+        resultElement.onclick = () => navigateToResult(index);
+        
+        fragment.appendChild(resultElement);
+    }
 
     // Add load more button if there are more results
     if (hasMore) {
         const remaining = results.length - displayedResults;
-        html += `<div class="load-more-container">
+        const loadMoreContainer = document.createElement('div');
+        loadMoreContainer.className = 'load-more-container';
+        loadMoreContainer.innerHTML = `
             <button class="load-more-btn" onclick="loadMoreResults()">
                 Load ${Math.min(LOAD_MORE_BATCH_SIZE, remaining)} more results (${remaining} remaining)
             </button>
-        </div>`;
+        `;
+        fragment.appendChild(loadMoreContainer);
     }
 
-    resultsList.innerHTML = html;
+    resultsList.innerHTML = '';
+    resultsList.appendChild(fragment);
+}
+
+function createResultElement(result, index) {
+    const relativePath = getRelativePath(result.file, workspacePath);
+    const highlightedText = highlightSearchTerm(escapeHtml(result.text), currentSearchQuery);
+    
+    // Extract filename and directory path
+    const pathParts = relativePath.split('/');
+    const filename = pathParts.pop();
+    const dirPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
+    
+    const resultElement = document.createElement('div');
+    resultElement.className = 'result-item';
+    resultElement.innerHTML = `
+        <div class="result-text">${highlightedText}</div>
+        <div class="result-file">${dirPath}<span class="filename">${filename}</span> ${result.line}</div>
+    `;
+    
+    return resultElement;
 }
 
 function updateContext() {
@@ -421,7 +470,7 @@ function navigateToResult(index) {
 }
 
 function updateSelection() {
-    updateResultsList();
+    updateSelectionHighlight();
     updateContext();
     
     // Scroll selected item into view
@@ -432,6 +481,20 @@ function updateSelection() {
             block: 'nearest',
             inline: 'nearest'
         });
+    }
+}
+
+function updateSelectionHighlight() {
+    // Remove previous selection
+    const previousSelected = document.querySelector('.result-item.selected');
+    if (previousSelected) {
+        previousSelected.classList.remove('selected');
+    }
+    
+    // Add selection to current item
+    const items = document.querySelectorAll('.result-item');
+    if (items[selectedIndex]) {
+        items[selectedIndex].classList.add('selected');
     }
 }
 

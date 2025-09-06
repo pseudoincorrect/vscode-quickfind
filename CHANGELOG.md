@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2024-09-06
+
+### Added
+- Performance optimization of the search result display
+
 ## [0.8.0] - 2024-09-06
 
 ### Added
