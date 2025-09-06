@@ -2,11 +2,13 @@ const vscode = acquireVsCodeApi();
 let results = [];
 let selectedIndex = 0;
 let searchTimeout = null;
+let contextLoadTimeout = null;
 let currentSearchQuery = '';
 let workspacePath = '';
 let displayedResults = 50; // Initially show only 50 results
 const INITIAL_BATCH_SIZE = 50;
 const LOAD_MORE_BATCH_SIZE = 25;
+const CONTEXT_LOAD_DEBOUNCE_MS = 100;
 
 const searchInput = document.querySelector('.search-input');
 const resultsList = document.getElementById('resultsList');
@@ -153,13 +155,10 @@ function updateContext() {
 
     const result = results[selectedIndex];
     
-    // If context hasn't been loaded yet, request it
+    // If context hasn't been loaded yet, request it with debouncing
     if (!result.context) {
         contextPanel.innerHTML = '<div class="context-loading">Loading file context...</div>';
-        if (!result.contextRequested) {
-            result.contextRequested = true;
-            vscode.postMessage({ command: 'loadContext', index: selectedIndex });
-        }
+        requestContextLoad(selectedIndex);
         return;
     }
 
@@ -175,6 +174,22 @@ function updateContext() {
     });
 
     contextPanel.innerHTML = contextHtml;
+}
+
+function requestContextLoad(index) {
+    // Clear existing timeout to reset the debounce
+    if (contextLoadTimeout) {
+        clearTimeout(contextLoadTimeout);
+    }
+    
+    // Set new timeout for debounced context loading
+    contextLoadTimeout = setTimeout(() => {
+        const result = results[index];
+        if (result && !result.contextRequested) {
+            result.contextRequested = true;
+            vscode.postMessage({ command: 'loadContext', index: index });
+        }
+    }, CONTEXT_LOAD_DEBOUNCE_MS);
 }
 
 function selectResult(index) {

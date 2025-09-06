@@ -25,13 +25,6 @@ export class RegexSearchProvider {
     constructor(private context: vscode.ExtensionContext) {
         this.searchService = new SearchService();
         
-        // Listen for configuration changes
-        const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('quickFind.contextSize')) {
-                this.searchService.refreshConfiguration();
-            }
-        });
-        this.context.subscriptions.push(configChangeListener);
     }
 
     /**
@@ -94,7 +87,7 @@ export class RegexSearchProvider {
             (result: SearchResult) => this.navigateToResult(result),
             () => this.returnToOriginalEditor(),
             (query: string) => this.performSearch(query, searchType),
-            (result: SearchResult) => this.loadContextForResult(result), // Add context loading callback
+            (result: SearchResult, isVerticalLayout: boolean) => this.loadContextForResult(result, isVerticalLayout), // Add context loading callback
             this.searchService,
             this.currentSearchPath,
             currentViewColumn
@@ -132,9 +125,10 @@ export class RegexSearchProvider {
     /**
      * Loads additional context lines around a search result.
      * @param result - Search result to load context for
+     * @param isVerticalLayout - Whether using vertical layout (affects context size)
      */
-    private async loadContextForResult(result: SearchResult): Promise<SearchResult> {
-        return await this.searchService.loadContextForResult(result);
+    private async loadContextForResult(result: SearchResult, isVerticalLayout: boolean): Promise<SearchResult> {
+        return await this.searchService.loadContextForResult(result, isVerticalLayout);
     }
 
     /**

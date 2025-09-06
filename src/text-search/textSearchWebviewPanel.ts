@@ -30,7 +30,7 @@ export class SearchWebviewPanel {
         private onNavigate: (result: SearchResult) => void,
         private onCancel: () => void,
         private onSearch: (query: string) => Promise<SearchResult[]>,
-        private onLoadContext: (result: SearchResult) => Promise<SearchResult>,
+        private onLoadContext: (result: SearchResult, isVerticalLayout: boolean) => Promise<SearchResult>,
         private searchService: SearchService,
         private searchPath?: string,
         private viewColumn?: vscode.ViewColumn
@@ -65,9 +65,9 @@ export class SearchWebviewPanel {
         // Register this panel as the active QuickFind panel
         setActiveQuickFindPanel(this.panel);
         
-        // Listen for configuration changes to update context panel height and accent color
+        // Listen for configuration changes to update accent color
         const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('quickFind.contextSize') || event.affectsConfiguration('quickFind.accentColor')) {
+            if (event.affectsConfiguration('quickFind.accentColor')) {
                 this.searchService.refreshConfiguration();
                 this.panel.webview.html = this.getWebviewContent(); // Reload webview with new settings
             }
@@ -212,7 +212,11 @@ export class SearchWebviewPanel {
         try {
             if (index >= 0 && index < this.filteredResults.length) {
                 const result = this.filteredResults[index];
-                const resultWithContext = await this.onLoadContext(result);
+                // Determine layout mode from configuration
+                const config = vscode.workspace.getConfiguration('quickFind');
+                const isVerticalLayout = config.get<boolean>('maximizeOnSearch', false);
+                
+                const resultWithContext = await this.onLoadContext(result, isVerticalLayout);
                 this.filteredResults[index] = resultWithContext;
                 this.panel.webview.postMessage({
                     command: 'updateContext',
@@ -398,10 +402,11 @@ export class SearchWebviewPanel {
     }
 
     /**
-     * Calculates optimal height for context panel based on configuration.
+     * Calculates optimal height for context panel based on layout mode.
      */
     private calculateContextPanelHeight(): number {
-        const contextSize = this.searchService.getContextSize();
+        // For horizontal layout (fixed height), use horizontal context size
+        const contextSize = this.searchService.getContextSize(false); // Always use horizontal for height calculation
         // Base height (padding, borders, etc.) + lines
         // Each context line is approximately 16px (12px font + 2px margin)
         // Add some extra padding for better UX

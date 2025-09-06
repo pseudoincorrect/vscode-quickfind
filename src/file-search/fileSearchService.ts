@@ -32,6 +32,10 @@ interface SearchOptions {
 export class FileSearchService {
     private static readonly CONTEXT_MULTIPLIER = 3;
     
+    // Layout-aware context sizes
+    private static readonly HORIZONTAL_CONTEXT_SIZE = 5;
+    private static readonly VERTICAL_CONTEXT_SIZE = 15;
+    
     private defaultOptions: SearchOptions = {
         maxResults: 500,
         maxDepth: 8,
@@ -116,6 +120,13 @@ export class FileSearchService {
             console.error(`Error searching files in ${folderPath}:`, error);
             return [];
         }
+    }
+
+    /**
+     * Gets the context size based on layout mode.
+     */
+    public getContextSize(isVerticalLayout: boolean = false): number {
+        return isVerticalLayout ? FileSearchService.VERTICAL_CONTEXT_SIZE : FileSearchService.HORIZONTAL_CONTEXT_SIZE;
     }
 
     /**

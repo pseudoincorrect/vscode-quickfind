@@ -98,13 +98,6 @@
     "configuration": {
       "title": "QuickFind",
       "properties": {
-        "quickFind.contextSize": {
-          "type": "number",
-          "default": 7,
-          "minimum": 0,
-          "maximum": 20,
-          "description": "Number of lines to show before and after each search result for context"
-        },
         "quickFind.maxFileSize": {
           "type": "string",
           "default": "1MB",

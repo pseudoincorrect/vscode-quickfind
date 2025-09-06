@@ -2,6 +2,7 @@ const vscode = acquireVsCodeApi();
 let results = [];
 let selectedIndex = 0;
 let searchTimeout = null;
+let contextLoadTimeout = null;
 let currentSearchQuery = '';
 let workspacePath = '';
 let displayedResults = 50; // Initially show only 50 results
@@ -9,6 +10,7 @@ let currentSearchType = 'folder';
 let maxResults = 1000;
 const INITIAL_BATCH_SIZE = 50;
 const LOAD_MORE_BATCH_SIZE = 25;
+const CONTEXT_LOAD_DEBOUNCE_MS = 100;
 
 // Search history management
 let searchHistory = [];
@@ -369,11 +371,8 @@ function updateContext() {
     // If context has only one line (the match line), it means context hasn't been loaded yet
     if (context.length === 1 && context[0] === matchLine.trim()) {
         contextPanel.innerHTML = '<div class="context-loading">Loading context...</div>';
-        // Request context loading for this result (throttled to avoid spam)
-        if (!result.contextRequested) {
-            result.contextRequested = true;
-            vscode.postMessage({ command: 'loadContext', index: selectedIndex });
-        }
+        // Request context loading for this result with debouncing to avoid spam
+        requestContextLoad(selectedIndex);
         return;
     }
 
@@ -392,6 +391,22 @@ function updateContext() {
     });
 
     contextPanel.innerHTML = contextHtml;
+}
+
+function requestContextLoad(index) {
+    // Clear existing timeout to reset the debounce
+    if (contextLoadTimeout) {
+        clearTimeout(contextLoadTimeout);
+    }
+    
+    // Set new timeout for debounced context loading
+    contextLoadTimeout = setTimeout(() => {
+        const result = results[index];
+        if (result && !result.contextRequested) {
+            result.contextRequested = true;
+            vscode.postMessage({ command: 'loadContext', index: index });
+        }
+    }, CONTEXT_LOAD_DEBOUNCE_MS);
 }
 
 function selectResult(index) {

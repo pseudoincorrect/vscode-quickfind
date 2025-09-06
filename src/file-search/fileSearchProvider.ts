@@ -74,7 +74,7 @@ export class FileSearchProvider {
             (result: FileSearchResult) => this.navigateToResult(result),
             () => this.returnToOriginalEditor(),
             (query: string) => this.performSearch(query),
-            (result: FileSearchResult) => this.loadContextForResult(result),
+            (result: FileSearchResult, isVerticalLayout: boolean) => this.loadContextForResult(result, isVerticalLayout),
             this.searchService,
             this.currentSearchPath,
             currentViewColumn
@@ -101,10 +101,10 @@ export class FileSearchProvider {
     /**
      * Loads file context (directory listing or file preview).
      * @param result - File search result to load context for
+     * @param isVerticalLayout - Whether using vertical layout (affects context size)
      */
-    private async loadContextForResult(result: FileSearchResult): Promise<string[]> {
-        const config = vscode.workspace.getConfiguration('quickFind');
-        const contextSize = config.get<number>('contextSize', 5);
+    private async loadContextForResult(result: FileSearchResult, isVerticalLayout: boolean): Promise<string[]> {
+        const contextSize = this.searchService.getContextSize(isVerticalLayout);
         return await this.searchService.getFileContext(result.file, contextSize);
     }
 

@@ -30,7 +30,10 @@ interface SearchOptions {
  * Service for performing text searches in files and folders with configurable options.
  */
 export class SearchService {
-    private contextSize: number = 3;
+    // Layout-aware context sizes
+    private static readonly HORIZONTAL_CONTEXT_SIZE = 7;
+    private static readonly VERTICAL_CONTEXT_SIZE = 20;
+    
     private configService: ConfigService;
     private defaultOptions: SearchOptions = {
         maxFileSize: 1024 * 1024, // 1MB
@@ -38,7 +41,7 @@ export class SearchService {
         maxDepth: 8,
         includeHidden: false,
         followSymlinks: false,
-        contextSize: 3,
+        contextSize: SearchService.HORIZONTAL_CONTEXT_SIZE, // Default to horizontal
         excludePatterns: [
             'node_modules/**',
             '.git/**',
@@ -59,13 +62,6 @@ export class SearchService {
         this.refreshConfiguration();
     }
 
-    /**
-     * Updates context size from VSCode configuration.
-     */
-    private updateContextSize(): void {
-        const config = vscode.workspace.getConfiguration('quickFind');
-        this.contextSize = config.get<number>('contextSize', 3);
-    }
 
     /**
      * Parses file size string (e.g., '1MB') into bytes.
@@ -96,10 +92,6 @@ export class SearchService {
     private updateConfiguration(): void {
         const config = vscode.workspace.getConfiguration('quickFind');
         
-        // Update context size
-        this.contextSize = config.get<number>('contextSize', 3);
-        this.defaultOptions.contextSize = this.contextSize;
-        
         // Update native search specific options
         const maxFileSizeStr = config.get<string>('maxFileSize', '1MB');
         this.defaultOptions.maxFileSize = this.parseFileSize(maxFileSizeStr);
@@ -115,10 +107,10 @@ export class SearchService {
     }
 
     /**
-     * Gets the current context size setting.
+     * Gets the context size based on layout mode.
      */
-    public getContextSize(): number {
-        return this.contextSize;
+    public getContextSize(isVerticalLayout: boolean = false): number {
+        return isVerticalLayout ? SearchService.VERTICAL_CONTEXT_SIZE : SearchService.HORIZONTAL_CONTEXT_SIZE;
     }
 
     /**
@@ -216,13 +208,15 @@ export class SearchService {
     /**
      * Loads additional context lines around a search result.
      * @param result - Search result to load context for
+     * @param isVerticalLayout - Whether using vertical layout (affects context size)
      */
-    async loadContextForResult(result: SearchResult): Promise<SearchResult> {
+    async loadContextForResult(result: SearchResult, isVerticalLayout: boolean = false): Promise<SearchResult> {
         if (result.context.length > 1) {
             return result; // Already loaded
         }
 
-        const context = await this.readContextLines(result.file, result.line);
+        const contextSize = this.getContextSize(isVerticalLayout);
+        const context = await this.readContextLines(result.file, result.line, contextSize);
         return {
             ...result,
             context: context
@@ -532,13 +526,13 @@ export class SearchService {
      * @param filePath - Path to the file to read from
      * @param targetLine - Line number to read context around (1-based)
      */
-    private async readContextLines(filePath: string, targetLine: number): Promise<string[]> {
+    private async readContextLines(filePath: string, targetLine: number, contextSize: number): Promise<string[]> {
         try {
             const content = await fs.promises.readFile(filePath, 'utf8');
             const lines = content.split('\n');
             
-            const startLine = Math.max(0, targetLine - this.contextSize - 1);
-            const endLine = Math.min(lines.length, targetLine + this.contextSize);
+            const startLine = Math.max(0, targetLine - contextSize - 1);
+            const endLine = Math.min(lines.length, targetLine + contextSize);
             
             return lines.slice(startLine, endLine);
         } catch (error) {

@@ -28,7 +28,7 @@ export class FileSearchWebviewPanel {
         private onNavigate: (result: FileSearchResult) => void,
         private onCancel: () => void,
         private onSearch: (query: string) => Promise<FileSearchResult[]>,
-        private onLoadContext: (result: FileSearchResult) => Promise<string[]>,
+        private onLoadContext: (result: FileSearchResult, isVerticalLayout: boolean) => Promise<string[]>,
         private searchService: FileSearchService,
         private searchPath?: string,
         private viewColumn?: vscode.ViewColumn
@@ -182,7 +182,11 @@ export class FileSearchWebviewPanel {
         try {
             if (index >= 0 && index < this.filteredResults.length) {
                 const result = this.filteredResults[index];
-                const context = await this.onLoadContext(result);
+                // Determine layout mode from configuration
+                const config = vscode.workspace.getConfiguration('quickFind');
+                const isVerticalLayout = config.get<boolean>('maximizeOnSearch', false);
+                
+                const context = await this.onLoadContext(result, isVerticalLayout);
                 this.panel.webview.postMessage({
                     command: 'updateContext',
                     index: index,
@@ -323,8 +327,8 @@ export class FileSearchWebviewPanel {
      * Calculates optimal height for file preview panel.
      */
     private calculateContextPanelHeight(): number {
-        const config = vscode.workspace.getConfiguration('quickFind');
-        const contextSize = config.get<number>('contextSize', 5);
+        // For horizontal layout (fixed height), use horizontal context size
+        const contextSize = this.searchService.getContextSize(false); // Always use horizontal for height calculation
         // Base height (padding, borders, etc.) + lines
         // Each context line is approximately 16.8px (12px font * 1.4 line-height)
         // For file-search, we show contextSize * 3 lines
