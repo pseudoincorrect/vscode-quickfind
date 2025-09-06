@@ -17,6 +17,7 @@ export class FileSearchWebviewPanel {
     private filteredResults: FileSearchResult[] = [];
     private currentSearchQuery: string = '';
     private isInitialized: boolean = false;
+    private wasMaximized: boolean = false;
 
     /**
      * Creates a new file search webview panel.
@@ -49,6 +50,9 @@ export class FileSearchWebviewPanel {
             }
         );
 
+        // Maximize immediately before setting up the webview for faster response
+        this.maximizeIfNeeded();
+        
         this.filteredResults = initialResults;
         this.panel.webview.html = this.getWebviewContent();
         this.setupEventHandlers();
@@ -75,6 +79,9 @@ export class FileSearchWebviewPanel {
      * Disposes the panel and cleans up resources.
      */
     dispose() {
+        // Restore layout before disposing if we maximized it
+        this.restoreLayoutIfNeeded();
+        
         this.panel.dispose();
         while (this.disposables.length) {
             const disposable = this.disposables.pop();
@@ -191,9 +198,11 @@ export class FileSearchWebviewPanel {
      * Handles selection of a file result.
      * @param index - Index of the selected file result
      */
-    private handleSelect(index: number) {
+    private async handleSelect(index: number) {
         if (index >= 0 && index < this.filteredResults.length) {
             const result = this.filteredResults[index];
+            // Restore layout before navigating to maintain original split configuration
+            await this.restoreLayoutIfNeeded();
             this.onNavigate(result);
         }
     }
@@ -201,8 +210,50 @@ export class FileSearchWebviewPanel {
     /**
      * Handles panel cancellation.
      */
-    private handleCancel() {
+    private async handleCancel() {
+        // Restore layout before closing if we maximized it
+        await this.restoreLayoutIfNeeded();
         this.onCancel();
+    }
+
+    /**
+     * Maximizes the editor group if there are multiple groups visible and config allows it.
+     */
+    private async maximizeIfNeeded() {
+        try {
+            // Check if maximization is enabled in configuration
+            const config = vscode.workspace.getConfiguration('quickFind');
+            const shouldMaximize = config.get<boolean>('maximizeOnSearch', false);
+            
+            if (!shouldMaximize) {
+                return;
+            }
+            
+            // Check if we can maximize (only if there are multiple editor groups)
+            const editorGroups = vscode.window.tabGroups.all;
+            if (editorGroups.length > 1) {
+                this.wasMaximized = true;
+                await vscode.commands.executeCommand('workbench.action.toggleMaximizeEditorGroup');
+            }
+        } catch (error) {
+            // Silently fail if the command is not available or fails
+            console.debug('Could not maximize editor group:', error);
+        }
+    }
+
+    /**
+     * Restores the layout if we previously maximized it.
+     */
+    private async restoreLayoutIfNeeded() {
+        try {
+            if (this.wasMaximized) {
+                await vscode.commands.executeCommand('workbench.action.toggleMaximizeEditorGroup');
+                this.wasMaximized = false;
+            }
+        } catch (error) {
+            // Silently fail if the command is not available or fails
+            console.debug('Could not restore editor group:', error);
+        }
     }
 
     /**

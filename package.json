@@ -122,6 +122,11 @@
           "default": "#00ff88",
           "pattern": "^#[0-9a-fA-F]{6}$",
           "description": "Hex color code for search box border and selected result highlight (e.g., #00ff88)"
+        },
+        "quickFind.maximizeOnSearch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically maximize the search panel to take full available space during search"
         }
       }
     }
