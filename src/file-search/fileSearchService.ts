@@ -30,11 +30,9 @@ interface SearchOptions {
  * Service for fuzzy file searching with configurable options.
  */
 export class FileSearchService {
-    private static readonly CONTEXT_MULTIPLIER = 3;
-    
     // Layout-aware context sizes
-    private static readonly HORIZONTAL_CONTEXT_SIZE = 5;
-    private static readonly VERTICAL_CONTEXT_SIZE = 15;
+    private static readonly HORIZONTAL_CONTEXT_SIZE = 10;
+    private static readonly VERTICAL_CONTEXT_SIZE = 25;
     
     private defaultOptions: SearchOptions = {
         maxResults: 500,
@@ -138,8 +136,7 @@ export class FileSearchService {
         try {
             const content = await fs.promises.readFile(filePath, 'utf8');
             const lines = content.split('\n');
-            const numLines = contextSize * FileSearchService.CONTEXT_MULTIPLIER;
-            return lines.slice(0, numLines);
+            return lines.slice(0, contextSize);
         } catch (error) {
             console.error(`Error reading file ${filePath}:`, error);
             return ['Error loading file content'];

@@ -53,7 +53,7 @@ Automatic search history with smart defaults:
 - **`quickFind.accentColor`** (default: "#00ff88"): Hex color for search UI highlights
 - **`quickFind.maxFileSize`** (default: "1MB"): Maximum file size for searches (supports KB, MB, GB)
 - **`quickFind.maxResults`** (default: 1000): Maximum number of results (1-10000)
-- **`quickFind.maximizeOnSearch`** (default: false): Auto-maximize search panel for full screen space, Telescope-style focused searching
+- **`quickFind.maximizeOnSearch`** (default: false): Auto-maximize search panel for full screen space and enable vertical split layout (context panel on right side instead of top)
 
 ## Requirements
 

@@ -66,7 +66,7 @@ html, body {
 }
 
 .container.horizontal-layout .context-panel { 
-    height: var(--context-panel-height, 140px); 
+    height: 30vh; 
     padding: 0px 6px 6px 16px; 
     overflow-y: auto; 
     overflow-x: hidden; 
