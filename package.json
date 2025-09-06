@@ -118,7 +118,7 @@
         },
         "quickFind.maximizedLayout": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Automatically maximize the search panel to take full available space during search, with a vertical layout"
         }
       }

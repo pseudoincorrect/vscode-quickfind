@@ -11,11 +11,11 @@ QuickFind creates dedicated webview panels that provide a more user-friendly and
 
 ## Preview
 
-### Text Search with Horizontal Layout
-![Text Search Demo - Shows real-time search across workspace files with context panel below results](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
+### Text Search with Maximized Vertical Layout (Default)
+![Vertical Layout Demo - Context panel positioned on the right for better code viewing in maximized mode](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/vertical-layout.jpg)
 
-### Vertical Split Layout Option
-![Vertical Layout Demo - Context panel positioned on the right for better code viewing when maximization is enabled](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/vertical-layout.jpg)
+### Compact Horizontal Layout Option
+![Text Search Demo - Shows real-time search across workspace files with context panel below results](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
 
 ### File Search
 ![File Search Demo - Fuzzy file search with file metadata and content preview](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/file-search.jpg)
@@ -58,7 +58,7 @@ Automatic search history with smart defaults:
 - **`quickFind.accentColor`** (default: "#00ff88"): Hex color for search UI highlights
 - **`quickFind.maxFileSize`** (default: "1MB"): Maximum file size for searches (supports KB, MB, GB)
 - **`quickFind.maxResults`** (default: 1000): Maximum number of results (1-10000)
-- **`quickFind.maximizedLayout`** (default: false): Auto-maximize search panel for full screen space and enable vertical split layout (context panel on right side instead of top)
+- **`quickFind.maximizedLayout`** (default: true): Auto-maximize search panel for full screen space and enable vertical split layout (context panel on right side instead of top)
 
 ## Requirements
 
