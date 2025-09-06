@@ -24,7 +24,7 @@ html, body {
     overflow: hidden; 
 }
 
-/* Vertical layout (when maximizeOnSearch is true) */
+/* Vertical layout (when maximizedLayout is true) */
 .container.vertical-layout {
     flex-direction: row;
 }
@@ -51,7 +51,7 @@ html, body {
     border-bottom: none;
 }
 
-/* Horizontal layout (when maximizeOnSearch is false) */
+/* Horizontal layout (when maximizedLayout is false) */
 .container.horizontal-layout {
     flex-direction: column;
 }

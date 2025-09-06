@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-09-06
+
 ### Added
 - Optional search view maximization setting for Telescope-style full-screen searching
 - Vertical split layout option with context panel on right side when maximization is enabled

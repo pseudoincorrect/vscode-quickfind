@@ -214,7 +214,7 @@ export class SearchWebviewPanel {
                 const result = this.filteredResults[index];
                 // Determine layout mode from configuration
                 const config = vscode.workspace.getConfiguration('quickFind');
-                const isVerticalLayout = config.get<boolean>('maximizeOnSearch', false);
+                const isVerticalLayout = config.get<boolean>('maximizedLayout', false);
                 
                 const resultWithContext = await this.onLoadContext(result, isVerticalLayout);
                 this.filteredResults[index] = resultWithContext;
@@ -258,7 +258,7 @@ export class SearchWebviewPanel {
         try {
             // Check if maximization is enabled in configuration
             const config = vscode.workspace.getConfiguration('quickFind');
-            const shouldMaximize = config.get<boolean>('maximizeOnSearch', false);
+            const shouldMaximize = config.get<boolean>('maximizedLayout', false);
             
             if (!shouldMaximize) {
                 return;
@@ -462,7 +462,7 @@ export class SearchWebviewPanel {
         // Get configuration values
         const config = vscode.workspace.getConfiguration('quickFind');
         const accentColor = config.get<string>('accentColor') || '#00ff88';
-        const isVerticalLayout = config.get<boolean>('maximizeOnSearch', false);
+        const isVerticalLayout = config.get<boolean>('maximizedLayout', false);
 
         // Replace placeholders in the HTML template
         htmlContent = htmlContent

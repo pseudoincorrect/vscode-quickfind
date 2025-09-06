@@ -128,7 +128,7 @@ loadSearchHistory();
 // Load initial config and setup toggle buttons
 initializeSearchConfig();
 
-// Apply layout class based on maximizeOnSearch config
+// Apply layout class based on maximizedLayout config
 const container = document.getElementById('container');
 if (typeof isVerticalLayout !== 'undefined' && isVerticalLayout) {
     container.classList.add('vertical-layout');
