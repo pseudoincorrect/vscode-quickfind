@@ -19,20 +19,63 @@ html, body {
 
 .container { 
     display: flex; 
-    flex-direction: column; 
     width: 100%; 
     height: 100vh; 
     overflow: hidden; 
 }
 
-.context-panel { 
+/* Vertical layout (when maximizeOnSearch is true) */
+.container.vertical-layout {
+    flex-direction: row;
+}
+
+.container.vertical-layout .main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    order: 1;
+}
+
+.container.vertical-layout .context-panel { 
+    width: 50%; 
+    padding: 0px 6px 6px 16px; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    background: var(--vscode-editor-background); 
+    border-left: 1px solid var(--vscode-panel-border); 
+    flex-shrink: 0; 
+    height: 100%; 
+    order: 2;
+    border-bottom: none;
+}
+
+/* Horizontal layout (when maximizeOnSearch is false) */
+.container.horizontal-layout {
+    flex-direction: column;
+}
+
+.container.horizontal-layout .main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    order: 2;
+}
+
+.container.horizontal-layout .context-panel { 
     height: var(--context-panel-height, 140px); 
     padding: 0px 6px 6px 16px; 
-    overflow: hidden; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
     background: var(--vscode-editor-background); 
     border-bottom: 1px solid var(--vscode-panel-border); 
     flex-shrink: 0; 
     width: 100%; 
+    order: 1;
+    border-left: none;
 }
 
 .header {

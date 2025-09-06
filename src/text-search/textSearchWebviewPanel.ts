@@ -454,8 +454,10 @@ export class SearchWebviewPanel {
         // Calculate dynamic context panel height
         const contextPanelHeight = this.calculateContextPanelHeight();
         
-        // Get accent color from configuration
-        const accentColor = vscode.workspace.getConfiguration('quickFind').get<string>('accentColor') || '#00ff88';
+        // Get configuration values
+        const config = vscode.workspace.getConfiguration('quickFind');
+        const accentColor = config.get<string>('accentColor') || '#00ff88';
+        const isVerticalLayout = config.get<boolean>('maximizeOnSearch', false);
 
         // Replace placeholders in the HTML template
         htmlContent = htmlContent
@@ -464,7 +466,8 @@ export class SearchWebviewPanel {
             .replace('{{initialData}}', JSON.stringify(initialData))
             .replace('{{searchType}}', this.searchType)
             .replace('{{contextPanelHeight}}', contextPanelHeight.toString())
-            .replace('{{accentColor}}', accentColor);
+            .replace('{{accentColor}}', accentColor)
+            .replace('{{isVerticalLayout}}', isVerticalLayout.toString());
 
         return htmlContent;
     }

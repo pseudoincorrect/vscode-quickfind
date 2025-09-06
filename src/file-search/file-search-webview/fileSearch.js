@@ -19,6 +19,14 @@ if (typeof initialData !== 'undefined') {
     workspacePath = initialData.workspacePath || '';
 }
 
+// Apply layout class based on maximizeOnSearch config
+const container = document.getElementById('container');
+if (typeof isVerticalLayout !== 'undefined' && isVerticalLayout) {
+    container.classList.add('vertical-layout');
+} else {
+    container.classList.add('horizontal-layout');
+}
+
 updateDisplay();
 
 searchInput.addEventListener('input', (e) => {
