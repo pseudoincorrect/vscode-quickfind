@@ -1,7 +1,7 @@
 # QuickFind - VSCode Extension
 
 <div align="center">
-  <img src="assets/images/quickfind-logo.png" alt="QuickFind Logo" width="128" height="128">
+  <img src="assets/images/quickfind-logo.jpeg" alt="QuickFind Logo" width="128" height="128">
 </div>
 
 A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope.
@@ -11,17 +11,25 @@ QuickFind creates dedicated webview panels that provide a more user-friendly and
 
 ## Preview
 
-### Text Search with Maximized Vertical Layout (Default)
-
-![Vertical Layout Demo - Context panel positioned on the right for better code viewing in maximized mode](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/vertical-layout.jpg)
-
-### Compact Horizontal Layout Option
+### Text Search
 
 ![Text Search Demo - Shows real-time search across workspace files with context panel below results](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
 
 ### File Search
 
-![File Search Demo - Fuzzy file search with file metadata and content preview](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/file-search.jpg)
+![File Search Demo - Fuzzy file search with file metadata and content preview](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/file-search.jpeg)
+
+### Maximized Layout (Default)
+
+Maximizes the search panel to use the full screen space with the context panel positioned on the right for optimal code viewing.
+
+![Maximised Layout Demo - Context panel positioned on the right for better code viewing in maximized mode](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/maximised-layout.jpeg)
+
+### Compact Layout
+
+Keeps the search panel contained within the current editor with the context panel positioned on top for a smaller footprint. Enable via VSCode settings.
+
+![Compact Layout Demo - Context panel positioned on top for a smaller footpring](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/compact-layout.jpeg)
 
 ## Functions
 

@@ -2,7 +2,7 @@
   "name": "vscode-quickfind",
   "displayName": "QuickFind",
   "description": "Fast text search and file finding extension for VSCode with code preview",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/quickfind-logo-128.png",

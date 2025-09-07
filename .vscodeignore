@@ -20,7 +20,8 @@ releases/**
 **/*.test.ts
 
 # Exclude large assets (keep only the required icon)
+assets/images/compact-layout.jpeg
+assets/images/file-search.jpeg
+assets/images/maximised-layout.jpeg
+assets/images/quickfind-logo.jpeg
 assets/images/text-search.gif
-assets/images/quickfind-logo.png
-assets/images/file-search.jpg
-assets/images/vertical-layout.jpg
