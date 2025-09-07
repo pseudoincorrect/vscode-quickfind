@@ -4,7 +4,7 @@
   <img src="assets/images/quickfind-logo.png" alt="QuickFind Logo" width="128" height="128">
 </div>
 
-A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope. 
+A fast and intuitive search extension for Visual Studio Code, inspired by vim telescope.
 Provides powerful text search and file search capabilities with a clean split-pane interface.
 
 QuickFind creates dedicated webview panels that provide a more user-friendly and immersive search experience with better context visualization.
@@ -12,27 +12,33 @@ QuickFind creates dedicated webview panels that provide a more user-friendly and
 ## Preview
 
 ### Text Search with Maximized Vertical Layout (Default)
+
 ![Vertical Layout Demo - Context panel positioned on the right for better code viewing in maximized mode](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/vertical-layout.jpg)
 
 ### Compact Horizontal Layout Option
+
 ![Text Search Demo - Shows real-time search across workspace files with context panel below results](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
 
 ### File Search
+
 ![File Search Demo - Fuzzy file search with file metadata and content preview](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/file-search.jpg)
 
 ## Functions
 
 ### 🔍 Search Current File
+
 **Keybinding**: `Ctrl+K Ctrl+T` (Windows/Linux) / `Cmd+K Cmd+T` (macOS)
 
 Search within the currently active file with real-time regex matching and highlighting. Features toggle buttons for case-sensitive and whole-word search options.
 
 ### 🔍 Search Workspace
+
 **Keybinding**: `Ctrl+K Ctrl+G` (Windows/Linux) / `Cmd+K Cmd+G` (macOS)
 
 Search across all files in your workspace with blazing-fast performance. Features toggle buttons for case-sensitive and whole-word search options.
 
 ### 📁 Search Files
+
 **Keybinding**: `Ctrl+K Ctrl+F` (Windows/Linux) / `Cmd+K Cmd+F` (macOS)
 
 Fuzzy search for files in your workspace. Find files by name with intelligent matching and see file metadata in the context panel.
@@ -40,6 +46,7 @@ Fuzzy search for files in your workspace. Find files by name with intelligent ma
 ## 🎛️ Search Options
 
 Toggle buttons for advanced search options:
+
 - **Case-Sensitive** (`Aa` button) and **Whole-Word** (`W` button) matching
 - **Persistent Settings**: Preferences automatically saved and remembered across sessions
 - **Real-time Updates** with visual feedback (muted/highlighted states)
@@ -47,6 +54,7 @@ Toggle buttons for advanced search options:
 ## ⏳ Search History
 
 Automatic search history with smart defaults:
+
 - **Auto-saved**: Every search saved, most recent pre-filled on open
 - **Navigation**: `Ctrl+Up/Down` (Windows/Linux) or `Cmd+Up/Down` (macOS) to browse history
 - **Management**: Clear via Command Palette → "QuickFind: Clear Search History"

@@ -1,7 +1,7 @@
 # QuickFind Extension - Developer Documentation
 
-
 ## Development Installation
+
 1. Clone the repository:
    ```bash
    git clone <repository-url>
@@ -16,12 +16,14 @@
 ## Usage
 
 ### Keybindings
-| Command | Windows/Linux | macOS | Description |
-|---------|---------------|-------|-------------|
-| Search Current File | `Ctrl+Alt+F` | `Cmd+Alt+F` | Search within active file |
-| Search Current Folder | `Ctrl+Alt+G` | `Cmd+Alt+G` | Search all files in current folder |
+
+| Command               | Windows/Linux | macOS       | Description                        |
+| --------------------- | ------------- | ----------- | ---------------------------------- |
+| Search Current File   | `Ctrl+Alt+F`  | `Cmd+Alt+F` | Search within active file          |
+| Search Current Folder | `Ctrl+Alt+G`  | `Cmd+Alt+G` | Search all files in current folder |
 
 ### Navigation
+
 - **Arrow Keys**: Navigate between search results
 - **Enter**: Jump to selected line and column
 - **Escape**: Close search and return to original file
@@ -30,6 +32,7 @@
 ## Development
 
 ### Building
+
 ```bash
 # Install dependencies
 npm install
@@ -60,11 +63,13 @@ npm run clean-releases
 ```
 
 ### Testing
+
 1. Open the project in VSCode
 2. Press `F5` to launch Extension Development Host
 3. Test the extension in the new VSCode window
 
 ### Packaging
+
 ```bash
 # Package extension (creates .vsix in releases folder)
 npm run package
@@ -117,7 +122,6 @@ See [CHANGELOG.md](CHANGELOG.md)
 ## Release process
 
 See [README_RELEASES.md](releases/README_RELEASES.md)
-
 
 ## Acknowledgments
 

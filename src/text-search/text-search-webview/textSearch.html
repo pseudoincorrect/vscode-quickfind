@@ -1,52 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{cssUri}}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{cssUri}}" />
     <style>
-        :root {
-            --context-panel-height: {{contextPanelHeight}}px;
-            --quickfind-accent-color: {{accentColor}};
-        }
+      :root {
+          --context-panel-height: {{contextPanelHeight}}px;
+          --quickfind-accent-color: {{accentColor}};
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container" id="container">
-        <div class="context-panel" id="contextPanel">
-            <div class="header">
-                <span class="app-name">QuickFind</span>
-            </div>
-            <div class="no-results">Select a result to see context</div>
+      <div class="context-panel" id="contextPanel">
+        <div class="header">
+          <span class="app-name">QuickFind</span>
         </div>
-        <div class="main-content">
-            <div class="search-box">
-                <div class="search-controls">
-                    <input type="text" class="search-input" placeholder="Type regex to search..." autofocus>
-                    <div class="search-right">
-                        <div class="result-count" id="resultCount"></div>
-                        <div class="search-toggles">
-                            <button class="toggle-btn" id="caseSensitiveToggle" title="Case Insensitive">
-                                <span class="toggle-icon">Aa</span>
-                            </button>
-                            <button class="toggle-btn" id="wholeWordToggle" title="Whole Word">
-                                <span class="toggle-icon">W</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <div class="no-results">Select a result to see context</div>
+      </div>
+      <div class="main-content">
+        <div class="search-box">
+          <div class="search-controls">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Type regex to search..."
+              autofocus
+            />
+            <div class="search-right">
+              <div class="result-count" id="resultCount"></div>
+              <div class="search-toggles">
+                <button
+                  class="toggle-btn"
+                  id="caseSensitiveToggle"
+                  title="Case Insensitive"
+                >
+                  <span class="toggle-icon">Aa</span>
+                </button>
+                <button
+                  class="toggle-btn"
+                  id="wholeWordToggle"
+                  title="Whole Word"
+                >
+                  <span class="toggle-icon">W</span>
+                </button>
+              </div>
             </div>
-            <div class="results-list" id="resultsList"></div>
+          </div>
         </div>
-        <div class="keybinds">ESC: Cancel | Enter: Navigate | ↑↓: Navigate | Ctrl+↑↓: History</div>
+        <div class="results-list" id="resultsList"></div>
+      </div>
+      <div class="keybinds">
+        ESC: Cancel | Enter: Navigate | ↑↓: Navigate | Ctrl+↑↓: History
+      </div>
     </div>
 
     <script>
-        // Inject initial data
-        const initialData = {{initialData}};
-        const searchType = '{{searchType}}';
-        const isVerticalLayout = {{isVerticalLayout}};
+      // Inject initial data
+      const initialData = {{initialData}};
+      const searchType = '{{searchType}}';
+      const isVerticalLayout = {{isVerticalLayout}};
     </script>
     <script src="{{jsUri}}"></script>
-</body>
+  </body>
 </html>

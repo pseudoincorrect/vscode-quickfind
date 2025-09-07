@@ -13,6 +13,7 @@ The QuickFind extension has grown to include multiple complex features (text sea
 **Current Issue**: Magic numbers and hardcoded paths scattered throughout the codebase.
 
 **Problems**:
+
 - `/tmp/vscode-quickfind-text-search-history.json` appears in multiple files
 - Hardcoded values like `1000` (max results), `100` (debounce timing)
 - Platform-specific paths without abstraction
@@ -22,8 +23,8 @@ The QuickFind extension has grown to include multiple complex features (text sea
 ```typescript
 // src/constants.ts
 export const CONFIG_PATHS = {
-  HISTORY_FILE: '/tmp/vscode-quickfind-text-search-history.json',
-  CONFIG_FILE: '/tmp/vscode-quickfind-config.json'
+  HISTORY_FILE: "/tmp/vscode-quickfind-text-search-history.json",
+  CONFIG_FILE: "/tmp/vscode-quickfind-config.json",
 } as const;
 
 export const SEARCH_LIMITS = {
@@ -31,23 +32,24 @@ export const SEARCH_LIMITS = {
   MAX_FILE_SIZE: 1024 * 1024, // 1MB
   MAX_DEPTH: 8,
   BATCH_SIZE: 10,
-  MAX_HISTORY_SIZE: 50
+  MAX_HISTORY_SIZE: 50,
 } as const;
 
 export const UI_CONSTANTS = {
   CONTEXT_LOAD_DEBOUNCE_MS: 100,
   INITIAL_BATCH_SIZE: 50,
   LOAD_MORE_BATCH_SIZE: 25,
-  SEARCH_DEBOUNCE_MS: 300
+  SEARCH_DEBOUNCE_MS: 300,
 } as const;
 
 export const LAYOUT_SIZES = {
   HORIZONTAL_CONTEXT_SIZE: 10,
-  VERTICAL_CONTEXT_SIZE: 60
+  VERTICAL_CONTEXT_SIZE: 60,
 } as const;
 ```
 
 **Files to update**:
+
 - `src/extension.ts` (line 65 - hardcoded history file path)
 - `src/text-search/textSearchService.ts` (lines 34-35, 39-54)
 - `src/text-search/text-search-webview/textSearch.js` (lines 8-19)
@@ -58,6 +60,7 @@ export const LAYOUT_SIZES = {
 **Current Issue**: Inconsistent error handling with generic catch blocks that mask specific errors.
 
 **Problems**:
+
 - `extension.ts:76-78` - Generic error logging without user feedback
 - `textSearchService.ts:149-153` - Silent failures that could confuse users
 - No error boundaries for webview communication failures
@@ -67,45 +70,48 @@ export const LAYOUT_SIZES = {
 ```typescript
 // src/utils/errorHandler.ts
 export enum QuickFindErrorCode {
-  FILE_NOT_FOUND = 'FILE_NOT_FOUND',
-  PERMISSION_DENIED = 'PERMISSION_DENIED',
-  INVALID_REGEX = 'INVALID_REGEX',
-  SEARCH_TIMEOUT = 'SEARCH_TIMEOUT',
-  CONFIG_LOAD_FAILED = 'CONFIG_LOAD_FAILED'
+  FILE_NOT_FOUND = "FILE_NOT_FOUND",
+  PERMISSION_DENIED = "PERMISSION_DENIED",
+  INVALID_REGEX = "INVALID_REGEX",
+  SEARCH_TIMEOUT = "SEARCH_TIMEOUT",
+  CONFIG_LOAD_FAILED = "CONFIG_LOAD_FAILED",
 }
 
 export class QuickFindError extends Error {
   constructor(
-    message: string, 
+    message: string,
     public readonly code: QuickFindErrorCode,
-    public readonly context?: object
+    public readonly context?: object,
   ) {
     super(message);
-    this.name = 'QuickFindError';
+    this.name = "QuickFindError";
   }
 }
 
-export const handleFileSystemError = (error: unknown, operation: string): QuickFindError => {
+export const handleFileSystemError = (
+  error: unknown,
+  operation: string,
+): QuickFindError => {
   if (error instanceof Error) {
-    if (error.message.includes('ENOENT')) {
+    if (error.message.includes("ENOENT")) {
       return new QuickFindError(
-        `File not found during ${operation}`, 
+        `File not found during ${operation}`,
         QuickFindErrorCode.FILE_NOT_FOUND,
-        { operation, originalError: error.message }
+        { operation, originalError: error.message },
       );
     }
-    if (error.message.includes('EACCES')) {
+    if (error.message.includes("EACCES")) {
       return new QuickFindError(
-        `Permission denied during ${operation}`, 
+        `Permission denied during ${operation}`,
         QuickFindErrorCode.PERMISSION_DENIED,
-        { operation, originalError: error.message }
+        { operation, originalError: error.message },
       );
     }
   }
   return new QuickFindError(
-    `Unknown error during ${operation}`, 
+    `Unknown error during ${operation}`,
     QuickFindErrorCode.CONFIG_LOAD_FAILED,
-    { operation, originalError: String(error) }
+    { operation, originalError: String(error) },
   );
 };
 
@@ -116,6 +122,7 @@ export const showUserError = (error: QuickFindError): void => {
 ```
 
 **Files to update**:
+
 - All files with try/catch blocks should use centralized error handling
 - `src/text-search/textSearchService.ts` (lines 149-153, 184-187, 247-250)
 - `src/config/configService.ts` (lines 65-67, 84-86)
@@ -133,16 +140,18 @@ export interface IFileSystemService {
   writeFile(path: string, content: string): Promise<void>;
   exists(path: string): Promise<boolean>;
   mkdir(path: string): Promise<void>;
-  stat(path: string): Promise<{ size: number; isFile: boolean; isDirectory: boolean }>;
+  stat(
+    path: string,
+  ): Promise<{ size: number; isFile: boolean; isDirectory: boolean }>;
   readdir(path: string): Promise<string[]>;
 }
 
 export class FileSystemService implements IFileSystemService {
   async readFile(filePath: string): Promise<string> {
     try {
-      return await fs.promises.readFile(filePath, 'utf8');
+      return await fs.promises.readFile(filePath, "utf8");
     } catch (error) {
-      throw handleFileSystemError(error, 'readFile');
+      throw handleFileSystemError(error, "readFile");
     }
   }
 
@@ -151,9 +160,9 @@ export class FileSystemService implements IFileSystemService {
       // Ensure directory exists
       const dir = path.dirname(filePath);
       await this.mkdir(dir);
-      await fs.promises.writeFile(filePath, content, 'utf8');
+      await fs.promises.writeFile(filePath, content, "utf8");
     } catch (error) {
-      throw handleFileSystemError(error, 'writeFile');
+      throw handleFileSystemError(error, "writeFile");
     }
   }
 
@@ -172,19 +181,22 @@ export class FileSystemService implements IFileSystemService {
 // src/services/fileSystemService.mock.ts (for testing)
 export class MockFileSystemService implements IFileSystemService {
   private files = new Map<string, string>();
-  
+
   async readFile(path: string): Promise<string> {
     const content = this.files.get(path);
     if (!content) {
-      throw new QuickFindError('File not found', QuickFindErrorCode.FILE_NOT_FOUND);
+      throw new QuickFindError(
+        "File not found",
+        QuickFindErrorCode.FILE_NOT_FOUND,
+      );
     }
     return content;
   }
-  
+
   setFileContent(path: string, content: string): void {
     this.files.set(path, content);
   }
-  
+
   // ... other mock methods
 }
 ```
@@ -194,6 +206,7 @@ export class MockFileSystemService implements IFileSystemService {
 **Current Issue**: Hard dependencies and tight coupling make components difficult to test and modify.
 
 **Problems**:
+
 - `SearchService` directly instantiates `ConfigService` (line 61)
 - `SearchWebviewPanel` constructor has 8+ parameters
 - No way to substitute implementations for testing
@@ -233,24 +246,34 @@ export class Container {
 // src/containerSetup.ts
 export const setupContainer = (context: vscode.ExtensionContext): Container => {
   const container = new Container();
-  
-  container.registerSingleton('fileSystem', () => new FileSystemService());
-  container.registerSingleton('config', () => new ConfigService(container.resolve('fileSystem')));
-  container.registerSingleton('searchService', () => new SearchService(container.resolve('config')));
-  container.registerSingleton('historyService', () => new SearchHistoryService(container.resolve('fileSystem')));
-  
+
+  container.registerSingleton("fileSystem", () => new FileSystemService());
+  container.registerSingleton(
+    "config",
+    () => new ConfigService(container.resolve("fileSystem")),
+  );
+  container.registerSingleton(
+    "searchService",
+    () => new SearchService(container.resolve("config")),
+  );
+  container.registerSingleton(
+    "historyService",
+    () => new SearchHistoryService(container.resolve("fileSystem")),
+  );
+
   return container;
 };
 ```
 
 **Refactored SearchService**:
+
 ```typescript
 export class SearchService {
-    constructor(private configService: ConfigService) {
-        this.refreshConfiguration();
-    }
-    
-    // Remove direct instantiation: this.configService = new ConfigService();
+  constructor(private configService: ConfigService) {
+    this.refreshConfiguration();
+  }
+
+  // Remove direct instantiation: this.configService = new ConfigService();
 }
 ```
 
@@ -265,44 +288,51 @@ export class SearchService {
 export class SearchHistoryEntry {
   constructor(
     public readonly query: string,
-    public readonly timestamp: Date = new Date()
+    public readonly timestamp: Date = new Date(),
   ) {}
 }
 
 export class SearchHistory {
   private readonly entries: SearchHistoryEntry[];
 
-  constructor(entries: SearchHistoryEntry[] = [], private readonly maxSize: number = 50) {
+  constructor(
+    entries: SearchHistoryEntry[] = [],
+    private readonly maxSize: number = 50,
+  ) {
     this.entries = entries.slice(-maxSize); // Keep only recent entries
   }
 
   add(query: string): SearchHistory {
     if (!query.trim()) return this;
-    
+
     // Remove existing entry if present
-    const filtered = this.entries.filter(entry => entry.query !== query);
+    const filtered = this.entries.filter((entry) => entry.query !== query);
     const newEntry = new SearchHistoryEntry(query);
     const newEntries = [...filtered, newEntry].slice(-this.maxSize);
-    
+
     return new SearchHistory(newEntries, this.maxSize);
   }
 
   getPrevious(currentIndex: number): string | null {
     const index = currentIndex - 1;
-    return index >= 0 && index < this.entries.length ? this.entries[index].query : null;
+    return index >= 0 && index < this.entries.length
+      ? this.entries[index].query
+      : null;
   }
 
   getNext(currentIndex: number): string | null {
     const index = currentIndex + 1;
-    return index >= 0 && index < this.entries.length ? this.entries[index].query : null;
+    return index >= 0 && index < this.entries.length
+      ? this.entries[index].query
+      : null;
   }
 
   toArray(): string[] {
-    return this.entries.map(entry => entry.query);
+    return this.entries.map((entry) => entry.query);
   }
 
   static fromArray(queries: string[]): SearchHistory {
-    const entries = queries.map(query => new SearchHistoryEntry(query));
+    const entries = queries.map((query) => new SearchHistoryEntry(query));
     return new SearchHistory(entries);
   }
 }
@@ -312,17 +342,17 @@ export class SearchQuery {
   constructor(
     public readonly pattern: string,
     public readonly caseSensitive: boolean = false,
-    public readonly wholeWord: boolean = false
+    public readonly wholeWord: boolean = false,
   ) {}
 
   toRegex(): RegExp {
     let regexPattern = this.pattern;
-    
+
     if (this.wholeWord) {
       regexPattern = `\\b${regexPattern}\\b`;
     }
 
-    const flags = this.caseSensitive ? 'g' : 'gi';
+    const flags = this.caseSensitive ? "g" : "gi";
     return new RegExp(regexPattern, flags);
   }
 
@@ -341,7 +371,7 @@ export class SearchResultCollection {
   constructor(
     private readonly results: SearchResult[],
     public readonly query: SearchQuery,
-    public readonly maxResults: number = 1000
+    public readonly maxResults: number = 1000,
   ) {}
 
   getPage(offset: number, limit: number): SearchResult[] {
@@ -363,6 +393,7 @@ export class SearchResultCollection {
 **Current Issue**: `SearchWebviewPanel` (479 lines) handles too many responsibilities.
 
 **Current responsibilities**:
+
 - Webview lifecycle management
 - Search history persistence
 - Configuration management
@@ -377,7 +408,7 @@ export class SearchResultCollection {
 export class SearchHistoryService {
   constructor(
     private fileSystem: IFileSystemService,
-    private historyPath: string = CONFIG_PATHS.HISTORY_FILE
+    private historyPath: string = CONFIG_PATHS.HISTORY_FILE,
   ) {}
 
   async load(): Promise<SearchHistory> {
@@ -388,17 +419,23 @@ export class SearchHistoryService {
         return SearchHistory.fromArray(Array.isArray(queries) ? queries : []);
       }
     } catch (error) {
-      console.warn('Failed to load search history:', error);
+      console.warn("Failed to load search history:", error);
     }
     return new SearchHistory();
   }
 
   async save(history: SearchHistory): Promise<void> {
-    await this.fileSystem.writeFile(this.historyPath, JSON.stringify(history.toArray(), null, 2));
+    await this.fileSystem.writeFile(
+      this.historyPath,
+      JSON.stringify(history.toArray(), null, 2),
+    );
   }
 
   async clear(): Promise<void> {
-    await this.fileSystem.writeFile(this.historyPath, JSON.stringify([], null, 2));
+    await this.fileSystem.writeFile(
+      this.historyPath,
+      JSON.stringify([], null, 2),
+    );
   }
 }
 
@@ -408,25 +445,28 @@ export class WebviewMessageHandler {
     private searchService: SearchService,
     private historyService: SearchHistoryService,
     private onNavigate: (result: SearchResult) => void,
-    private onCancel: () => void
+    private onCancel: () => void,
   ) {}
 
   async handleMessage(message: any): Promise<any> {
     switch (message.command) {
-      case 'search':
+      case "search":
         return this.handleSearch(message.query);
-      case 'loadHistory':
+      case "loadHistory":
         return this.handleLoadHistory();
-      case 'saveHistory':
+      case "saveHistory":
         return this.handleSaveHistory(message.history);
       // ... other handlers
     }
   }
 
   private async handleSearch(query: string): Promise<SearchResult[]> {
-    const searchQuery = new SearchQuery(query, /* config values */);
+    const searchQuery = new SearchQuery(query /* config values */);
     if (!searchQuery.isValid()) {
-      throw new QuickFindError('Invalid search pattern', QuickFindErrorCode.INVALID_REGEX);
+      throw new QuickFindError(
+        "Invalid search pattern",
+        QuickFindErrorCode.INVALID_REGEX,
+      );
     }
     return this.searchService.search(searchQuery);
   }
@@ -449,6 +489,7 @@ export class SearchWebviewPanel {
 **Current Issue**: Loose typing with `any` types throughout the codebase reduces type safety.
 
 **Problems**:
+
 - `handleUpdateConfig(configUpdates: any)` in `textSearchWebviewPanel.ts:361`
 - Missing return type annotations
 - Optional chaining not used consistently
@@ -470,6 +511,7 @@ export class SearchWebviewPanel {
 ```
 
 **Type definitions to add**:
+
 ```typescript
 // src/types/webview.ts
 export interface WebviewMessage {
@@ -502,7 +544,7 @@ export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
   WARN = 2,
-  ERROR = 3
+  ERROR = 3,
 }
 
 export interface LogContext {
@@ -525,7 +567,9 @@ export class LoggingService {
   }
 
   error(message: string, error?: Error, context?: LogContext): void {
-    const errorContext = error ? { error: error.message, stack: error.stack } : {};
+    const errorContext = error
+      ? { error: error.message, stack: error.stack }
+      : {};
     this.log(LogLevel.ERROR, message, { ...context, ...errorContext });
   }
 
@@ -534,9 +578,11 @@ export class LoggingService {
 
     const timestamp = new Date().toISOString();
     const levelName = LogLevel[level];
-    const contextStr = context ? JSON.stringify(context) : '';
-    
-    console.log(`[${timestamp}] [QuickFind] ${levelName}: ${message} ${contextStr}`);
+    const contextStr = context ? JSON.stringify(context) : "";
+
+    console.log(
+      `[${timestamp}] [QuickFind] ${levelName}: ${message} ${contextStr}`,
+    );
   }
 }
 ```
@@ -549,11 +595,11 @@ export class LoggingService {
 
 ```typescript
 // tests/integration/searchWorkflow.test.ts
-import { MockFileSystemService } from '../src/services/fileSystemService.mock';
-import { SearchService } from '../src/text-search/textSearchService';
-import { SearchHistory } from '../src/models/SearchHistory';
+import { MockFileSystemService } from "../src/services/fileSystemService.mock";
+import { SearchService } from "../src/text-search/textSearchService";
+import { SearchHistory } from "../src/models/SearchHistory";
 
-describe('Search Workflow Integration', () => {
+describe("Search Workflow Integration", () => {
   let mockFileSystem: MockFileSystemService;
   let searchService: SearchService;
 
@@ -562,44 +608,47 @@ describe('Search Workflow Integration', () => {
     searchService = new SearchService(/* dependencies */);
   });
 
-  test('should perform complete search and history cycle', async () => {
+  test("should perform complete search and history cycle", async () => {
     // Setup test files
-    mockFileSystem.setFileContent('/test/file.js', 'function test() { return true; }');
-    
+    mockFileSystem.setFileContent(
+      "/test/file.js",
+      "function test() { return true; }",
+    );
+
     // Perform search
-    const results = await searchService.searchInFolder('/test', 'function');
-    
+    const results = await searchService.searchInFolder("/test", "function");
+
     expect(results).toHaveLength(1);
-    expect(results[0].text).toContain('function test()');
-    
+    expect(results[0].text).toContain("function test()");
+
     // Test history addition
     const history = new SearchHistory();
-    const updatedHistory = history.add('function');
-    
-    expect(updatedHistory.toArray()).toEqual(['function']);
+    const updatedHistory = history.add("function");
+
+    expect(updatedHistory.toArray()).toEqual(["function"]);
   });
 
-  test('should handle invalid regex gracefully', async () => {
-    const results = await searchService.searchInFolder('/test', '[invalid');
+  test("should handle invalid regex gracefully", async () => {
+    const results = await searchService.searchInFolder("/test", "[invalid");
     // Should fallback to literal search, not throw
     expect(results).toEqual([]);
   });
 });
 
 // tests/unit/models/SearchHistory.test.ts
-describe('SearchHistory', () => {
-  test('should maintain max size limit', () => {
+describe("SearchHistory", () => {
+  test("should maintain max size limit", () => {
     const history = new SearchHistory([], 2);
-    const result = history.add('first').add('second').add('third');
-    
-    expect(result.toArray()).toEqual(['second', 'third']);
+    const result = history.add("first").add("second").add("third");
+
+    expect(result.toArray()).toEqual(["second", "third"]);
   });
-  
-  test('should remove duplicates', () => {
+
+  test("should remove duplicates", () => {
     const history = new SearchHistory();
-    const result = history.add('test').add('other').add('test');
-    
-    expect(result.toArray()).toEqual(['other', 'test']);
+    const result = history.add("test").add("other").add("test");
+
+    expect(result.toArray()).toEqual(["other", "test"]);
   });
 });
 ```
@@ -607,6 +656,7 @@ describe('SearchHistory', () => {
 ### 10. Performance Optimizations ⭐️
 
 **Current Issues**:
+
 - Sequential file processing instead of parallel batching (`textSearchService.ts:165-181`)
 - Webview recreates entire HTML on configuration changes
 - No result virtualization for large result sets
@@ -616,30 +666,30 @@ describe('SearchHistory', () => {
 ```typescript
 // Improved parallel processing in SearchService
 private async processInBatches<T, R>(
-  items: T[], 
-  concurrency: number, 
+  items: T[],
+  concurrency: number,
   processor: (item: T) => Promise<R>
 ): Promise<R[]> {
   const results: R[] = [];
-  
+
   for (let i = 0; i < items.length; i += concurrency) {
     const batch = items.slice(i, i + concurrency);
     const batchPromises = batch.map(processor);
     const batchResults = await Promise.all(batchPromises);
     results.push(...batchResults);
   }
-  
+
   return results;
 }
 
 async searchInFolder(folderPath: string, pattern: string): Promise<SearchResult[]> {
   const files = await this.discoverFiles(folderPath);
   const results = await this.processInBatches(
-    files, 
+    files,
     5, // Process 5 files concurrently
     (file) => this.searchInFile(file, pattern)
   );
-  
+
   return results.flat().slice(0, this.defaultOptions.maxResults);
 }
 
@@ -657,7 +707,7 @@ private updateWebviewConfig(config: Partial<TextSearchConfig>): void {
 
 1. **High Priority** ⭐️⭐️⭐️
    - Constants extraction (#1) - Low risk, high impact
-   - Dependency injection (#4) - Enables other improvements  
+   - Dependency injection (#4) - Enables other improvements
    - Business logic extraction (#6) - Reduces complexity
 
 2. **Medium Priority** ⭐️⭐️
