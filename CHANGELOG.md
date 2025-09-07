@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2024-09-07
+
+### Added
+
+- Added prominent "×" close button to both file search and text search interfaces
+
 ## [0.8.1] - 2024-09-06
 
 ### Added
