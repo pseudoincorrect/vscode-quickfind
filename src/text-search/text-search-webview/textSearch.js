@@ -26,6 +26,7 @@ const searchInput = document.querySelector(".search-input");
 const resultsList = document.getElementById("resultsList");
 const contextPanel = document.getElementById("contextPanel");
 const resultCount = document.getElementById("resultCount");
+const exitButton = document.querySelector(".exit-button");
 
 // Toggle buttons
 const caseSensitiveToggle = document.getElementById("caseSensitiveToggle");
@@ -107,6 +108,12 @@ function initializeSearchConfig() {
     if (searchInput.value.trim()) {
       vscode.postMessage({ command: "search", query: searchInput.value });
     }
+  });
+
+  // Exit button click handler
+  exitButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    vscode.postMessage({ command: "cancel" });
   });
 
   updateToggleButtons();

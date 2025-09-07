@@ -31,8 +31,8 @@ interface SearchOptions {
  */
 export class FileSearchService {
   // Layout-aware context sizes
-  private static readonly HORIZONTAL_CONTEXT_SIZE = 10;
-  private static readonly VERTICAL_CONTEXT_SIZE = 60;
+  private static readonly COMPACT_CONTEXT_SIZE = 40;
+  private static readonly MAXIMISED_CONTEXT_SIZE = 100;
 
   private defaultOptions: SearchOptions = {
     maxResults: 500,
@@ -128,8 +128,8 @@ export class FileSearchService {
    */
   public getContextSize(isVerticalLayout: boolean = false): number {
     return isVerticalLayout
-      ? FileSearchService.VERTICAL_CONTEXT_SIZE
-      : FileSearchService.HORIZONTAL_CONTEXT_SIZE;
+      ? FileSearchService.MAXIMISED_CONTEXT_SIZE
+      : FileSearchService.COMPACT_CONTEXT_SIZE;
   }
 
   /**
@@ -156,7 +156,9 @@ export class FileSearchService {
    * @param bytes - File size in bytes
    */
   private formatFileSize(bytes: number): string {
-    if (bytes === 0) return "0 B";
+    if (bytes === 0) {
+      return "0 B";
+    }
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

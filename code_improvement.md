@@ -43,8 +43,8 @@ export const UI_CONSTANTS = {
 } as const;
 
 export const LAYOUT_SIZES = {
-  HORIZONTAL_CONTEXT_SIZE: 10,
-  VERTICAL_CONTEXT_SIZE: 60,
+  COMPACT_CONTEXT_SIZE: 10,
+  MAXIMISED_CONTEXT_SIZE: 60,
 } as const;
 ```
 

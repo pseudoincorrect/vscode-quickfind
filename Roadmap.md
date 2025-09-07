@@ -11,7 +11,17 @@ _Quick wins_
   - Auto-select last search on panel open
   - Clear history option
 
-## 🎨 Phase 2: Customization
+## 🔀 Phase 2: Layout Options
+
+_Flexible viewing preferences_
+
+- [X] **Horizontal split view** - Toggle between vertical/horizontal split
+  - Remember user preference per workspace
+  - Keyboard shortcut for quick toggle
+  - Adaptive layout based on window size
+- [X] **Full-screen result view** - Maximize results panel temporarily
+
+## 🎨 Phase 3: Customization
 
 _Better user control_
 
@@ -20,7 +30,7 @@ _Better user control_
   - Quick toggles for common exclusions (node_modules, .git, etc.)
   - Save pattern presets
 
-## 🔧 Phase 3: Smart Filtering
+## 🔧 Phase 4: Smart Filtering
 
 _Respect project conventions_
 
@@ -30,7 +40,7 @@ _Respect project conventions_
 - [ ] **File type filters** - Quick filters by extension/language
   - "Search only in: JS/TS/Python/etc."
 
-## 🎯 Phase 4: Advanced Features
+## 🎯 Phase 5: Advanced Features
 
 _Power user tools_
 
@@ -39,17 +49,6 @@ _Power user tools_
   - Fuzzy match on symbol names
   - Group by symbol type
 - [ ] **Symbol filtering config** - Whitelist/blacklist symbol types
-
-## 🔀 Phase 5: Layout Options
-
-_Flexible viewing preferences_
-
-- [ ] **Horizontal split view** - Toggle between vertical/horizontal split
-  - Remember user preference per workspace
-  - Keyboard shortcut for quick toggle
-  - Adaptive layout based on window size
-- [ ] **Adjustable split ratio** - Drag to resize panels
-- [ ] **Full-screen result view** - Maximize results panel temporarily
 
 ## 🚧 Technical Debt
 

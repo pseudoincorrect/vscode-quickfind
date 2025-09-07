@@ -31,8 +31,8 @@ interface SearchOptions {
  */
 export class SearchService {
   // Layout-aware context sizes
-  private static readonly HORIZONTAL_CONTEXT_SIZE = 10;
-  private static readonly VERTICAL_CONTEXT_SIZE = 60;
+  private static readonly COMPACT_CONTEXT_SIZE = 10;
+  private static readonly MAXIMISED_CONTEXT_SIZE = 40;
 
   private configService: ConfigService;
   private defaultOptions: SearchOptions = {
@@ -41,7 +41,7 @@ export class SearchService {
     maxDepth: 8,
     includeHidden: false,
     followSymlinks: false,
-    contextSize: SearchService.HORIZONTAL_CONTEXT_SIZE, // Default to horizontal
+    contextSize: SearchService.COMPACT_CONTEXT_SIZE, // Default to horizontal
     excludePatterns: [
       "node_modules/**",
       ".git/**",
@@ -112,8 +112,8 @@ export class SearchService {
    */
   public getContextSize(isVerticalLayout: boolean = false): number {
     return isVerticalLayout
-      ? SearchService.VERTICAL_CONTEXT_SIZE
-      : SearchService.HORIZONTAL_CONTEXT_SIZE;
+      ? SearchService.MAXIMISED_CONTEXT_SIZE
+      : SearchService.COMPACT_CONTEXT_SIZE;
   }
 
   /**

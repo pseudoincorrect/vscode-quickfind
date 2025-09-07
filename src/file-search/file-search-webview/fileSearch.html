@@ -21,12 +21,15 @@
       </div>
       <div class="main-content">
         <div class="search-box">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Type to search files (fuzzy matching)"
-            autofocus
-          />
+          <div class="search-input-container">
+            <button class="exit-button" title="Close (ESC)">×</button>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Type to search files (fuzzy matching)"
+              autofocus
+            />
+          </div>
         </div>
         <div class="results-list" id="resultsList"></div>
       </div>

@@ -13,6 +13,7 @@ const CONTEXT_LOAD_DEBOUNCE_MS = 100;
 const searchInput = document.querySelector(".search-input");
 const resultsList = document.getElementById("resultsList");
 const contextPanel = document.getElementById("contextPanel");
+const exitButton = document.querySelector(".exit-button");
 
 // Initialize with initial data (will be set by the HTML template)
 if (typeof initialData !== "undefined") {
@@ -30,6 +31,12 @@ if (typeof isVerticalLayout !== "undefined" && isVerticalLayout) {
 }
 
 updateDisplay();
+
+// Exit button click handler
+exitButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  vscode.postMessage({ command: "cancel" });
+});
 
 searchInput.addEventListener("input", (e) => {
   const query = e.target.value;
