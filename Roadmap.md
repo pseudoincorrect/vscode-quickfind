@@ -15,11 +15,11 @@ _Quick wins_
 
 _Flexible viewing preferences_
 
-- [X] **Horizontal split view** - Toggle between vertical/horizontal split
+- [x] **Horizontal split view** - Toggle between vertical/horizontal split
   - Remember user preference per workspace
   - Keyboard shortcut for quick toggle
   - Adaptive layout based on window size
-- [X] **Full-screen result view** - Maximize results panel temporarily
+- [x] **Full-screen result view** - Maximize results panel temporarily
 
 ## 🎨 Phase 3: Customization
 
