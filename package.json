@@ -2,7 +2,7 @@
   "name": "vscode-quickfind",
   "displayName": "QuickFind",
   "description": "Fast text search and file finding extension for VSCode with code preview",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "author": "pseudoincorrect",
   "publisher": "pseudoincorrect",
   "icon": "assets/images/quickfind-logo-128.png",
@@ -69,18 +69,18 @@
     "keybindings": [
       {
         "command": "quickFind.searchInFile",
-        "key": "ctrl+k ctrl+t",
-        "mac": "cmd+k cmd+t"
+        "key": "ctrl+f",
+        "mac": "cmd+f"
       },
       {
         "command": "quickFind.searchInFolder",
-        "key": "ctrl+k ctrl+g",
-        "mac": "cmd+k cmd+g"
+        "key": "ctrl+g",
+        "mac": "cmd+g"
       },
       {
         "command": "quickFind.searchFiles",
-        "key": "ctrl+k ctrl+f",
-        "mac": "cmd+k cmd+f"
+        "key": "ctrl+r",
+        "mac": "cmd+r"
       },
       {
         "command": "quickFind.historyPrevious",

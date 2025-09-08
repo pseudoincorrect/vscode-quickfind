@@ -11,9 +11,11 @@ QuickFind creates dedicated webview panels that provide a more user-friendly and
 
 ## Preview
 
-### Text Search
+### Demo
 
-![Text Search Demo - Shows real-time search across workspace files with context panel below results](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/text-search.gif)
+Text search, workspace grep, file search, and layout options:
+
+![QuickFind Demo - Text search, workspace grep, file search, and layout options](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/quickfind-demo.gif)
 
 ### File Search
 
@@ -35,19 +37,22 @@ Keeps the search panel contained within the current editor with the context pane
 
 ### 🔍 Search Current File
 
-**Keybinding**: `Ctrl+K Ctrl+T` (Windows/Linux) / `Cmd+K Cmd+T` (macOS)
+**Keybinding**: `Ctrl+F` (Windows/Linux) / `Cmd+F` (macOS)  
+*Remember: **F**ind in file*
 
 Search within the currently active file with real-time regex matching and highlighting. Features toggle buttons for case-sensitive and whole-word search options.
 
 ### 🔍 Search Workspace
 
-**Keybinding**: `Ctrl+K Ctrl+G` (Windows/Linux) / `Cmd+K Cmd+G` (macOS)
+**Keybinding**: `Ctrl+G` (Windows/Linux) / `Cmd+G` (macOS)  
+*Remember: **G**rep workspace*
 
 Search across all files in your workspace with blazing-fast performance. Features toggle buttons for case-sensitive and whole-word search options.
 
 ### 📁 Search Files
 
-**Keybinding**: `Ctrl+K Ctrl+F` (Windows/Linux) / `Cmd+K Cmd+F` (macOS)
+**Keybinding**: `Ctrl+R` (Windows/Linux) / `Cmd+R` (macOS)  
+*Remember: **R**each for files*
 
 Fuzzy search for files in your workspace. Find files by name with intelligent matching and see file metadata in the context panel.
 
@@ -84,9 +89,9 @@ Automatic search history with smart defaults:
 
 Customize via **Keyboard Shortcuts** (`Ctrl+K Ctrl+S` / `Cmd+K Cmd+S`):
 
-- **Search in Current File**: `Ctrl+K Ctrl+T` / `Cmd+K Cmd+T`
-- **Search in Workspace**: `Ctrl+K Ctrl+G` / `Cmd+K Cmd+G`
-- **Search Files**: `Ctrl+K Ctrl+F` / `Cmd+K Cmd+F`
+- **Search in Current File**: `Ctrl+F` / `Cmd+F`
+- **Search in Workspace**: `Ctrl+G` / `Cmd+G`
+- **Search Files**: `Ctrl+R` / `Cmd+R`
 - **History Navigation**: `Ctrl+Up/Down` / `Cmd+Up/Down`
 - **Clear History**: Available in Command Palette
 
