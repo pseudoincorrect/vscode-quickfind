@@ -14,7 +14,7 @@ import { setActiveQuickFindPanel } from "../extension";
  */
 export class SearchWebviewPanel {
   private panel: vscode.WebviewPanel;
-  private disposables: vscode.Disposable[] = [];
+  private disposables: vscode.Disposable[] = []; // Tracks event listeners and resources for cleanup to prevent memory leaks
   private filteredResults: SearchResult[] = [];
   private currentSearchQuery: string = "";
   private isInitialized: boolean = false;

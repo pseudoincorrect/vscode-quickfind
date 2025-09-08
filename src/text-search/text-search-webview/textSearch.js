@@ -94,6 +94,9 @@ function initializeSearchConfig() {
     if (searchInput.value.trim()) {
       vscode.postMessage({ command: "search", query: searchInput.value });
     }
+
+    // Refocus on search input
+    searchInput.focus();
   });
 
   wholeWordToggle.addEventListener("click", () => {
@@ -108,6 +111,9 @@ function initializeSearchConfig() {
     if (searchInput.value.trim()) {
       vscode.postMessage({ command: "search", query: searchInput.value });
     }
+
+    // Refocus on search input
+    searchInput.focus();
   });
 
   // Exit button click handler
