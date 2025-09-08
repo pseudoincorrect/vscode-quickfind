@@ -37,8 +37,8 @@ Keeps the search panel contained within the current editor with the context pane
 
 ### 🔍 Search Current File
 
-**Keybinding**: `Ctrl+F` (Windows/Linux) / `Cmd+F` (macOS)  
-*Remember: **F**ind in file*
+**Keybinding**: `Ctrl+T` (Windows/Linux) / `Cmd+T` (macOS)  
+*Remember: **T**ext search in file*
 
 Search within the currently active file with real-time regex matching and highlighting. Features toggle buttons for case-sensitive and whole-word search options.
 
@@ -89,7 +89,7 @@ Automatic search history with smart defaults:
 
 Customize via **Keyboard Shortcuts** (`Ctrl+K Ctrl+S` / `Cmd+K Cmd+S`):
 
-- **Search in Current File**: `Ctrl+F` / `Cmd+F`
+- **Search in Current File**: `Ctrl+T` / `Cmd+T`
 - **Search in Workspace**: `Ctrl+G` / `Cmd+G`
 - **Search Files**: `Ctrl+R` / `Cmd+R`
 - **History Navigation**: `Ctrl+Up/Down` / `Cmd+Up/Down`
