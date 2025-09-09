@@ -17,10 +17,6 @@ Text search, workspace grep, file search, and layout options:
 
 ![QuickFind Demo - Text search, workspace grep, file search, and layout options](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/quickfind-demo.gif)
 
-### File Search
-
-![File Search Demo - Fuzzy file search with file metadata and content preview](https://raw.githubusercontent.com/pseudoincorrect/vscode-quickfind/main/assets/images/file-search.jpeg)
-
 ### Maximized Layout (Default)
 
 Maximizes the search panel to use the full screen space with the context panel positioned on the right for optimal code viewing.
@@ -71,15 +67,11 @@ Automatic search history with smart defaults:
 - **Auto-saved**: Every search saved, most recent pre-filled on open
 - **Navigation**: `Ctrl+Up/Down` (Windows/Linux) or `Cmd+Up/Down` (macOS) to browse history
 - **Management**: Clear via Command Palette → "QuickFind: Clear Search History"
-- **Storage**: Limited to 50 entries, saved in `/tmp/vscode-quickfind-text-search-history.json`
 
 ## Configuration
 
-- **`quickFind.contextSize`** (default: 7): Lines of context around search results (0-20)
-- **`quickFind.accentColor`** (default: "#00ff88"): Hex color for search UI highlights
-- **`quickFind.maxFileSize`** (default: "1MB"): Maximum file size for searches (supports KB, MB, GB)
-- **`quickFind.maxResults`** (default: 1000): Maximum number of results (1-10000)
 - **`quickFind.maximizedLayout`** (default: true): Auto-maximize search panel for full screen space and enable vertical split layout (context panel on right side instead of top)
+- **`quickFind.accentColor`** (default: "#00ff88"): Hex color for search UI highlights
 
 ## Requirements
 

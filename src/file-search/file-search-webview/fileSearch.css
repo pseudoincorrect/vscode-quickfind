@@ -253,13 +253,6 @@ body {
   flex-grow: 1;
 }
 
-.search-highlight {
-  background: var(--vscode-editor-findMatchHighlightBackground);
-  color: var(--vscode-editor-findMatchForeground);
-  font-weight: bold;
-  border-radius: 2px;
-  padding: 0 1px;
-}
 
 .no-results {
   padding: 20px;

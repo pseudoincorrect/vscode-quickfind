@@ -118,7 +118,12 @@ export class FileSearchProvider {
     isVerticalLayout: boolean,
   ): Promise<string[]> {
     const contextSize = this.searchService.getContextSize(isVerticalLayout);
-    return await this.searchService.getFileContext(result.file, contextSize);
+    if (!this.currentSearchPath) {
+      return [];
+    }
+    // Build full path from search path + relative path
+    const fullPath = path.join(this.currentSearchPath, result.relativePath);
+    return await this.searchService.getFileContext(fullPath, contextSize);
   }
 
   /**
@@ -134,14 +139,18 @@ export class FileSearchProvider {
       }
 
       if (result.isDirectory) {
+        // Build full path from search path + relative path
+        const fullPath = this.currentSearchPath ? path.join(this.currentSearchPath, result.relativePath) : result.relativePath;
         // Open the directory in Explorer
         await vscode.commands.executeCommand(
           "revealInExplorer",
-          vscode.Uri.file(result.file),
+          vscode.Uri.file(fullPath),
         );
       } else {
+        // Build full path from search path + relative path
+        const fullPath = this.currentSearchPath ? path.join(this.currentSearchPath, result.relativePath) : result.relativePath;
         // Open the file in the same view column as the original editor
-        const document = await vscode.workspace.openTextDocument(result.file);
+        const document = await vscode.workspace.openTextDocument(fullPath);
         const targetViewColumn =
           this.originalEditor?.viewColumn || vscode.ViewColumn.One;
         const editor = await vscode.window.showTextDocument(

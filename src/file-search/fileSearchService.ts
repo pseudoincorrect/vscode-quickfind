@@ -9,11 +9,7 @@ import * as vscode from "vscode";
 import Fuse from "fuse.js";
 
 export interface FileSearchResult {
-  file: string;
-  name: string;
   relativePath: string;
-  size: number;
-  modified: Date;
   isDirectory: boolean;
 }
 
@@ -55,11 +51,8 @@ export class FileSearchService {
   };
 
   private fuseOptions = {
-    keys: [
-      { name: "name", weight: 0.7 },
-      { name: "relativePath", weight: 0.3 },
-    ],
-    threshold: 0.6, // Lower = more strict matching
+    keys: ["relativePath"],
+    threshold: 0.5, // Lower = more strict matching
     includeScore: true,
     minMatchCharLength: 1,
     shouldSort: true,
@@ -152,20 +145,6 @@ export class FileSearchService {
   }
 
   /**
-   * Formats file size in human-readable format.
-   * @param bytes - File size in bytes
-   */
-  private formatFileSize(bytes: number): string {
-    if (bytes === 0) {
-      return "0 B";
-    }
-    const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
-  }
-
-  /**
    * Discovers all searchable files in a directory tree.
    * @param basePath - Root directory path to start discovery from
    */
@@ -178,8 +157,8 @@ export class FileSearchService {
 
       await this.walkDirectory(basePath, basePath, files, ignorePatterns, 0);
 
-      // Sort by name for consistent ordering
-      return files.sort((a, b) => a.name.localeCompare(b.name));
+      // Sort by relativePath for consistent ordering
+      return files.sort((a, b) => a.relativePath.localeCompare(b.relativePath));
     } catch (error) {
       console.error(`Error discovering files in ${basePath}:`, error);
       return [];
@@ -231,11 +210,7 @@ export class FileSearchService {
             // Add directory if configured to include them
             if (this.defaultOptions.includeDirectories) {
               files.push({
-                file: fullPath,
-                name: entry.name,
                 relativePath: relativePath,
-                size: 0,
-                modified: stats.mtime,
                 isDirectory: true,
               });
             }
@@ -250,11 +225,7 @@ export class FileSearchService {
             );
           } else if (entry.isFile()) {
             files.push({
-              file: fullPath,
-              name: entry.name,
               relativePath: relativePath,
-              size: stats.size,
-              modified: stats.mtime,
               isDirectory: false,
             });
           }

@@ -138,22 +138,16 @@ function updateResultsList() {
   let html = results
     .slice(0, resultsToShow)
     .map((result, index) => {
-      const relativePath = getRelativePath(result.file, workspacePath);
-      const fileName = result.name;
-      const highlightedName = highlightSearchTerm(
-        escapeHtml(fileName),
-        currentSearchQuery,
-      );
-      const highlightedPath = highlightSearchTerm(
-        escapeHtml(relativePath),
-        currentSearchQuery,
-      );
+      const relativePath = result.relativePath;
+      const fileName = relativePath.split('/').pop() || relativePath; // Extract filename from path
+      const escapedName = escapeHtml(fileName);
+      const escapedPath = escapeHtml(relativePath);
 
       return `<div class="result-item ${index === selectedIndex ? "selected" : ""}" 
                     onclick="navigateToResult(${index})">
             <div class="file-info">
-                <div class="file-name">${highlightedName}</div>
-                <div class="file-path-display">${highlightedPath}</div>
+                <div class="file-name">${escapedName}</div>
+                <div class="file-path-display">${escapedPath}</div>
             </div>
         </div>`;
     })
@@ -246,37 +240,6 @@ function updateSelection() {
   }
 }
 
-function highlightSearchTerm(text, searchQuery) {
-  if (!searchQuery || searchQuery.trim() === "") {
-    return text;
-  }
-
-  // For fuzzy search highlighting, we'll do a simple case-insensitive search
-  // This could be enhanced to match the actual fuzzy matching algorithm
-  const lowerText = text.toLowerCase();
-  const lowerQuery = searchQuery.toLowerCase();
-  let result = "";
-  let lastIndex = 0;
-
-  // Split query into characters for fuzzy highlighting
-  const queryChars = lowerQuery.split("");
-  let textIndex = 0;
-  let queryIndex = 0;
-
-  while (textIndex < text.length && queryIndex < queryChars.length) {
-    if (lowerText[textIndex] === queryChars[queryIndex]) {
-      // Found a matching character
-      result += text.substring(lastIndex, textIndex);
-      result += '<span class="search-highlight">' + text[textIndex] + "</span>";
-      lastIndex = textIndex + 1;
-      queryIndex++;
-    }
-    textIndex++;
-  }
-
-  result += text.substring(lastIndex);
-  return result;
-}
 
 function escapeHtml(text) {
   const div = document.createElement("div");
@@ -284,25 +247,4 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-function getRelativePath(fullPath, workspacePath) {
-  if (!workspacePath || !fullPath) {
-    return fullPath;
-  }
-
-  // Normalize paths to use forward slashes
-  const normalizedFullPath = fullPath.replace(/\\/g, "/");
-  const normalizedWorkspacePath = workspacePath.replace(/\\/g, "/");
-
-  // Ensure workspace path ends with slash for proper comparison
-  const workspacePathWithSlash = normalizedWorkspacePath.endsWith("/")
-    ? normalizedWorkspacePath
-    : normalizedWorkspacePath + "/";
-
-  if (normalizedFullPath.startsWith(workspacePathWithSlash)) {
-    // Return relative path
-    return normalizedFullPath.substring(workspacePathWithSlash.length);
-  }
-
-  // If not within workspace, return full path
-  return normalizedFullPath;
-}
+// getRelativePath function removed - we now work directly with relativePath from the simplified interface
