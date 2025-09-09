@@ -5,7 +5,7 @@ All notable changes to the "QuickFind" extension will be documented in this file
 The format is based (mostly) on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.7] - 2024-09-09
+## [0.8.8] - 2024-09-09
 
 ### Added
 
@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional search view maximization setting for Telescope-style full-screen searching
 - Vertical split layout option with context panel on right side when maximization is enabled
 - Performance optimization with scroll debounce for context loading during rapid navigation
-- Improve fuzzy file search, remove confusing regex char highlighting
+- Improve file search with hybrid regex/fuzzy search, remove confusing regex char highlighting
 
 ### Fixed
 

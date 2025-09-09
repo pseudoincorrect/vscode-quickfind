@@ -21,7 +21,6 @@ releases/**
 
 # Exclude large assets (keep only the required icon)
 assets/images/compact-layout.jpeg
-assets/images/file-search.jpeg
 assets/images/maximised-layout.jpeg
 assets/images/quickfind-logo.jpeg
 assets/images/quickfind-demo.gif

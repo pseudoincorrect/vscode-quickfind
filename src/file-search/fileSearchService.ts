@@ -85,9 +85,9 @@ export class FileSearchService {
   }
 
   /**
-   * Searches for files matching the query using fuzzy matching.
+   * Searches for files matching the query using hybrid exact + fuzzy matching.
    * @param folderPath - Root folder path to search in
-   * @param query - Search query for fuzzy file name matching
+   * @param query - Search query for file name matching
    */
   async searchFiles(
     folderPath: string,
@@ -102,18 +102,56 @@ export class FileSearchService {
         return files.slice(0, this.defaultOptions.maxResults);
       }
 
-      // Use Fuse.js for fuzzy searching
-      const fuse = new Fuse(files, this.fuseOptions);
-      const searchResults = fuse.search(query);
+      // Step 1: Find exact substring matches first
+      const exactMatches = this.findExactMatches(files, query);
 
-      // Extract items from Fuse results and limit
-      return searchResults
-        .map((result) => result.item)
-        .slice(0, this.defaultOptions.maxResults);
+      // Step 2: Use Fuse.js for fuzzy searching on remaining files
+      const remainingFiles = files.filter(file => 
+        !exactMatches.some(exact => exact.relativePath === file.relativePath)
+      );
+      
+      const fuse = new Fuse(remainingFiles, this.fuseOptions);
+      const fuzzyResults = fuse.search(query);
+      const fuzzyMatches = fuzzyResults.map(result => result.item);
+
+      // Step 3: Combine exact matches (first) with fuzzy matches
+      const combinedResults = [...exactMatches, ...fuzzyMatches];
+
+      // Return limited results
+      return combinedResults.slice(0, this.defaultOptions.maxResults);
     } catch (error) {
       console.error(`Error searching files in ${folderPath}:`, error);
       return [];
     }
+  }
+
+  /**
+   * Finds files with exact substring matches in their paths.
+   * @param files - Array of files to search through
+   * @param query - Search query to match against file paths
+   */
+  private findExactMatches(files: FileSearchResult[], query: string): FileSearchResult[] {
+    const lowerQuery = query.toLowerCase();
+    
+    return files.filter(file => {
+      const lowerPath = file.relativePath.toLowerCase();
+      return lowerPath.includes(lowerQuery);
+    }).sort((a, b) => {
+      const aPath = a.relativePath.toLowerCase();
+      const bPath = b.relativePath.toLowerCase();
+      const aBasename = path.basename(aPath);
+      const bBasename = path.basename(bPath);
+      
+      // Prioritize matches in filename over path
+      const aFilenameMatch = aBasename.includes(lowerQuery);
+      const bFilenameMatch = bBasename.includes(lowerQuery);
+      
+      if (aFilenameMatch && !bFilenameMatch) return -1;
+      if (!aFilenameMatch && bFilenameMatch) return 1;
+      
+      // If both or neither match in filename, sort by path length (shorter first)
+      return aPath.length - bPath.length;
+    });
   }
 
   /**
